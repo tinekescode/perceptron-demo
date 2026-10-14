@@ -1,0 +1,17 @@
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build output
+target/
+node_modules/
+dist/
+.vite/
+
+# Local config
+.env

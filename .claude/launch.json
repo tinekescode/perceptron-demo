@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "perceptron-frontend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "perceptron-frontend", "run", "dev"],
+      "port": 5173
+    }
+  ]
+}
