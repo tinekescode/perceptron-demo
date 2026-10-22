@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Handwritten Digits</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <header class="top">
+    <div>
+      <h1>Handwritten digits</h1>
+      <p class="subtitle">A 784 → 64 → 10 network learns to read handwritten digits (MNIST) with backpropagation.</p>
+    </div>
+  </header>
+
+  <section class="toolbar">
+    <button class="primary" id="train" disabled>Train</button>
+    <label class="field">Epochs
+      <select id="epochs">
+        <option selected>1</option>
+        <option>3</option>
+        <option>5</option>
+      </select>
+    </label>
+    <label class="field check"><input type="checkbox" id="slow" checked> Slow, to watch it learn</label>
+    <button class="secondary" id="stop" disabled>Stop</button>
+    <button class="secondary" id="reset">Reset weights</button>
+    <span class="status" id="status">Connecting…</span>
+    <dl class="stats" id="stats"></dl>
+  </section>
+
+  <p class="intro">
+    Every image is 28 × 28 = 784 pixels, so the network has 784 inputs. Each hidden neuron is a perceptron
+    over all 784 pixels; the 10 outputs give a probability per digit. Draw a digit before training: the network
+    guesses. Then press <b>Train</b> and watch the guesses, the accuracy and the hidden neurons change.
+  </p>
+
+  <div class="grid">
+    <article class="card">
+      <h2>Draw a digit</h2>
+      <div class="draw-row">
+        <canvas id="pad" width="280" height="280" aria-label="Drawing pad"></canvas>
+        <div class="seen">
+          <canvas id="seen" width="28" height="28" aria-label="Network input"></canvas>
+          <p class="hint">What the network sees: 28 × 28 pixels, scaled and centred like the MNIST images.</p>
+        </div>
+      </div>
+      <div class="buttons">
+        <button class="secondary" id="clear">Clear</button>
+        <button class="secondary" id="sample" disabled>Random test image</button>
+      </div>
+      <p class="hint" id="input-label">Draw with the mouse, or load a test image.</p>
+    </article>
+
+    <article class="card">
+      <h2>Prediction</h2>
+      <div class="bars" id="bars"></div>
+      <p class="answer" id="answer"></p>
+    </article>
+
+    <article class="card">
+      <h2>Accuracy on test images</h2>
+      <svg id="chart" class="chart" viewBox="0 0 520 240" role="img" aria-label="Accuracy while training"></svg>
+      <p class="hint">Measured on 2,000 test images the network never trains on. 10% is guessing.</p>
+    </article>
+
+    <article class="card">
+      <h2>Mistakes</h2>
+      <div class="mistakes" id="mistakes"></div>
+      <p class="hint" id="mistakes-hint">After training: test images the network gets wrong. Click one to load it.</p>
+    </article>
+
+    <article class="card wide">
+      <h2>Hidden neurons</h2>
+      <div class="neurons" id="neurons"></div>
+      <ul class="legend">
+        <li><span class="swatch pos"></span>ink here pushes the neuron up</li>
+        <li><span class="swatch neg"></span>ink here pushes it down</li>
+        <li><span class="swatch act"></span>outline = how active it is for the current input</li>
+      </ul>
+      <p class="hint">Each tile is one hidden neuron's 784 input weights, drawn as a 28 × 28 image.
+        Before training they are noise; while training they turn into stroke and blob detectors.</p>
+    </article>
+  </div>
+</div>
+<script type="module" src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,1313 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How AI Lost the Thread</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caladea:ital,wght@0,400;0,700;1,400&family=Carlito:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #12142B;
+    --ink: #FFFFFF;
+    --purple: #6C63FF;
+    --teal: #00D9C0;
+    --lav: #C9C6F0;
+    --muted: #A9A6C9;
+    --dim: #8A8AA3;
+    --rule: #3A3D63;
+    --thread: #4A4670;
+    --cell: #1E2044;
+    --track: #2A2C52;
+    --serif: Cambria, Caladea, Georgia, serif;
+    --sans: Calibri, Carlito, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: #0B0C1C; overflow: hidden; }
+  body { font-family: var(--sans); color: var(--ink); }
+
+  /* 2000×1125 stage (13.33in × 7.5in), scaled to fit the window */
+  #viewport { position: fixed; inset: 0; }
+  #stage {
+    position: absolute; left: 50%; top: 50%; width: 2000px; height: 1125px;
+    background: var(--bg); overflow: hidden; transform-origin: center center;
+    box-shadow: 0 0 80px rgba(0,0,0,.5);
+  }
+  .slide {
+    position: absolute; inset: 0; opacity: 0; visibility: hidden;
+    transition: opacity .45s ease, visibility 0s linear .45s;
+  }
+  .slide.active { opacity: 1; visibility: visible; transition: opacity .45s ease; }
+  .slide > svg.art { position: absolute; inset: 0; width: 2000px; height: 1125px; overflow: visible; }
+
+  .abs { position: absolute; line-height: 1; white-space: nowrap; }
+  .kicker { font: 700 30px var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--purple); }
+  .kicker.teal { color: var(--teal); }
+  .kicker.small { font-size: 24px; color: var(--dim); }
+  .title { font: 700 80px var(--serif); }
+  .statement { font: 700 72px/98px var(--serif); white-space: normal; }
+  .body { font: 400 32px/57px var(--sans); color: var(--lav); white-space: normal; }
+  .caption { font: italic 400 22px/30px var(--sans); color: var(--muted); white-space: normal; text-align: center; }
+  .p { color: var(--purple); } .t { color: var(--teal); }
+  .short-rule { position: absolute; left: 135px; width: 450px; height: 3px; background: var(--rule); }
+
+  /* chat demo (slides 2–3) */
+  .chat-win { position: absolute; background: #0E1026; border: 2px solid var(--rule); border-radius: 18px; overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0,0,0,.45); }
+  .chat-bar { height: 56px; display: flex; align-items: center; gap: 10px; padding: 0 22px; border-bottom: 1px solid var(--rule); background: #151838; }
+  .chat-bar i { width: 14px; height: 14px; border-radius: 50%; background: var(--thread); }
+  .chat-bar span { margin-left: 16px; font: 700 22px var(--sans); color: var(--lav); }
+  .chat-side { position: absolute; left: 0; top: 56px; bottom: 0; width: 300px; border-right: 1px solid var(--rule); padding: 26px 18px; background: #121433; }
+  .chat-side-h { font: 700 18px var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--dim); margin: 0 0 14px 12px; }
+  .chat-hist { font: 400 24px var(--sans); color: var(--muted); padding: 12px 14px; border-radius: 10px; margin-bottom: 6px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: background .3s, color .3s; }
+  .chat-hist.on { background: rgba(108,99,255,.25); color: #fff; }
+  .chat-main { position: absolute; left: 300px; right: 0; top: 56px; bottom: 0; padding: 40px 48px 140px; }
+  .chat-log { display: flex; flex-direction: column; gap: 26px; }
+  .msg-user { align-self: flex-end; max-width: 78%; background: var(--purple); color: #fff; padding: 16px 24px;
+    border-radius: 22px 22px 6px 22px; font: 400 28px/1.35 var(--sans); }
+  .msg-bot { align-self: flex-start; max-width: 92%; color: var(--lav); font: 400 28px/1.5 var(--sans); white-space: pre-wrap; }
+  .msg-bot.code { font: 400 23px/1.55 Consolas, "Cascadia Mono", "Courier New", monospace; color: #E8E6FF; background: #1A1D3D;
+    border: 1px solid var(--rule); border-radius: 12px; padding: 18px 24px; }
+  .dots { align-self: flex-start; display: flex; gap: 8px; padding: 14px 0; }
+  .dots i { width: 12px; height: 12px; border-radius: 50%; background: var(--muted); animation: dot 1s infinite ease-in-out; }
+  .dots i:nth-child(2) { animation-delay: .15s; } .dots i:nth-child(3) { animation-delay: .3s; }
+  @keyframes dot { 0%, 100% { opacity: .25; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-5px); } }
+  .chat-input { position: absolute; left: 48px; right: 48px; bottom: 34px; height: 78px; border: 2px solid var(--rule); border-radius: 39px;
+    background: #151838; display: flex; align-items: center; padding: 0 90px 0 32px; font: 400 27px var(--sans); color: #fff; }
+  .chat-typed:empty::before { content: "Ask anything…"; color: var(--dim); }
+  .caret { width: 3px; height: 34px; background: var(--teal); margin-left: 3px; animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .chat-send { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 54px; height: 54px; border-radius: 50%;
+    background: var(--thread); color: #fff; display: grid; place-items: center; font: 700 26px var(--sans); transition: background .2s; }
+  .chat-send.ready { background: var(--purple); }
+  .chip { position: absolute; left: 1560px; width: 330px; padding: 20px 24px; border-radius: 14px; border: 2px solid var(--rule);
+    font: 700 30px var(--serif); color: var(--muted); transition: border-color .3s, color .3s, background .3s; }
+  .chip.on { border-color: var(--teal); color: #fff; background: rgba(0,217,192,.1); }
+  .ask-bar { position: absolute; left: 150px; top: 236px; width: 1700px; height: 100px; border: 2px solid var(--rule); border-radius: 50px;
+    background: #151838; display: flex; align-items: center; padding: 0 110px 0 44px; font: 400 40px var(--sans); color: #fff; }
+  .ask-bar .chat-send { width: 70px; height: 70px; right: 16px; font-size: 32px; }
+  .ask-bar .caret { height: 46px; }
+  .late { transition: opacity .7s ease; }
+  .slide.asking .late { opacity: 0; transition: none; }
+
+  /* timeline */
+  .tl-h { font: 700 34px var(--serif); transform: translateX(-50%); }
+  .tl-d { font: italic 400 24px var(--sans); color: var(--muted); transform: translateX(-50%); }
+
+  /* neuron */
+  .card { position: absolute; left: 54px; top: 301px; width: 1138px; height: 749px; background: #10192d;
+    border-radius: 14px; border: 2px solid var(--rule); overflow: hidden; }
+  .card iframe { width: 100%; height: 100%; border: 0; display: block; }
+  .hold { position: absolute; left: 1250px; font: 700 34px var(--serif); padding-left: 52px; line-height: 1; }
+  .hold::before { content: ""; position: absolute; left: 0; top: 9px; width: 14px; height: 14px; border-radius: 50%; background: var(--teal); }
+
+  .hebb-reset { position: absolute; left: 1010px; top: 322px; padding: 8px 16px; border-radius: 8px; border: 1px solid var(--rule);
+    background: var(--bg); color: var(--lav); font: 400 22px var(--sans); cursor: pointer; }
+  .hebb-reset:hover { color: #fff; border-color: var(--purple); }
+
+  #cnnTitle > svg.art:last-of-type { transform: translateY(50px); }
+  .cnn-label { position: absolute; top: 790px; transform: translateX(-50%); font: italic 400 26px var(--sans); color: var(--muted); white-space: nowrap; }
+
+  /* transformer section */
+  .tx-card-h { position: absolute; top: 368px; font: 700 36px var(--serif); white-space: nowrap; }
+  .tx-era { position: absolute; top: 422px; font: 700 20px var(--sans); letter-spacing: .14em; color: var(--dim); }
+  .tx-good, .tx-bad { position: absolute; width: 488px; font: 400 24px/34px var(--sans); color: var(--lav); }
+  .tx-good { top: 724px; } .tx-good b { color: var(--teal); }
+  .tx-bad { top: 812px; } .tx-bad b { color: #FB7185; }
+  .attn-sent { position: absolute; left: 120px; width: 1760px; top: 520px; display: flex; justify-content: center; gap: 20px;
+    font: 400 48px var(--serif); color: #fff; white-space: nowrap; }
+  .attn-sent span { transition: color .4s; }
+  .attn-sent .it { color: var(--purple); font-weight: 700; }
+  .attn-sent .ref { color: var(--teal); font-weight: 700; }
+  .attn-caption { position: absolute; left: 0; width: 2000px; top: 612px; text-align: center; font: italic 400 30px var(--sans); color: var(--teal); }
+  .tx-row { position: absolute; left: 880px; width: 1000px; padding-left: 46px; }
+  .tx-row i { position: absolute; left: 0; top: 9px; width: 24px; height: 24px; border-radius: 50%; }
+  .tx-row h3 { font: 700 34px var(--serif); }
+  .tx-row p { margin-top: 8px; font: 400 24px/34px var(--sans); color: var(--lav); }
+  .tx-row.wide { left: 1400px; width: 480px; }
+
+  /* closing slide */
+  .qr-card { position: absolute; top: 300px; width: 360px; height: 360px; padding: 30px; border-radius: 20px; background: #fff; }
+  .qr-card svg { width: 300px; height: 300px; display: block; shape-rendering: crispEdges; }
+  .qr-label { position: absolute; top: 700px; transform: translateX(-50%); font: 700 36px var(--serif); white-space: nowrap; }
+  .qr-url { position: absolute; top: 756px; transform: translateX(-50%); font: 400 24px var(--sans); color: var(--lav); text-decoration: none; white-space: nowrap; }
+  .qr-url:hover { color: #fff; text-decoration: underline; }
+
+  /* brain-likeness meter */
+  .meter-label { position: absolute; left: 0; width: 1995px; text-align: center; font: 700 22px var(--sans);
+    letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
+  .meter { position: absolute; left: 240px; width: 1515px; height: 30px; border-radius: 15px; background: var(--track); overflow: hidden; }
+  .meter i { display: block; height: 100%; width: 0; border-radius: 15px; background: var(--teal);
+    transition: width 1.1s cubic-bezier(.2,.7,.2,1) .25s; }
+  .slide.active .meter i { width: var(--v); }
+
+  /* line drawing on enter */
+  .draw { stroke-dasharray: 1; stroke-dashoffset: 1; }
+  .slide.active .draw { stroke-dashoffset: 0; transition: stroke-dashoffset 1.4s ease .3s; }
+  .pop { opacity: 0; }
+  .slide.active .pop { opacity: 1; transition: opacity .5s ease 1.2s; }
+
+  /* UI chrome */
+  #notes {
+    position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); width: min(1000px, calc(100% - 32px));
+    max-height: 40vh; overflow: auto; background: rgba(18,20,43,.96); border: 1px solid var(--rule); border-radius: 10px;
+    padding: 16px 20px; font: 400 17px/1.5 var(--sans); color: var(--lav); display: none; z-index: 10;
+  }
+  #notes.show { display: block; }
+  #notes b { color: var(--teal); font-weight: 700; margin-right: 8px; }
+  #hud { position: fixed; right: 16px; bottom: 12px; font: 400 14px var(--sans); color: var(--dim); opacity: 0; transition: opacity .3s; z-index: 11; }
+  body:hover #hud { opacity: .8; }
+  #hud kbd { font: inherit; border: 1px solid var(--rule); border-radius: 4px; padding: 0 5px; }
+  @media print {
+    html, body { overflow: visible; background: none; }
+    #viewport { position: static; display: block; }
+    #stage { transform: none !important; width: auto; height: auto; box-shadow: none; background: none; }
+    .slide { position: relative; opacity: 1; visibility: visible; width: 2000px; height: 1125px; background: var(--bg); break-after: page; }
+    .meter i { width: var(--v); } .draw { stroke-dashoffset: 0; } .pop { opacity: 1; }
+    #notes, #hud, .hebb-reset { display: none !important; }
+  }
+</style>
+</head>
+<body>
+<div id="viewport"><div id="stage">
+
+<!-- 1 · Title -->
+<section class="slide" data-thread="plain" data-notes="~10 sec. Quick intro of yourself and the talk title, then move on fast.">
+  <div class="abs kicker teal" style="left:150px;top:280px">AI's Founding Myth</div>
+  <div class="abs title" style="left:150px;top:385px;font-size:100px">How AI Lost the Thread</div>
+  <div class="abs" style="left:150px;top:572px;font:italic 400 38px var(--sans);color:var(--lav)">The Strange Path from Neurons to LLMs</div>
+  <img src="assets/circuit.png" alt="" style="position:absolute;left:1440px;top:90px;width:480px;height:480px;opacity:.15">
+</section>
+
+<!-- 2 · How we use it -->
+<section class="slide" id="llmUse" data-thread="plain" data-notes="~40 sec. Let the demo run behind you while you talk. Ask the room: 'Hands up if you asked an AI something this week.' Then point at the labels on the right as they light up: it's in your IDE, your inbox, your chats, your phone. Writing tests, explaining errors, summarising, translating, deciding what's for dinner. Don't explain anything yet — just establish how completely normal this has become.">
+  <div class="abs kicker" style="left:120px;top:94px">Sound Familiar?</div>
+  <div class="abs title" style="left:120px;top:152px">What We Ask It, Every Day</div>
+  <div class="chat-win" style="left:120px;top:290px;width:1360px;height:740px">
+    <div class="chat-bar"><i></i><i></i><i></i><span>Assistant</span></div>
+    <div class="chat-side"><div class="chat-side-h">Today</div></div>
+    <div class="chat-main">
+      <div class="chat-log"></div>
+      <div class="chat-input"><span class="chat-typed"></span><span class="caret"></span><b class="chat-send">↑</b></div>
+    </div>
+  </div>
+  <div class="abs kicker small" style="left:1560px;top:300px">Where you meet it</div>
+  <div class="chip" style="top:348px" data-chip="ide">In your IDE</div>
+  <div class="chip" style="top:448px" data-chip="mail">In your inbox</div>
+  <div class="chip" style="top:548px" data-chip="chat">In your chats</div>
+  <div class="chip" style="top:648px" data-chip="phone">On your phone</div>
+</section>
+
+<!-- 3 · Why listen -->
+<section class="slide" id="llmWhy" data-thread="plain" data-notes="~20 sec. Let the question type itself out — pause. Then: 'We all use this, every day. But ask most people where it actually came from, and you get a shrug — or a vague story about brains.' This is the promise, stated up front: not how to use an LLM, but where it came from and how it got here. Keep it short and conversational — this is the moment the audience decides whether to lean in.">
+  <div class="abs kicker teal" style="left:150px;top:154px">Why Listen to This</div>
+  <div class="ask-bar"><span class="ask-typed">Where did you actually come from?</span><span class="caret"></span><b class="chat-send ready">↑</b></div>
+  <div class="abs statement late" style="left:150px;top:430px;width:1800px">We use it every day.<br><span class="late" style="transition-delay:.7s">Most of us have no idea <span class="t">where it came from.</span></span></div>
+  <div class="short-rule late" style="top:700px;transition-delay:1.4s"></div>
+  <div class="abs body late" style="left:150px;top:736px;width:1500px;transition-delay:1.4s">This talk follows the thread back: from a 1940s idea about brain cells to the tool on your phone.</div>
+</section>
+
+<!-- 4 · About me -->
+<section class="slide" data-thread="plain" data-notes="~30 sec. Keep this brief and light — one or two sentences per stop on the path. The callback line at the bottom is optional to say out loud; it can just sit there as a wink for anyone paying close attention.">
+  <div class="abs kicker" style="left:120px;top:94px">About Me</div>
+  <div class="abs title" style="left:120px;top:152px">Tineke Slotegraaf</div>
+  <div class="abs" style="left:120px;top:244px;font:italic 400 30px var(--sans);color:var(--muted)">Software and AI Engineer - Alvant</div>
+  <svg class="art" viewBox="0 0 2000 1125">
+    <line x1="240" y1="630" x2="1702" y2="630" stroke="var(--rule)" stroke-width="4"/>
+    <circle cx="240" cy="630" r="15" fill="#fff"/>
+    <circle cx="727" cy="630" r="15" fill="#fff"/>
+    <circle cx="1215" cy="630" r="15" fill="#fff"/>
+    <circle cx="1702" cy="630" r="19" fill="var(--purple)"/>
+  </svg>
+  <div class="abs tl-h" style="left:240px;top:512px">BSc Artificial Intelligence</div>
+  <div class="abs tl-h" style="left:727px;top:512px">MSc Cognitive Science</div>
+  <div class="abs tl-h" style="left:1215px;top:512px">Software Engineer</div>
+  <div class="abs tl-h p" style="left:1702px;top:512px">Back to AI — Jan 2025</div>
+  <div class="abs tl-d" style="left:240px;top:696px">the foundation</div>
+  <div class="abs tl-d" style="left:727px;top:696px">how minds actually work</div>
+  <div class="abs tl-d" style="left:1215px;top:696px">full-stack, several years</div>
+  <div class="abs tl-d" style="left:1702px;top:696px">building LLM-powered systems</div>
+</section>
+
+<!-- 5 · Neuron -->
+<section class="slide" data-thread="plain" data-notes="~50 sec. Open with the stakes line before diving in. Let the simulator run and narrate it in plain words: signals arrive on the branches on the left, the cell body adds them up — watch 'Summed input' climb — and the moment it reaches the threshold of 10, the cell fires: one pulse runs down the long wire to the far end, then everything resets. Point out that it's all-or-nothing: a bigger sum doesn't make a bigger pulse. Avoid 'dendrite,' 'soma,' 'axon' as jargon; use 'branches,' 'cell body,' 'wire' where it helps. Mention in one sentence that this is a simplification — the brain has hundreds of kinds of neurons. Bridge: 'In 1943 McCulloch and Pitts boiled exactly this down to an on/off switch: add up the inputs, compare to a threshold. Hold onto that switch — it comes back in a few slides. But first: how does a neuron learn?'">
+  <div class="abs kicker" style="left:120px;top:87px">The Hook — 1943</div>
+  <div class="abs title" style="left:120px;top:135px">How a Neuron Decides</div>
+  <div class="card"><iframe src="assets/neuron-simulator.html" title="Neuron simulator: summed dendrite inputs trigger an action potential along the axon"></iframe></div>
+  <div class="abs kicker small" style="left:1260px;top:340px">What to Hold Onto</div>
+  <div class="hold" style="top:380px">It listens to many inputs at once</div>
+  <div class="hold" style="top:538px">It adds them all up</div>
+  <div class="hold" style="top:695px">Enough input? It fires — all or nothing</div>
+  <div class="hold" style="top:853px">Not one neuron — hundreds of kinds</div>
+</section>
+
+<!-- 5b · How a neuron learns -->
+<section class="slide" id="hebb" data-thread="plain" data-notes="~60 sec. (Donald Hebb, 1949.) Walk the animation: A and B tend to fire together. When they do, their combined push makes the cell fire — and both of their connections get a little stronger. Watch the lines thicken. C fires on its own, never manages to make the cell fire, and its connection slowly weakens. That's 'neurons that fire together, wire together', plus its flip side. When the pattern has settled, the animation starts over. The key point for later: each connection changes using only what happens right where it sits — did I just fire, did the cell just fire? Nobody sends it a precise, personal 'you were off by this much'. The brain does have broad reward signals like dopamine, but those are a broadcast to many cells at once, not a correction for each connection. Hold onto that: backprop will need exactly that personal correction, and that's where AI and biology part ways. Bridge: 'Rosenblatt took the 1943 switch and gave it a learning rule loosely inspired by this. That's the perceptron.'">
+  <div class="abs kicker" style="left:120px;top:87px">The Hook — 1949</div>
+  <div class="abs title" style="left:120px;top:135px">How a Neuron Learns</div>
+  <svg class="art" viewBox="0 0 2000 1125">
+    <rect x="54" y="301" width="1138" height="749" rx="14" fill="#161936" stroke="var(--rule)" stroke-width="2"/>
+  </svg>
+  <button class="hebb-reset" type="button">↺ start over</button>
+  <div class="abs" style="left:623px;top:985px;transform:translateX(-50%);font:italic 400 24px var(--sans);color:var(--muted)">A and B fire together → their connections grow. &nbsp;C fires alone → its connection fades.</div>
+  <div class="abs kicker small" style="left:1260px;top:340px">What to Hold Onto</div>
+  <div class="hold" style="top:380px">Fire together, wire together</div>
+  <div class="hold" style="top:538px">Used but ignored? It fades</div>
+  <div class="hold" style="top:695px">Each link only knows its own spot</div>
+  <div class="hold" style="top:853px">No personal “you were off by 0.3” note</div>
+</section>
+
+<!-- 6 · Perceptron -->
+<section class="slide" data-thread="plain" data-notes="~45 sec. (Rosenblatt, 1958.) This is the honest starting point of the metaphor. Walk the diagram as the neuron from two slides ago: the inputs are the signals arriving on the branches, each weight is a connection strength, the Σ adds everything up like the cell body, and f is the threshold — fire or don't. Then the learning line: wrong? nudge each weight a little; right? leave it. Every weight changes using only its own input and this one unit's own error — a real, if crude, echo of Hebbian learning. High plausibility bar on purpose: this step wasn't the lie. Point at the small graph: AND is only true in one corner, and one straight line cuts that corner off — exactly what a single perceptron can draw. Optional colour: in 1958 the press got very excited — a New York Times piece reported the Navy expected it to one day walk, talk and be conscious of its existence (double-check the exact wording before quoting it). Then: 'Let me show you one learning, live.'">
+  <div class="abs kicker" style="left:120px;top:94px">1958 — Rosenblatt</div>
+  <div class="abs title" style="left:120px;top:152px">The Perceptron</div>
+  <svg class="art" viewBox="0 0 2000 1125">
+    <defs><marker id="ah6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--teal)"/></marker></defs>
+    <g stroke="var(--teal)" stroke-width="4" fill="none">
+      <line x1="442" y1="405" x2="818" y2="585"/>
+      <line x1="442" y1="585" x2="818" y2="585"/>
+      <line x1="442" y1="765" x2="818" y2="585"/>
+      <line x1="982" y1="585" x2="1121" y2="585" marker-end="url(#ah6)"/>
+      <line x1="1275" y1="585" x2="1425" y2="585" marker-end="url(#ah6)"/>
+    </g>
+    <g fill="#fff" stroke="var(--rule)" stroke-width="4">
+      <circle cx="390" cy="405" r="52"/><circle cx="390" cy="585" r="52"/><circle cx="390" cy="765" r="52"/>
+      <circle cx="1470" cy="585" r="42"/>
+    </g>
+    <g font-family="Cambria, Caladea, Georgia, serif" font-style="italic" font-size="38" fill="var(--bg)" text-anchor="middle">
+      <text x="390" y="418">x1</text><text x="390" y="598">x2</text><text x="390" y="778">x3</text><text x="1470" y="598">y</text>
+    </g>
+    <g font-family="Calibri, Carlito, sans-serif" font-style="italic" font-size="24" fill="var(--muted)" text-anchor="middle">
+      <text x="630" y="497">w1</text><text x="630" y="587">w2</text><text x="630" y="677">w3</text>
+    </g>
+    <circle cx="900" cy="585" r="82" fill="var(--purple)"/>
+    <text x="900" y="608" text-anchor="middle" font-family="Cambria, Caladea, Georgia, serif" font-weight="700" font-size="64" fill="#fff">Σ</text>
+    <rect x="1125" y="522" width="150" height="126" rx="16" fill="var(--teal)"/>
+    <text x="1200" y="606" text-anchor="middle" font-family="Cambria, Caladea, Georgia, serif" font-style="italic" font-weight="700" font-size="60" fill="#fff">f</text>
+    <!-- what each part borrows from the neuron -->
+    <g class="pop" font-family="Calibri, Carlito, sans-serif" font-style="italic" font-size="22" fill="var(--lav)" text-anchor="middle">
+      <text x="390" y="862">signals on the branches</text>
+      <text x="630" y="760">connection strengths</text>
+      <text x="900" y="708">adds up, like the cell body</text>
+      <text x="1200" y="690">threshold:</text><text x="1200" y="718">fire or not</text>
+    </g>
+    <!-- AND -->
+    <text x="1684" y="358" text-anchor="middle" font-family="Cambria, Caladea, Georgia, serif" font-weight="700" font-size="28" fill="#fff">AND</text>
+    <rect x="1553" y="390" width="262" height="263" fill="none" stroke="#5A5680" stroke-width="2"/>
+    <line class="draw" pathLength="1" x1="1672" y1="362" x2="1846" y2="536" stroke="var(--purple)" stroke-width="4"/>
+    <circle cx="1815" cy="390" r="12" fill="var(--teal)" stroke="var(--rule)" stroke-width="2"/>
+    <circle cx="1553" cy="390" r="12" fill="#fff" stroke="var(--rule)" stroke-width="2"/>
+    <circle cx="1815" cy="653" r="12" fill="#fff" stroke="var(--rule)" stroke-width="2"/>
+    <circle cx="1553" cy="653" r="12" fill="#fff" stroke="var(--rule)" stroke-width="2"/>
+  </svg>
+  <div class="abs caption" style="left:1484px;top:712px;width:400px">Only one corner is true. One straight line cuts it off.</div>
+  <div class="abs" style="left:0;width:1995px;top:908px;text-align:center;font:400 30px var(--sans);color:var(--lav)"><b style="color:#fff">How it learns:</b> wrong? Nudge each weight a little. &nbsp;Right? Leave it alone.</div>
+  <div class="meter-label" style="top:996px">How brain-like is this?</div>
+  <div class="meter" style="top:1028px;--v:85%"><i></i></div>
+</section>
+
+<!-- 6b · Demo -->
+<section class="slide" id="demoAnd" data-thread="plain" data-notes="Demo, 5–10 min (see perceptron-demo/DEMO.md). Before the talk: perceptron-demo running on :8080 and the frontend on :5173, AND tab open, press ⏮ to rewind. Switch to the browser. Flow: 1) Truth table — only the top-right corner is 1, one line can cut it off. 2) At the start frame, point at the network and the calculation: weighted sum + bias, then the step. 3) Press play: green = right, leave it; red = wrong, the line jumps and the dashed line shows where it was. Pause once on a red step and read w += η · error · x with the real numbers. 4) Learned ✓, then 'Train again' for a different path to the same result. If there's time: the code peek (predict, then train) or the learning-rate tweak. Close with the XOR teaser: 'Now the 1s are on opposite corners — no single line can do this.' That's the next slide.">
+  <div class="abs" style="left:0;width:2000px;top:430px;text-align:center;font:700 240px var(--serif)">Demo</div>
+</section>
+
+<!-- 7 · Backprop -->
+<section class="slide" data-thread="break" data-notes="~35 sec. This is the real break, and it happens almost immediately. (Rumelhart, Hinton & Williams, 1986.) The moment you stack layers, you need a way to assign credit backward — and backprop's mechanism has no known biological analog. This is the step that stays unbiological for the rest of the talk, underneath every architecture that follows. Point at the small graph: XOR can't be split by one line — but two lines (i.e. two hidden units, combined by an output unit) can. That combining step is exactly what a hidden layer buys you, and exactly what needs backprop to train it.">
+  <div class="abs kicker" style="left:120px;top:94px">1986 — Rumelhart, Hinton &amp; Williams</div>
+  <div class="abs title" style="left:120px;top:152px">+ Backpropagation</div>
+  <svg class="art" viewBox="0 0 2000 1125">
+    <defs><marker id="ah7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--teal)"/></marker></defs>
+    <g stroke="var(--teal)" stroke-width="4" fill="none">
+      <line x1="437" y1="465" x2="883" y2="465"/><line x1="437" y1="465" x2="883" y2="705"/>
+      <line x1="437" y1="705" x2="883" y2="465"/><line x1="437" y1="705" x2="883" y2="705"/>
+      <line x1="977" y1="465" x2="1425" y2="583" marker-end="url(#ah7)"/>
+      <line x1="977" y1="705" x2="1425" y2="587" marker-end="url(#ah7)"/>
+    </g>
+    <g stroke="var(--purple)" stroke-width="4" stroke-dasharray="16 10" fill="none">
+      <line class="pop" x1="1415" y1="620" x2="953" y2="548"/>
+      <line class="pop" x1="1415" y1="716" x2="953" y2="788"/>
+    </g>
+    <text class="pop" x="993" y="788" text-anchor="middle" font-family="Calibri, Carlito, sans-serif" font-style="italic" font-weight="700" font-size="40" fill="var(--purple)">?</text>
+    <g fill="#fff" stroke="var(--rule)" stroke-width="4">
+      <circle cx="390" cy="465" r="47"/><circle cx="390" cy="705" r="47"/><circle cx="1470" cy="585" r="42"/>
+    </g>
+    <circle cx="930" cy="465" r="47" fill="var(--purple)"/><circle cx="930" cy="705" r="47" fill="var(--purple)"/>
+    <!-- XOR -->
+    <text x="1684" y="358" text-anchor="middle" font-family="Cambria, Caladea, Georgia, serif" font-weight="700" font-size="28" fill="#fff">XOR</text>
+    <rect x="1553" y="390" width="262" height="263" fill="none" stroke="#5A5680" stroke-width="2"/>
+    <circle class="pop" cx="1553" cy="390" r="42" fill="none" stroke="var(--purple)" stroke-width="3"/>
+    <circle class="pop" cx="1815" cy="653" r="42" fill="none" stroke="var(--purple)" stroke-width="3"/>
+    <circle cx="1553" cy="390" r="12" fill="var(--teal)" stroke="var(--rule)" stroke-width="2"/>
+    <circle cx="1815" cy="653" r="12" fill="var(--teal)" stroke="var(--rule)" stroke-width="2"/>
+    <circle cx="1815" cy="390" r="12" fill="#fff" stroke="var(--rule)" stroke-width="2"/>
+    <circle cx="1553" cy="653" r="12" fill="#fff" stroke="var(--rule)" stroke-width="2"/>
+  </svg>
+  <div class="abs caption" style="left:1484px;top:712px;width:400px">No single straight line works — you need two, combined. That's what a hidden layer buys you.</div>
+  <div class="abs pop" style="left:940px;top:834px;transform:translateX(-50%);font:italic 400 26px var(--sans);color:var(--purple)">no known biological path for this signal</div>
+  <div class="meter-label" style="top:996px">How brain-like is this?</div>
+  <div class="meter" style="top:1028px;--v:35%"><i></i></div>
+</section>
+
+<!-- 7b · Demo -->
+<section class="slide" data-thread="break" data-notes="Demo, 5–10 min (see perceptron-mlp/DEMO.md). Before the talk: perceptron-demo on :8080 (for the contrast), perceptron-mlp on :8081, the frontend on :5173; optionally Perceptron.java and MultiLayerPerceptron.java side by side in the IDE. Switch to the browser, XOR tab. Flow: 1) Problem: (0,1) and (1,0) are 1, the corners are 0 — draw one straight line that separates them. You can't. 2) Sketch: 2 inputs → 4 hidden nodes → 1 output; each hidden node draws its own line, the output combines them. 3) Run it and show learned: true; rawOutput is a number between 0 and 1, rounded at 0.5; epochsTrained is about 961, against a handful for AND. If there's time, the code diff — not the maths, just what changed: one weight list became a layer; step became sigmoid (a step is flat, so there is no slope to send back); one sum became two layers; 'nudge if wrong' became backprop — a hidden node has no target of its own, so the output error is passed backwards through the weight that connects them. Optional tweak: HIDDEN_SIZE = 1 fails (one line again), 2 just works. Land on the biology: that backward error, a personal 'you were off by this much' for every weight, is exactly what the neuron slide said nobody sends.">
+  <div class="abs" style="left:0;width:2000px;top:430px;text-align:center;font:700 240px var(--serif)">Demo</div>
+</section>
+
+<!-- 8 · CNNs -->
+<section class="slide" id="cnnTitle" data-thread="knot" data-notes="~35 sec. This is the genuine partial return — the twist most people don't expect. Point at the picture, left to right, without explaining it yet: a handwritten 7 goes in, and each layer turns the picture into a stack of smaller maps — first edges, then corners, then parts — until one answer lights up: 7. That's LeCun's 1989 network reading zip codes, in one picture; the next slides unpack it. CNNs weren't just loosely inspired by vision; Fukushima built the Neocognitron directly from electrophysiology. Later work (Yamins &amp; DiCarlo's group) found CNN activations trained purely for object recognition predict real macaque cortical firing. (Double-check both references before leaning on them out loud.) The bar goes back up here on purpose.">
+  <div class="abs kicker" style="left:120px;top:94px">1989 — LeCun</div>
+  <div class="abs title" style="left:120px;top:152px">Convolutional Nets</div>
+  <svg class="art" viewBox="0 0 2000 1125"></svg>
+  <div class="cnn-label" style="left:284px">pixels</div>
+  <div class="cnn-label" style="left:634px">edges</div>
+  <div class="cnn-label" style="left:950px">corners</div>
+  <div class="cnn-label" style="left:1223px">parts</div>
+  <div class="cnn-label" style="left:1500px">answer</div>
+  <div class="meter-label" style="top:996px">How brain-like is this?</div>
+  <div class="meter" style="top:1028px;--v:55%"><i></i></div>
+</section>
+
+<!-- 8a · Classic nets on images -->
+<section class="slide" id="cnnFlat" data-thread="knot" data-notes="~40 sec. Before convolution, the obvious way to feed an image to a neural net was to unroll it: every pixel becomes one input with its own weight, wired to every neuron. Point at the two rows: same 7, moved two pixels to the right — most of the lit pixels now land on different inputs, so what the network learned about the first 7 doesn't carry over to the second. A classic net has to learn 'a 7 in every possible position' separately. That's the problem convolution solves.">
+  <div class="abs kicker" style="left:120px;top:94px">Convolutional Nets — The Problem</div>
+  <div class="abs title" style="left:120px;top:152px">How a Classic Network Sees an Image</div>
+  <div class="abs" style="left:120px;top:262px;font:400 32px var(--sans);color:var(--lav)">Every pixel gets its own weight — so nudge the image two pixels right, and the network sees a stranger.</div>
+  <svg class="art" viewBox="0 0 2000 1125"></svg>
+  <div class="abs" style="left:120px;top:356px;font:italic 400 22px var(--sans);color:var(--muted)">a 7</div>
+  <div class="abs" style="left:120px;top:626px;font:italic 400 22px var(--sans);color:var(--muted)">the same 7, two pixels right</div>
+  <div class="abs" style="left:1160px;top:352px;font:italic 400 22px var(--sans);color:var(--muted)">one neuron: a separate weight for every pixel</div>
+  <div class="abs" style="left:430px;top:494px;font:400 20px var(--sans);color:var(--dim)">pixel 1</div>
+  <div class="abs" style="left:1838px;top:494px;font:400 20px var(--sans);color:var(--dim);transform:translateX(-100%)">pixel 64</div>
+  <div class="abs" style="left:430px;top:870px;font:400 34px var(--serif);white-space:normal;width:1420px">Only <b class="t" id="flatMatch">3 of 10</b> lit pixels still land on the same input.<br><span style="font:italic 400 26px var(--sans);color:var(--muted)">What the network learned about the first 7 doesn't carry over — it has to learn every position separately.</span></div>
+  <div class="abs" style="left:430px;top:792px;font:400 22px var(--sans);color:var(--muted)"><span style="display:inline-block;width:16px;height:16px;background:var(--teal);vertical-align:-2px;margin-right:8px"></span>same input as before <span style="display:inline-block;width:16px;height:16px;background:var(--purple);vertical-align:-2px;margin:0 8px 0 32px"></span>moved to a different input</div>
+</section>
+
+<!-- 8b · Inspired by the eye -->
+<section class="slide" data-thread="knot" data-notes="~45 sec. (Hubel & Wiesel, 1959; Nobel Prize 1981.) Recording from single neurons in a cat's visual cortex, they found cells that each respond only to a small patch of the visual field — and only to an edge or bar at one particular angle. Other 'complex' cells respond to that edge wherever it appears nearby. Walk the picture: light from the house lands on the retina, the signal goes back to the visual cortex, and there each cell watches one little patch — the numbered circles — and fires for one edge angle. Fukushima turned this almost literally into the Neocognitron (1980); LeCun added backprop and had it reading handwritten zip codes (1989). Then walk the right column: each biological idea maps one-to-one onto a ConvNet ingredient.">
+  <div class="abs kicker" style="left:120px;top:94px">Convolutional Nets — The Inspiration</div>
+  <div class="abs title" style="left:120px;top:152px">Borrowing from the Eye</div>
+  <div class="abs" style="left:120px;top:262px;font:400 32px var(--sans);color:var(--lav)">Vision starts small: each cell in the visual cortex watches one tiny patch, and fires for one edge angle.</div>
+  <svg class="art" viewBox="0 0 2000 1125">
+    <!-- the house being looked at, with three receptive fields on it -->
+    <g fill="none" stroke="#fff" stroke-width="4" stroke-linejoin="round">
+      <path d="M150 520 L225 450 L300 520"/>
+      <rect x="165" y="520" width="120" height="120"/>
+      <rect x="185" y="545" width="30" height="30" stroke-width="3"/>
+      <rect x="240" y="590" width="26" height="50" stroke-width="3"/>
+    </g>
+    <g fill="none" stroke="var(--purple)" stroke-width="3" stroke-dasharray="6 5">
+      <circle cx="187" cy="485" r="22"/><circle cx="165" cy="600" r="22"/><circle cx="225" cy="640" r="22"/>
+    </g>
+    <g font-family="Calibri, Carlito, sans-serif" font-weight="700" font-size="20" fill="var(--purple)" text-anchor="middle">
+      <text x="160" y="462">1</text><text x="132" y="606">2</text><text x="225" y="684">3</text>
+    </g>
+    <!-- light rays through the lens onto the retina (the image lands upside down) -->
+    <g stroke="var(--teal)" stroke-width="2" stroke-opacity=".55">
+      <line x1="225" y1="450" x2="729" y2="651"/>
+      <line x1="225" y1="640" x2="743" y2="489"/>
+    </g>
+    <!-- the eye -->
+    <circle cx="620" cy="560" r="150" fill="#1A1D3D" fill-opacity=".85" stroke="var(--lav)" stroke-width="3"/>
+    <path d="M482 502 Q446 560 482 618" fill="none" stroke="var(--lav)" stroke-width="3"/>
+    <path d="M691 437 A142 142 0 0 1 691 683" fill="none" stroke="var(--teal)" stroke-width="7" stroke-linecap="round"/>
+    <ellipse cx="500" cy="560" rx="20" ry="52" fill="var(--purple)" fill-opacity=".75"/>
+    <g stroke="var(--teal)" stroke-width="2" stroke-opacity=".55">
+      <line x1="500" y1="560" x2="729" y2="651"/><line x1="500" y1="560" x2="743" y2="489"/>
+    </g>
+    <!-- optic nerve to the visual cortex -->
+    <path d="M768 560 C 820 560, 850 560, 905 560" fill="none" stroke="var(--lav)" stroke-width="10" stroke-linecap="round" stroke-opacity=".6"/>
+    <g id="v1cells"></g>
+    <g font-family="Calibri, Carlito, sans-serif" font-style="italic" font-size="22" fill="var(--muted)" text-anchor="middle">
+      <text x="225" y="740">what you look at</text>
+      <text x="620" y="740">the eye: image lands on the retina</text>
+      <text x="1032" y="740">visual cortex: one cell per patch & angle</text>
+    </g>
+    <!-- who turned it into a network -->
+    <line x1="150" y1="960" x2="1850" y2="960" stroke="var(--rule)" stroke-width="3"/>
+    <circle cx="300" cy="960" r="10" fill="var(--teal)"/><circle cx="1000" cy="960" r="10" fill="#fff"/><circle cx="1700" cy="960" r="10" fill="var(--purple)"/>
+  </svg>
+  <div class="abs kicker small" style="left:1250px;top:360px">In your visual cortex</div>
+  <div class="abs kicker small" style="left:1640px;top:360px">In a ConvNet</div>
+  <div id="eyeMap"></div>
+  <div class="abs tl-h" style="left:300px;top:900px;font-size:28px">1959 · Hubel &amp; Wiesel</div>
+  <div class="abs tl-h" style="left:1000px;top:900px;font-size:28px">1980 · Fukushima</div>
+  <div class="abs tl-h" style="left:1700px;top:900px;font-size:28px">1989 · LeCun</div>
+  <div class="abs tl-d" style="left:300px;top:990px">record single cells in a cat's visual cortex</div>
+  <div class="abs tl-d" style="left:1000px;top:990px">copies them into the Neocognitron</div>
+  <div class="abs tl-d" style="left:1700px;top:990px">adds backprop: it reads zip codes</div>
+</section>
+
+<!-- 8c · Edges → corners → parts -->
+<section class="slide" id="cnnSee" data-thread="knot" data-notes="~50 sec. Walk left to right. The little window slides over the pixels; at each spot it asks one question — 'is there an edge here, at this angle?' — and writes the answer into an edge map, one map per filter. The next layer looks at those edge maps and finds the places where edges meet: corners. The layer after that combines corners into parts — a roof, a window, a door. Only at the very end does something say 'house'. The edge and corner maps on this slide are computed live from the pixels with hand-made filters; a real network learns its own — and its first layer almost always ends up looking like edge detectors. Same story as the visual cortex on the previous slide.">
+  <div class="abs kicker" style="left:120px;top:94px">Convolutional Nets — How They See</div>
+  <div class="abs title" style="left:120px;top:152px">Edges, Then Corners, Then Things</div>
+  <div class="abs" style="left:120px;top:262px;font:400 32px var(--sans);color:var(--lav)">One small window slides over the picture. Each layer finds slightly bigger patterns, built from the ones below.</div>
+  <svg class="art" viewBox="0 0 2000 1125"></svg>
+  <div class="abs kicker small" style="left:248px;top:370px;transform:translateX(-50%)">Pixels</div>
+  <div class="abs kicker small" style="left:612px;top:370px;transform:translateX(-50%)">Layer 1 · Edges</div>
+  <div class="abs kicker small" style="left:970px;top:370px;transform:translateX(-50%)">Layer 2 · Corners</div>
+  <div class="abs kicker small" style="left:1320px;top:370px;transform:translateX(-50%)">Layer 3 · Parts</div>
+  <div class="abs kicker small" style="left:1715px;top:370px;transform:translateX(-50%)">Output</div>
+  <div class="abs" style="left:1358px;top:446px;font:italic 400 22px var(--sans);color:var(--lav)">roof</div>
+  <div class="abs" style="left:1262px;top:550px;font:italic 400 22px var(--sans);color:var(--lav)">window</div>
+  <div class="abs" style="left:1262px;top:642px;font:italic 400 22px var(--sans);color:var(--lav)">door</div>
+  <div class="abs" style="left:1715px;top:432px;transform:translateX(-50%);font:700 60px var(--serif);color:var(--teal)">“house”</div>
+  <div class="abs" style="left:150px;top:820px;width:1700px;white-space:normal;font:400 30px/46px var(--sans);color:var(--lav)">Nobody hand-writes these filters: the network learns them from examples. Yet its first layer almost always ends up as <b style="color:#fff">edge detectors</b> — just like the cells Hubel &amp; Wiesel found.</div>
+  <div class="abs" style="left:150px;top:1058px;font:italic 400 20px var(--sans);color:var(--dim)">edge and corner maps computed live from the pixels with hand-made 3×3 filters · output scores illustrative</div>
+</section>
+
+<!-- 8d · Parameter comparison -->
+<section class="slide" id="cnnParams" data-thread="knot" data-notes="~40 sec. Let the numbers land. A modest 224×224 colour photo is 150,528 numbers. Wire it to just 1,000 neurons the classic way, and the first layer alone needs over 150 million weights. A ConvNet's first layer, with 64 filters of 3×3×3, needs 1,728. The squares are to scale — the ConvNet's is the tiny dot. And it's not just cheaper: because the same filter is reused at every position, a shape moved to the right triggers the same filter — which fixes the problem from three slides back.">
+  <div class="abs kicker" style="left:120px;top:94px">Convolutional Nets — The Payoff</div>
+  <div class="abs title" style="left:120px;top:152px">Counting the Weights</div>
+  <div class="abs" style="left:120px;top:262px;font:400 32px var(--sans);color:var(--lav)">One ordinary 224 × 224 colour photo. First layer only.</div>
+
+  <div class="abs" style="left:150px;top:350px;font:700 40px var(--serif)">Classic network</div>
+  <div class="abs" style="left:150px;top:404px;font:400 26px var(--sans);color:var(--muted)">150,528 pixel values × 1,000 neurons</div>
+  <div class="abs" style="left:150px;top:446px;font:700 64px var(--serif)"><span data-count="150528000">150,528,000</span> <span style="font:400 28px var(--sans);color:var(--lav)">weights</span></div>
+  <div class="sq-big" style="position:absolute;left:150px;top:550px;width:400px;height:400px;background:var(--thread);border:2px solid #5A5680"></div>
+
+  <div class="abs" style="left:1050px;top:350px;font:700 40px var(--serif)">ConvNet</div>
+  <div class="abs" style="left:1050px;top:404px;font:400 26px var(--sans);color:var(--muted)">64 filters × (3 × 3 pixels × 3 colours)</div>
+  <div class="abs" style="left:1050px;top:446px;font:700 64px var(--serif);color:var(--teal)"><span data-count="1728">1,728</span> <span style="font:400 28px var(--sans);color:var(--lav)">weights</span></div>
+  <svg class="art" viewBox="0 0 2000 1125">
+    <rect x="1050" y="550" width="1.4" height="1.4" fill="var(--teal)"/>
+    <circle class="pop" cx="1051" cy="551" r="26" fill="none" stroke="var(--teal)" stroke-width="3"/>
+    <text class="pop" x="1092" y="559" font-family="Calibri, Carlito, sans-serif" font-style="italic" font-size="24" fill="var(--teal)">← that dot, to scale</text>
+  </svg>
+  <div class="abs" style="left:1050px;top:650px;font:700 150px var(--serif);color:var(--teal)">≈<span data-count="87000">87,000</span>×</div>
+  <div class="abs" style="left:1050px;top:808px;font:700 40px var(--serif)">fewer weights</div>
+  <div class="abs" style="left:1050px;top:866px;width:800px;white-space:normal;font:400 28px/40px var(--sans);color:var(--lav)">And the same 27 numbers per filter are reused at every position, so a 7 moved to the right still lights up the same filters.</div>
+  <div class="abs" style="left:150px;top:1058px;font:italic 400 20px var(--sans);color:var(--dim)">squares drawn to scale by area · 224 × 224 × 3 = 150,528 inputs · 64 × 3 × 3 × 3 = 1,728 · biases left out</div>
+</section>
+
+<!-- 9 · Transformers -->
+<section class="slide" data-thread="cut" data-notes="~40 sec. The cord is fully cut here — no biological analog at all. Point at the picture: one word, silently asking every other word ‘how much should I care about you?’ — thick arcs for the words that matter. Then the small graph: a checkerboard can’t be solved by one line or by two — it needs to relate points to each other directly, regardless of distance. That’s what attention does: it connects any two points based on learned relevance, not geometric proximity. The bar drops to almost nothing on purpose. Bridge: ‘So why did language, of all things, need this? Let’s look at what came before.’">
+  <div class="abs kicker" style="left:120px;top:94px">2017 — Vaswani et al.</div>
+  <div class="abs title" style="left:120px;top:152px">Attention / Transformers</div>
+  <svg class="art" viewBox="0 0 2000 1125">
+    <g fill="none" stroke="var(--purple)" stroke-linejoin="round">
+      <polyline class="draw" pathLength="1" points="810,585 645,443 480,585" stroke-width="4" stroke-opacity=".35"/>
+      <polyline class="draw" pathLength="1" points="810,585 1140,382 1470,585" stroke-width="6" stroke-opacity=".55"/>
+      <polyline class="draw" pathLength="1" points="810,585 975,440 1140,585" stroke-width="10" stroke-opacity=".85"/>
+    </g>
+    <circle cx="480" cy="585" r="36" fill="#fff"/><circle cx="810" cy="585" r="36" fill="var(--purple)"/>
+    <circle cx="1140" cy="585" r="36" fill="#fff"/><circle cx="1470" cy="585" r="36" fill="#fff"/>
+    <!-- checkerboard -->
+    <text x="1684" y="268" text-anchor="middle" font-family="Cambria, Caladea, Georgia, serif" font-weight="700" font-size="30" fill="#fff">a checkerboard</text>
+    <rect x="1553" y="300" width="262" height="262" fill="none" stroke="#5A5680" stroke-width="2"/>
+    <g stroke="var(--purple)" stroke-opacity=".7" stroke-width="2">
+      <line x1="1553" y1="300" x2="1815" y2="562"/><line x1="1815" y1="300" x2="1553" y2="562"/>
+    </g>
+    <g fill="#fff" stroke="var(--rule)" stroke-width="2">
+      <circle cx="1553" cy="300" r="11"/><circle cx="1815" cy="300" r="11"/><circle cx="1553" cy="562" r="11"/><circle cx="1815" cy="562" r="11"/><circle cx="1684" cy="431" r="11"/>
+    </g>
+    <g fill="var(--teal)" stroke="var(--rule)" stroke-width="2">
+      <circle cx="1684" cy="300" r="11"/><circle cx="1553" cy="431" r="11"/><circle cx="1815" cy="431" r="11"/><circle cx="1684" cy="562" r="11"/>
+    </g>
+  </svg>
+  <div class="abs caption" style="left:1484px;top:607px;width:400px">No simple boundary works — it's about relationships, not distance.</div>
+  <div class="abs caption" style="left:497px;top:677px;width:1000px;font-size:26px">one word, silently asking every other word "how much should I care about you?"</div>
+  <div class="meter-label" style="top:996px">How brain-like is this?</div>
+  <div class="meter" style="top:1028px;--v:5%"><i></i></div>
+</section>
+
+<!-- 9a · Why language was hard -->
+<section class="slide" id="txProblem" data-thread="cut" data-notes="~50 sec. Before transformers, language was the hard case. Walk the three cards left to right. A perceptron or simple network sees a fixed set of inputs: no sense of order, no memory of the previous word, not enough depth. A convolutional net — brilliant for images — slides a small window along the text: it catches neighbouring words, but in ‘the bug that she found is fixed’, ‘bug’ and ‘fixed’ belong together and are too far apart for the window. RNNs and LSTMs (1990s) were built for sequences: they read one word at a time and carry a memory along. Two problems: the memory fades over long texts, and word 100 has to wait for word 99 — you can’t spread the work over thousands of GPU cores. That’s the gap the transformer closes.">
+  <div class="abs kicker" style="left:120px;top:94px">Transformers — The Problem</div>
+  <div class="abs title" style="left:120px;top:152px">Why Earlier Networks Struggled with Language</div>
+  <div class="abs" style="left:120px;top:262px;font:400 32px var(--sans);color:var(--lav)">Language is a sequence, and the words that belong together can be far apart.</div>
+  <svg class="art" viewBox="0 0 2000 1125"></svg>
+  <div class="tx-card-h" style="left:156px">Perceptrons &amp; simple nets</div>
+  <div class="tx-card-h" style="left:756px">Convolutional nets</div>
+  <div class="tx-card-h" style="left:1356px">RNNs &amp; LSTMs</div>
+  <div class="tx-era" style="left:156px">1958 →</div>
+  <div class="tx-era" style="left:756px">1989 →</div>
+  <div class="tx-era" style="left:1356px">1990s →</div>
+  <div class="tx-good" style="left:156px"><b>Good at:</b> simple patterns in a fixed set of inputs.</div>
+  <div class="tx-good" style="left:756px"><b>Good at:</b> local patterns — a few neighbouring words.</div>
+  <div class="tx-good" style="left:1356px"><b>Good at:</b> reading in order, carrying a memory along.</div>
+  <div class="tx-bad" style="left:156px"><b>Struggles with:</b> order and context. No memory of what came before, and not enough depth.</div>
+  <div class="tx-bad" style="left:756px"><b>Struggles with:</b> words that belong together but are far apart.</div>
+  <div class="tx-bad" style="left:1356px"><b>Struggles with:</b> long texts, because the memory fades. And speed: word 100 waits for word 99.</div>
+</section>
+
+<!-- 9b · Self-attention -->
+<section class="slide" id="txIdea" data-thread="cut" data-notes="~60 sec. Read the sentence out loud: ‘The trophy didn’t fit in the suitcase because it was too big.’ What is ‘it’? The trophy. Now watch the last word change to ‘small’ — suddenly ‘it’ is the suitcase. One word at the very end changes the meaning of a word eight places earlier: that’s a long-range dependency, and language is full of them. Self-attention handles it directly: every word looks at every other word and asks ‘how relevant are you to me?’ — the thickness of the arcs. Then point at the two boxes. An RNN has to pass the information hop by hop, seven steps from ‘trophy’ to ‘it’, and it fades on the way. A transformer connects every pair in one step — and because no word waits for the previous one, all words are processed at the same time, which is what makes training on GPUs so fast. The weights on the slide are illustrative, not from a real model.">
+  <div class="abs kicker" style="left:120px;top:94px">Transformers — The Idea</div>
+  <div class="abs title" style="left:120px;top:152px">Every Word Looks at Every Other Word</div>
+  <div class="abs" style="left:120px;top:262px;font:400 32px var(--sans);color:var(--lav)">Self-attention connects any two words directly, however far apart they are.</div>
+  <svg class="art" viewBox="0 0 2000 1125"></svg>
+  <div class="attn-sent"></div>
+  <div class="attn-caption"></div>
+  <div class="abs" style="left:160px;top:734px;font:700 32px var(--serif)">Before: word by word</div>
+  <div class="abs" style="left:160px;top:782px;width:760px;white-space:normal;font:400 24px/32px var(--sans);color:var(--muted)">An RNN passes its memory along: 7 hops from “trophy” to “it”, fading on the way.</div>
+  <div class="abs" style="left:1080px;top:734px;font:700 32px var(--serif)">Transformer: one step</div>
+  <div class="abs" style="left:1080px;top:782px;width:760px;white-space:normal;font:400 24px/32px var(--sans);color:var(--muted)">Every pair is connected directly, and all words are processed at once, so training runs in parallel.</div>
+  <div class="abs" style="left:120px;top:1058px;font:italic 400 20px var(--sans);color:var(--dim)">attention weights illustrative</div>
+</section>
+
+<!-- 9c · Inside a transformer -->
+<section class="slide" id="txInside" data-thread="cut" data-notes="~70 sec. Don’t go deep — four ideas, one sentence each, pointing at the matching colour in the diagram. Read it bottom to top. Words are turned into numbers, and a position signal is added (amber) — attention looks at all words at once, so without it ‘dog bites man’ and ‘man bites dog’ would look identical. Then the block: multi-head self-attention (purple) — what we just saw, several times in parallel, because one head might track grammar, another what ‘it’ refers to. Then a feed-forward layer (teal): a small classic network applied to every word — the perceptron is back. Around each part: a shortcut that adds the input back, and a normalisation step — they keep a very deep stack stable to train. And that block is simply repeated: GPT-3 stacks 96 of them. At the top: predict the next word.">
+  <div class="abs kicker" style="left:120px;top:94px">Transformers — Inside</div>
+  <div class="abs title" style="left:120px;top:152px">Inside a Transformer</div>
+  <div class="abs" style="left:120px;top:262px;font:400 32px var(--sans);color:var(--lav)">A stack of identical blocks: attention first, then a small classic network.</div>
+  <svg class="art" viewBox="0 0 2000 1125"></svg>
+  <div class="tx-row" style="top:352px"><i style="background:var(--purple)"></i><h3>Self-attention</h3><p>Each word asks every other word “how relevant are you to me?”, then mixes in their meaning, weighted by the answer.</p></div>
+  <div class="tx-row" style="top:512px"><i style="background:#A39CFF"></i><h3>Multi-head attention</h3><p>Several attentions run side by side. One head may track grammar, another what “it” refers to.</p></div>
+  <div class="tx-row" style="top:672px"><i style="background:#F5B94A"></i><h3>Positional encoding</h3><p>Attention sees all words at once, so order is lost. A position signal keeps “dog bites man” ≠ “man bites dog”.</p></div>
+  <div class="tx-row" style="top:832px"><i style="background:var(--teal)"></i><h3>Feed-forward, normalisation &amp; shortcuts</h3><p>A small classic network per word — perceptrons again. Shortcuts and normalisation keep a deep stack stable to train.</p></div>
+</section>
+
+<!-- 9d · Impact on LLMs -->
+<section class="slide" id="txImpact" data-thread="cut" data-notes="~45 sec. This is why transformers took over: they scale. The same design keeps getting better as you add layers, data and compute — and because everything runs in parallel, you can actually afford to train it on enormous amounts of text. Walk the chart — careful, it’s a log scale, every gridline is ten times more: the original transformer, 213 million parameters; BERT, 340 million; GPT-2, 1.5 billion; GPT-3, 175 billion — trained on about 300 billion tokens. GPT-4’s size was never published. Two families: BERT-style models read and understand — think search; GPT-style models write, one next word at a time — think chat. Both are transformers.">
+  <div class="abs kicker" style="left:120px;top:94px">Transformers — The Impact</div>
+  <div class="abs title" style="left:120px;top:152px">The Engine Inside Every LLM</div>
+  <div class="abs" style="left:120px;top:262px;font:400 32px var(--sans);color:var(--lav)">The same design scales: more layers, more data, more compute, and it keeps getting better.</div>
+  <svg class="art" viewBox="0 0 2000 1125"></svg>
+  <div class="abs kicker small" style="left:120px;top:360px">Parameters · log scale, each gridline is 10×</div>
+  <div class="tx-row wide" style="top:380px"><i style="background:#A39CFF"></i><h3>Reads: BERT</h3><p>Understands text, e.g. for search and classification.</p></div>
+  <div class="tx-row wide" style="top:560px"><i style="background:var(--teal)"></i><h3>Writes: GPT</h3><p>Predicts the next word, again and again: that’s your chat assistant.</p></div>
+  <div class="tx-row wide" style="top:740px"><i style="background:var(--purple)"></i><h3>Learns from oceans of text</h3><p>GPT-3 was trained on about 300 billion tokens (pieces of words), all in parallel.</p></div>
+  <div class="abs" style="left:120px;top:1058px;font:italic 400 20px var(--sans);color:var(--dim)">parameter counts from the original papers · GPT-4’s size has not been published</div>
+</section>
+
+<!-- 9e · Why transformers matter -->
+<section class="slide" id="txWhy" data-thread="cut" data-notes="~40 sec. Step back and show the whole road on one line: the neuron, the perceptron, backprop, convolution — and the transformer is the link that turns all of that into today’s language models. Say the statement: no self-attention and no parallel training, no GPT-4. Then the reveal: crack open a modern LLM and the same weighted-sum-plus-activation from the perceptron slide is still sitting in there, just repeated across billions of parameters, with attention added on top. That’s the moment the mystique and the biology dissolve together — what’s left isn’t mysterious anymore, just large.">
+  <div class="abs kicker" style="left:120px;top:94px">Transformers — Why It Matters</div>
+  <div class="abs title" style="left:120px;top:152px">The Missing Link</div>
+  <svg class="art" viewBox="0 0 2000 1125"></svg>
+  <div class="abs" style="left:0;width:2000px;top:640px;text-align:center;font:700 52px var(--serif)">No self-attention, no parallel training — <span class="t">no GPT-4.</span></div>
+  <div class="abs" style="left:0;width:1995px;top:880px;text-align:center;font:400 40px var(--serif)">And yet — open up a modern LLM and it's still there: <b class="p">the same perceptron</b><b>, just bigger.</b></div>
+  <div class="abs" style="left:0;width:1995px;top:954px;text-align:center;font:italic 400 26px var(--sans);color:var(--muted)">More layers, more data, more compute — plus that “how much should I care about you” trick on top.</div>
+</section>
+
+<!-- 10 · The turn -->
+<section class="slide" data-thread="cut" data-notes="~45 sec. Say the thesis line, then walk the chart: the perceptron really was a fair starting point (high plausibility). Backprop pulled us away from it almost immediately. CNNs are a genuine partial return — built directly from visual-cortex recordings. Then transformers cut the cord completely. The point isn't that the metaphor was a lie — it's that we kept building past the point where it still applied, and rarely checked back in. Capability kept climbing the whole time, regardless.">
+  <div class="abs kicker teal" style="left:150px;top:102px">The Turn</div>
+  <div class="abs statement" style="left:150px;top:200px;width:1800px;line-height:92px">It started as a <span class="p">real metaphor.</span><br>We built on it — then <span class="t">drifted</span>, piece by piece.</div>
+  <svg class="art chart" viewBox="0 0 2000 1125" data-x="264,759,1253,1748" data-a="915,757,690,555" data-b="600,825,735,960"></svg>
+  <div class="abs" style="left:1533px;top:506px;width:200px;text-align:right;font:700 24px var(--sans);color:var(--teal)">how well it works</div>
+  <div class="abs" style="left:1433px;top:830px;width:300px;text-align:right;font:700 24px var(--sans);color:var(--purple)">how brain-like it is</div>
+  <div class="xlabels" data-labels="Perceptron,+ Backprop,CNNs,Transformers"></div>
+  <div class="abs" style="left:180px;top:1058px;font:italic 400 20px var(--sans);color:var(--dim)">conceptual illustration — not measured data</div>
+</section>
+
+<!-- 11 · The loop -->
+<section class="slide" data-thread="loop" data-notes="~45 sec. The loop closes: neuroscientists are now using transformer-style models to help decode brain activity we still don't fully understand. It's not a full return — plausibility ticks up, it doesn't recover — but the direction of travel reversed. Capability never stopped climbing. Let this land, then move straight into the takeaway — no separate bridge slide needed, the headline here already says it.">
+  <div class="abs kicker teal" style="left:150px;top:102px">The Loop</div>
+  <div class="abs statement" style="left:150px;top:200px;width:1800px;line-height:92px">We <span class="p">walked away</span> from biology to build this.<br>Now it's <span class="t">walking back</span>.</div>
+  <svg class="art chart" viewBox="0 0 2000 1125" data-x="231,610,989,1369,1748" data-a="915,757,690,555,546" data-b="600,825,735,960,847">
+    <line class="pop" x1="1749" y1="768" x2="1749" y2="832" stroke="var(--purple)" stroke-width="2" stroke-dasharray="6 6"/>
+  </svg>
+  <div class="abs" style="left:1533px;top:497px;width:200px;text-align:right;font:700 24px var(--sans);color:var(--teal)">how well it works</div>
+  <div class="abs" style="left:1433px;top:925px;width:300px;text-align:right;font:700 24px var(--sans);color:var(--purple)">how brain-like it is</div>
+  <div class="abs pop" style="left:1233px;top:724px;width:500px;text-align:right;font:italic 400 22px var(--sans);color:var(--lav)">AI is now helping decode real brain signals</div>
+  <div class="xlabels" data-labels="Perceptron,+ Backprop,CNNs,Transformers,Today"></div>
+  <div class="abs" style="left:180px;top:1058px;font:italic 400 20px var(--sans);color:var(--dim)">conceptual illustration — not measured data</div>
+</section>
+
+<!-- 12 · Takeaway -->
+<section class="slide" data-thread="end" data-notes="~30 sec. This is the actual ending — the one sentence you want people repeating at lunch. Say it slowly, pause after 'brains,' let the turn to 'weighted sum' land. Then the payoff: this reframe isn't just tidier, it's more USEFUL — expecting brain-like behavior from a non-brain-like system is exactly what makes hallucination or brittle rephrasing feel surprising. Expecting weighted-sum behavior doesn't. End here, on the statement, not the question.">
+  <div class="abs kicker teal" style="left:150px;top:154px">The Takeaway</div>
+  <div class="abs statement" style="left:150px;top:268px;width:1800px">Stop reasoning about LLMs like <span class="p">brains.</span><br>Reason about them like a very large <span class="t">weighted sum.</span></div>
+  <div class="short-rule" style="top:562px"></div>
+  <div class="abs body" style="left:150px;top:596px;width:1420px">You now know where it came from. It predicts the weird stuff — making things up, getting thrown off by rewording, forgetting who you are mid-conversation — far better than any brain metaphor does.</div>
+  <div class="abs" style="left:195px;top:1054px;font:400 24px var(--sans);letter-spacing:.12em;color:var(--dim)">How AI Lost the Thread</div>
+</section>
+
+<!-- 13 · Thank you -->
+<section class="slide" id="thanks" data-thread="end" data-notes="Leave this slide up during Q&amp;A. Point at the two codes: the first one has everything from today — the slides and all the demo code (AND, XOR and the digits demo you can draw on yourself); the second is LinkedIn if they want to connect or ask something later. Then: 'Questions?'">
+  <div class="abs" style="left:150px;top:250px;font:700 120px var(--serif)">Thank you</div>
+  <div class="abs" style="left:150px;top:432px;font:700 48px var(--serif)">Tineke Slotegraaf</div>
+  <div class="abs" style="left:150px;top:500px;font:italic 400 30px var(--sans);color:var(--muted)">Software and AI Engineer - Alvant</div>
+  <div class="short-rule" style="left:150px;top:590px"></div>
+  <div class="abs" style="left:150px;top:640px;font:700 64px var(--serif);color:var(--teal)">Questions?</div>
+  <div class="qr-card" style="left:1050px"><svg viewBox="0 0 330 330" class="segno"><path transform="scale(10)" class="qrline" stroke="#12142b" d="M0 0.5h7m1 0h1m1 0h2m1 0h3m1 0h5m1 0h1m2 0h7m-33 1h1m5 0h1m2 0h1m2 0h1m7 0h2m4 0h1m5 0h1m-33 1h1m1 0h3m1 0h1m2 0h1m2 0h1m2 0h1m5 0h1m4 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m4 0h1m1 0h1m3 0h1m1 0h1m2 0h1m3 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m1 0h1m2 0h5m1 0h7m2 0h1m1 0h3m1 0h1m-33 1h1m5 0h1m1 0h1m4 0h1m1 0h3m2 0h1m5 0h1m5 0h1m-33 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-23 1h1m1 0h2m2 0h1m1 0h1m1 0h2m-21 1h7m1 0h4m2 0h3m9 0h2m3 0h1m-33 1h2m1 0h1m3 0h1m2 0h1m5 0h6m1 0h1m2 0h2m1 0h4m-32 1h1m1 0h4m1 0h1m1 0h1m1 0h1m3 0h2m3 0h2m1 0h3m1 0h1m1 0h2m-31 1h1m2 0h2m1 0h1m2 0h2m1 0h3m4 0h2m2 0h3m1 0h4m-32 1h1m2 0h4m1 0h1m1 0h1m1 0h2m2 0h1m1 0h1m3 0h4m1 0h3m1 0h1m-31 1h2m5 0h2m3 0h2m1 0h1m1 0h3m1 0h2m1 0h3m2 0h3m-33 1h1m2 0h2m1 0h1m2 0h2m1 0h3m1 0h1m1 0h1m3 0h1m2 0h2m2 0h1m1 0h1m-32 1h1m2 0h3m1 0h1m1 0h4m2 0h3m2 0h2m1 0h4m2 0h2m-31 1h3m1 0h4m1 0h1m1 0h2m1 0h1m5 0h1m1 0h1m1 0h2m1 0h2m3 0h1m-33 1h1m1 0h2m1 0h1m3 0h1m1 0h1m2 0h1m1 0h1m2 0h3m1 0h1m2 0h2m1 0h2m1 0h1m-32 1h1m2 0h4m3 0h2m3 0h1m3 0h1m3 0h1m2 0h2m1 0h2m-30 1h3m3 0h6m1 0h1m1 0h1m1 0h3m5 0h6m-31 1h1m1 0h3m2 0h2m5 0h4m2 0h1m1 0h2m1 0h3m2 0h1m-33 1h4m1 0h1m3 0h2m1 0h1m1 0h8m1 0h1m2 0h1m3 0h1m1 0h1m-33 1h1m3 0h1m1 0h5m1 0h2m1 0h1m1 0h1m2 0h1m3 0h2m1 0h1m1 0h1m1 0h1m-32 1h1m1 0h1m1 0h1m2 0h1m1 0h4m1 0h1m1 0h3m1 0h7m2 0h2m1 0h1m-33 1h1m1 0h6m3 0h1m3 0h1m1 0h3m2 0h1m1 0h5m2 0h2m-25 1h1m1 0h1m1 0h1m1 0h3m1 0h2m3 0h2m3 0h1m1 0h1m1 0h1m-33 1h7m1 0h2m1 0h1m1 0h1m1 0h1m4 0h1m1 0h3m1 0h1m1 0h1m1 0h2m-32 1h1m5 0h1m1 0h1m1 0h2m1 0h4m1 0h1m1 0h5m3 0h4m-32 1h1m1 0h3m1 0h1m1 0h1m1 0h1m2 0h1m2 0h1m1 0h2m2 0h1m1 0h6m1 0h1m-32 1h1m1 0h3m1 0h1m1 0h2m1 0h1m1 0h3m1 0h3m3 0h3m2 0h2m2 0h1m-33 1h1m1 0h3m1 0h1m1 0h1m3 0h2m1 0h2m1 0h1m3 0h1m3 0h2m1 0h1m-30 1h1m5 0h1m1 0h2m1 0h1m1 0h3m1 0h1m1 0h5m1 0h1m2 0h3m-31 1h7m2 0h2m3 0h3m1 0h2m2 0h4m1 0h1m3 0h1"/></svg></div>
+  <div class="qr-card" style="left:1490px"><svg viewBox="0 0 330 330" class="segno"><path transform="scale(10)" class="qrline" stroke="#12142b" d="M0 0.5h7m3 0h1m2 0h2m1 0h1m1 0h3m2 0h1m2 0h7m-33 1h1m5 0h1m1 0h1m1 0h1m2 0h1m1 0h3m2 0h4m2 0h1m5 0h1m-33 1h1m1 0h3m1 0h1m1 0h4m1 0h4m3 0h1m3 0h1m1 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m2 0h2m1 0h3m3 0h2m2 0h3m1 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m4 0h3m2 0h2m2 0h3m1 0h1m1 0h1m1 0h3m1 0h1m-33 1h1m5 0h1m6 0h2m1 0h2m1 0h1m2 0h1m3 0h1m5 0h1m-33 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-24 1h2m1 0h1m1 0h2m1 0h3m2 0h3m-24 1h3m1 0h2m2 0h4m1 0h1m2 0h3m1 0h1m1 0h1m6 0h2m-32 1h1m1 0h1m5 0h2m3 0h3m1 0h3m1 0h1m1 0h1m2 0h2m1 0h2m1 0h1m-32 1h7m1 0h2m1 0h2m2 0h1m1 0h1m1 0h1m1 0h2m1 0h1m1 0h3m1 0h2m-32 1h1m1 0h1m4 0h1m3 0h3m2 0h1m2 0h1m1 0h6m1 0h1m2 0h1m-32 1h1m1 0h1m2 0h1m3 0h1m1 0h1m1 0h1m4 0h1m2 0h4m1 0h3m1 0h2m-33 1h1m2 0h3m2 0h2m4 0h1m4 0h1m1 0h1m2 0h1m2 0h1m1 0h3m-30 1h1m2 0h5m3 0h3m2 0h4m2 0h1m1 0h4m-30 1h1m2 0h1m4 0h6m4 0h1m2 0h1m1 0h8m-31 1h1m3 0h1m1 0h2m1 0h3m1 0h4m1 0h1m1 0h4m1 0h2m1 0h3m-31 1h1m1 0h3m2 0h1m1 0h1m2 0h1m1 0h1m5 0h1m1 0h2m2 0h1m1 0h2m1 0h2m-33 1h1m3 0h5m1 0h2m1 0h2m2 0h2m1 0h3m2 0h1m1 0h2m1 0h1m-29 1h3m2 0h4m1 0h1m2 0h4m1 0h1m1 0h1m1 0h3m1 0h1m2 0h2m-33 1h3m1 0h4m4 0h2m1 0h2m1 0h1m2 0h1m2 0h1m4 0h2m1 0h1m-33 1h3m1 0h2m1 0h2m1 0h1m8 0h2m2 0h1m2 0h1m2 0h1m2 0h1m-28 1h3m1 0h2m1 0h5m1 0h1m2 0h1m1 0h4m2 0h4m-32 1h1m1 0h2m2 0h1m1 0h3m1 0h2m2 0h1m1 0h1m4 0h1m1 0h3m2 0h1m-32 1h1m2 0h1m1 0h7m1 0h3m1 0h1m4 0h1m1 0h5m2 0h2m-25 1h2m2 0h2m2 0h1m1 0h2m4 0h1m3 0h2m-30 1h7m4 0h1m1 0h1m2 0h2m1 0h1m1 0h1m1 0h2m1 0h1m1 0h1m-29 1h1m5 0h1m1 0h4m1 0h5m2 0h5m3 0h5m-33 1h1m1 0h3m1 0h1m2 0h5m2 0h3m1 0h9m1 0h2m-32 1h1m1 0h3m1 0h1m1 0h2m1 0h1m3 0h1m2 0h1m1 0h1m2 0h2m2 0h1m1 0h4m-33 1h1m1 0h3m1 0h1m1 0h2m2 0h1m1 0h1m2 0h1m3 0h7m1 0h1m-30 1h1m5 0h1m1 0h1m3 0h1m1 0h2m1 0h1m1 0h2m1 0h3m2 0h2m3 0h1m-33 1h7m2 0h1m2 0h4m3 0h1m1 0h1m1 0h1m2 0h1m1 0h3"/></svg></div>
+  <div class="qr-label" style="left:1230px">Code + slides</div>
+  <div class="qr-label" style="left:1670px">LinkedIn</div>
+  <a class="qr-url" style="left:1230px" href="https://github.com/tinekescode/perceptron-demo" target="_blank" rel="noopener">github.com/tinekescode/perceptron-demo</a>
+  <a class="qr-url" style="left:1670px" href="https://www.linkedin.com/in/tinekeslotegraaf" target="_blank" rel="noopener">linkedin.com/in/tinekeslotegraaf</a>
+  <div class="abs" style="left:1230px;top:800px;transform:translateX(-50%);font:italic 400 22px var(--sans);color:var(--dim)">the talk, plus all three demos</div>
+</section>
+
+</div></div>
+
+<div id="notes"></div>
+<div id="hud"><span id="count"></span> · <kbd>←</kbd><kbd>→</kbd> navigate · <kbd>N</kbd> notes · <kbd>F</kbd> fullscreen</div>
+
+<script>
+(() => {
+  const NS = "http://www.w3.org/2000/svg";
+  const el = (tag, attrs, parent) => {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  };
+
+  // ── The "thread": a row of alternating / \ ticks along the top of every slide.
+  //    It breaks, knots, frays, loops back and finally ties off as the story unfolds.
+  const TICK_X0 = 90, TICK_STEP = 34.5, TICK_N = 53, Y0 = 29, Y1 = 43;
+  function thread(variant) {
+    const svg = el("svg", { class: "art", viewBox: "0 0 2000 1125" });
+    const g = el("g", { stroke: "var(--thread)", "stroke-width": 2, "stroke-linecap": "round" }, svg);
+    const acc = el("g", { stroke: "var(--purple)", "stroke-width": 3, "stroke-linecap": "round", fill: "none" }, svg);
+    const gaps = { break: [930, 1060], cut: [770, 1215], loop: [830, 1160] };
+    const end = variant === "end" ? 1800 : 1920;
+    for (let i = 0; i <= TICK_N; i++) {
+      const x = TICK_X0 + i * TICK_STEP;
+      if (x > end) break;
+      const gap = gaps[variant];
+      if (gap && x > gap[0] && x < gap[1]) continue;
+      if (variant === "knot" && Math.abs(x - 1000) < 15) continue;
+      const fwd = i % 2 === 0;
+      el("line", { x1: x, y1: fwd ? Y1 : Y0, x2: x + 14, y2: fwd ? Y0 : Y1 }, g);
+    }
+    if (variant === "break") {
+      // a clean snap: a few loose strands either side of the gap
+      for (const [x, d] of [[938, 0], [956, 4], [1043, -3], [1058, 6]])
+        el("line", { x1: x, y1: 30, x2: x + d, y2: 46 }, acc);
+    }
+    if (variant === "knot") el("circle", { cx: 1000, cy: 36, r: 9, fill: "var(--purple)", stroke: "none" }, acc);
+    if (variant === "cut") {
+      // frayed ends
+      for (const [x, d] of [[789, 0], [797, 3], [805, 1], [815, 8], [822, 12]]) el("line", { x1: x, y1: 22, x2: x + d, y2: 54 }, acc);
+      for (const [x, d] of [[1180, 0], [1188, 1], [1196, -4], [1200, 10], [1210, 14]]) el("line", { x1: x, y1: 22, x2: x + d, y2: 54 }, acc);
+    }
+    if (variant === "loop") {
+      const defs = el("defs", {}, svg);
+      const m = el("marker", { id: "loopHead", viewBox: "0 0 10 10", refX: 8, refY: 5, markerWidth: 5, markerHeight: 5, orient: "auto" }, defs);
+      el("path", { d: "M0 0L10 5L0 10z", fill: "var(--purple)" }, m);
+      el("path", { d: "M850 36 Q995 -24 1148 36", "stroke-dasharray": "10 8", "marker-end": "url(#loopHead)" }, acc);
+    }
+    if (variant === "end") {
+      el("ellipse", { cx: 1840, cy: 32, rx: 15, ry: 11 }, acc);
+      el("ellipse", { cx: 1862, cy: 32, rx: 15, ry: 11 }, acc);
+      el("circle", { cx: 1850, cy: 35, r: 5, fill: "var(--purple)", stroke: "none" }, acc);
+    }
+    return svg;
+  }
+
+  // ── Line charts on slides 10–11
+  function chart(svg) {
+    const xs = svg.dataset.x.split(",").map(Number);
+    const series = [[svg.dataset.a, "var(--teal)"], [svg.dataset.b, "var(--purple)"]];
+    el("polyline", { points: "165,533 165,983 1815,983", fill: "none", stroke: "var(--rule)", "stroke-width": 2 }, svg);
+    for (const [ys, color] of series) {
+      const y = ys.split(",").map(Number);
+      el("polyline", { class: "draw", pathLength: 1, points: xs.map((x, i) => `${x},${y[i]}`).join(" "),
+        fill: "none", stroke: color, "stroke-width": 5, "stroke-linejoin": "round" }, svg);
+      xs.forEach((x, i) => el("circle", { cx: x, cy: y[i], r: 10, fill: color }, svg));
+    }
+    const labels = svg.parentElement.querySelector(".xlabels");
+    labels.dataset.labels.split(",").forEach((t, i) => {
+      const d = document.createElement("div");
+      d.className = "abs"; d.textContent = t;
+      d.style.cssText = `left:${xs[i]}px;top:1012px;transform:translateX(-50%);font:400 24px var(--sans);color:var(--lav)`;
+      labels.appendChild(d);
+    });
+  }
+
+  const CELL = "var(--cell)", TEAL = "var(--teal)", PURPLE = "var(--purple)";
+
+  // ── Slide 2: a chat window playing out everyday requests
+  {
+    const slide = document.getElementById("llmUse");
+    const CASES = [
+      { title: "JUnit test", chip: "ide", ask: "Write a JUnit test for calculateDiscount()", code: true,
+        reply: "@Test\nvoid membersGetTenPercentOff() {\n    var order = new Order(100.00, Customer.member());\n    assertEquals(90.00, pricing.calculateDiscount(order), 0.001);\n}" },
+      { title: "NullPointerException", chip: "ide", ask: "Why do I get a NullPointerException on line 42?",
+        reply: "On line 42 you call customer.getAddress().getCity(), but getAddress() returns null for customers who never added an address. Check for null first, or return an Optional<Address>." },
+      { title: "Email thread summary", chip: "mail", ask: "Summarise this 38-message email thread in three bullets",
+        reply: "• The release moves to Thursday.\n• Marco owns the database migration.\n• Still open: who tells the customer?" },
+      { title: "Friendlier, in Dutch", chip: "chat", ask: "Make this message friendlier, and in Dutch",
+        reply: "Hoi allemaal! Even een korte update: de release schuift op naar donderdag. Bedankt voor jullie geduld!" },
+      { title: "Dinner idea", chip: "phone", ask: "What can I cook with eggs, spinach and feta?",
+        reply: "A spinach-and-feta omelette: wilt the spinach, pour in three beaten eggs, crumble the feta on top and fold. Ten minutes, one pan." },
+    ];
+    const side = slide.querySelector(".chat-side"), log = slide.querySelector(".chat-log");
+    const typed = slide.querySelector(".chat-typed"), send = slide.querySelector(".chat-send");
+    const chips = [...slide.querySelectorAll(".chip")];
+    const hist = CASES.map(c => { const d = document.createElement("div"); d.className = "chat-hist"; d.textContent = c.title; side.appendChild(d); return d; });
+    const div = (cls, text = "") => { const d = document.createElement("div"); d.className = cls; d.textContent = text; log.appendChild(d); return d; };
+    const select = i => {
+      hist.forEach((h, j) => h.classList.toggle("on", j === i));
+      chips.forEach(c => c.classList.toggle("on", c.dataset.chip === CASES[i].chip));
+    };
+    const showDone = i => {   // a finished exchange, for the slide's resting state
+      select(i); log.textContent = ""; typed.textContent = ""; send.classList.remove("ready");
+      div("msg-user", CASES[i].ask); div("msg-bot" + (CASES[i].code ? " code" : ""), CASES[i].reply);
+    };
+    showDone(0);
+    let run = 0;
+    const play = async () => {
+      const me = ++run, sleep = ms => new Promise(r => setTimeout(r, ms)), alive = () => me === run;
+      for (let i = 0; alive(); i = (i + 1) % CASES.length) {
+        const c = CASES[i];
+        select(i); log.textContent = ""; typed.textContent = "";
+        await sleep(500);
+        for (const ch of c.ask) { if (!alive()) return; typed.textContent += ch; await sleep(32); }
+        send.classList.add("ready"); await sleep(350); if (!alive()) return;
+        typed.textContent = ""; send.classList.remove("ready");
+        div("msg-user", c.ask);
+        const dots = div("dots"); dots.innerHTML = "<i></i><i></i><i></i>";
+        await sleep(800); if (!alive()) return;
+        dots.remove();
+        const out = div("msg-bot" + (c.code ? " code" : ""));
+        for (const word of c.reply.split(/(?<=[ \n])/)) { if (!alive()) return; out.textContent += word; await sleep(c.code ? 28 : 45); }
+        await sleep(2800);
+      }
+    };
+    slide.addEventListener("slideenter", play);
+    slide.addEventListener("slideleave", () => { run++; showDone(0); });
+  }
+
+  // ── Slide 3: the question types itself out, then the statement appears
+  {
+    const slide = document.getElementById("llmWhy"), typed = slide.querySelector(".ask-typed"), send = slide.querySelector(".chat-send");
+    const QUESTION = typed.textContent;
+    let run = 0;
+    slide.addEventListener("slideenter", async () => {
+      const me = ++run, sleep = ms => new Promise(r => setTimeout(r, ms));
+      slide.classList.add("asking"); typed.textContent = ""; send.classList.remove("ready");
+      await sleep(600);
+      for (const ch of QUESTION) { if (me !== run) return; typed.textContent += ch; await sleep(55); }
+      send.classList.add("ready"); await sleep(700);
+      if (me === run) slide.classList.remove("asking");
+    });
+    slide.addEventListener("slideleave", () => { run++; slide.classList.remove("asking"); typed.textContent = QUESTION; send.classList.add("ready"); });
+  }
+
+  // ── How a neuron learns: Hebbian strengthening, and fading for a connection that fires alone
+  {
+    const slide = document.getElementById("hebb"), svg = slide.querySelector("svg.art");
+    const OUT = { x: 850, y: 640, r: 70 }, THRESHOLD = 0.6, START = 0.35, TRAVEL = 550, WINDOW = 150;
+    const inputs = {
+      A: { x: 250, y: 430, end: [788, 604] },
+      B: { x: 250, y: 640, end: [780, 640] },
+      C: { x: 250, y: 870, end: [788, 680] },
+    };
+    const sans = { "font-family": "Calibri, Carlito, sans-serif" };
+    const linkLayer = el("g", {}, svg), spikeLayer = el("g", {}, svg), nodeLayer = el("g", {}, svg);
+    for (const [name, n] of Object.entries(inputs)) {
+      n.ctrl = [560, n.y];
+      n.path = el("path", { d: `M${n.x + 42} ${n.y} Q${n.ctrl[0]} ${n.ctrl[1]} ${n.end[0]} ${n.end[1]}`, fill: "none", stroke: TEAL, "stroke-linecap": "round" }, linkLayer);
+      n.knob = el("circle", { cx: n.end[0], cy: n.end[1], r: 9, fill: TEAL }, linkLayer);
+      n.circle = el("circle", { cx: n.x, cy: n.y, r: 42, fill: "#fff" }, nodeLayer);
+      const t = el("text", { x: n.x, y: n.y + 12, "text-anchor": "middle", "font-family": "Cambria, Caladea, Georgia, serif", "font-weight": 700, "font-size": 36, fill: "var(--bg)" }, nodeLayer);
+      t.textContent = name;
+      const label = el("text", { x: n.x - 55, y: n.y + 72, ...sans, "font-size": 18, fill: "var(--dim)" }, nodeLayer);
+      label.textContent = "connection strength";
+      el("rect", { x: n.x - 55, y: n.y + 82, width: 110, height: 10, rx: 5, fill: "var(--track)" }, nodeLayer);
+      n.bar = el("rect", { x: n.x - 55, y: n.y + 82, width: 0, height: 10, rx: 5, fill: TEAL }, nodeLayer);
+    }
+    const ring = el("circle", { cx: OUT.x, cy: OUT.y, r: OUT.r, fill: "none", stroke: TEAL, "stroke-width": 4, opacity: 0 }, nodeLayer);
+    const cell = el("circle", { cx: OUT.x, cy: OUT.y, r: OUT.r, fill: PURPLE }, nodeLayer);
+    const cellText = el("text", { x: OUT.x, y: OUT.y + 9, "text-anchor": "middle", ...sans, "font-weight": 700, "font-size": 26, fill: "#fff" }, nodeLayer);
+    cellText.textContent = "the cell";
+    // "each connection only knows its own spot"
+    el("circle", { cx: 788, cy: 604, r: 28, fill: "none", stroke: "var(--lav)", "stroke-width": 2, "stroke-dasharray": "6 5" }, nodeLayer);
+    el("line", { x1: 806, y1: 582, x2: 940, y2: 470, stroke: "var(--lav)", "stroke-width": 2, "stroke-dasharray": "6 5" }, nodeLayer);
+    ["this connection only knows:", "did I just fire?", "did the cell just fire?"].forEach((s, i) => {
+      const t = el("text", { x: 950, y: 440 + i * 30, ...sans, "font-style": "italic", "font-size": 22, fill: "var(--lav)" }, nodeLayer);
+      t.textContent = s;
+    });
+
+    const bez = (n, p) => {
+      const sx = n.x + 42, u = 1 - p;
+      return [u * u * sx + 2 * u * p * n.ctrl[0] + p * p * n.end[0], u * u * n.y + 2 * u * p * n.ctrl[1] + p * p * n.end[1]];
+    };
+    let w, shown, spikes, queue, checks, lastFire, flashes, holdUntil, raf = null;
+    const reset = now => {
+      w = { A: START, B: START, C: START }; shown = shown || { ...w };
+      spikes.forEach(s => s.dot.remove()); spikes = []; queue = []; checks = [];
+      lastFire = -1e9; flashes = {}; holdUntil = 0;
+      for (let k = 0; k < 40; k++) {            // A and B together, C on its own in between
+        const t = now + 500 + k * 1700;
+        queue.push([t, "A"], [t + 90, "B"], [t + 850, "C"]);
+      }
+    };
+    spikes = []; reset(performance.now());
+    // Everything runs on scheduled times, not frame times, so a slow or bursty frame rate can't make
+    // spikes look simultaneous.
+    const fire = (name, t) => {
+      flashes[name] = t;
+      spikes.push({ name, t0: t, dot: el("circle", { r: 9, fill: "#FFF3A3" }, spikeLayer) });
+    };
+    const arrivals = {};
+    const frame = now => {
+      while (queue.length && queue[0][0] <= now) { const [t, name] = queue.shift(); fire(name, t); }
+      const arrived = spikes.filter(s => s.t0 + TRAVEL <= now).sort((a, b) => a.t0 - b.t0);
+      for (const s of arrived) {
+        s.dot.remove(); spikes.splice(spikes.indexOf(s), 1);
+        const t = s.t0 + TRAVEL;
+        arrivals[s.name] = t;
+        const recent = Object.keys(arrivals).filter(k => t - arrivals[k] <= WINDOW);
+        const push = recent.reduce((sum, k) => sum + w[k], 0);
+        if (push >= THRESHOLD && t - lastFire > 300) {
+          lastFire = t;
+          recent.forEach(k => { w[k] += 0.15 * (1 - w[k]); });                 // fired together: strengthen
+        } else if (t - lastFire <= WINDOW) {
+          w[s.name] += 0.15 * (1 - w[s.name]);                                 // arrived just as the cell fired: also together
+        } else checks.push({ name: s.name, t });
+      }
+      for (const c of checks.filter(c => c.t + WINDOW <= now)) {               // didn't help the cell fire: fade
+        if (lastFire < c.t - WINDOW || lastFire > c.t + WINDOW) w[c.name] -= 0.08 * w[c.name];
+        checks.splice(checks.indexOf(c), 1);
+      }
+      for (const s of spikes) {
+        const [x, y] = bez(inputs[s.name], Math.max(0, (now - s.t0) / TRAVEL));
+        s.dot.setAttribute("cx", x); s.dot.setAttribute("cy", y);
+      }
+      // once the pattern has settled, hold it for a moment and start over
+      if (!holdUntil && w.A > 0.9 && w.B > 0.9 && w.C < 0.15) holdUntil = now + 3500;
+      if (holdUntil && now > holdUntil) reset(now);
+      for (const [name, n] of Object.entries(inputs)) {
+        shown[name] += (w[name] - shown[name]) * 0.08;
+        const v = shown[name];
+        n.path.setAttribute("stroke-width", 2 + 20 * v);
+        n.path.setAttribute("stroke-opacity", 0.25 + 0.75 * v);
+        n.knob.setAttribute("r", 5 + 10 * v);
+        n.bar.setAttribute("width", 110 * v);
+        n.circle.setAttribute("fill", now - (flashes[name] || -1e9) < 200 ? PURPLE : "#fff");
+      }
+      const since = now - lastFire;
+      cell.setAttribute("fill", since < 250 ? TEAL : PURPLE);
+      ring.setAttribute("opacity", since < 600 ? 1 - since / 600 : 0);
+      ring.setAttribute("r", OUT.r + Math.min(1, since / 600) * 50);
+      raf = requestAnimationFrame(frame);
+    };
+    frame(performance.now()); cancelAnimationFrame(raf);
+    slide.addEventListener("slideenter", () => { cancelAnimationFrame(raf); reset(performance.now()); shown = { ...w }; raf = requestAnimationFrame(frame); });
+    slide.addEventListener("slideleave", () => cancelAnimationFrame(raf));
+    const btn = slide.querySelector(".hebb-reset");
+    btn.addEventListener("click", e => { e.stopPropagation(); reset(performance.now()); btn.blur(); });
+  }
+
+  // ── Transformer section
+  {
+    const AMBER = "#F5B94A", ROSE = "#FB7185", LILAC = "#A39CFF";
+    const serif = "Cambria, Caladea, Georgia, serif", sans = "Calibri, Carlito, sans-serif";
+    const text = (parent, x, y, str, attrs = {}) => { const t = el("text", { x, y, "font-family": sans, ...attrs }, parent); t.textContent = str; return t; };
+    const arrowHead = (svg, id, color) => {
+      const m = el("marker", { id, viewBox: "0 0 10 10", refX: 9, refY: 5, markerWidth: 5, markerHeight: 5, orient: "auto" }, el("defs", {}, svg));
+      el("path", { d: "M0 0L10 5L0 10z", fill: color }, m);
+    };
+    const pill = (parent, cx, cy, word, stroke = "var(--rule)") => {
+      const w = 16 * word.length + 30;
+      el("rect", { x: cx - w / 2, y: cy - 21, width: w, height: 42, rx: 21, fill: CELL, stroke, "stroke-width": 2 }, parent);
+      text(parent, cx, cy + 8, word, { "text-anchor": "middle", "font-size": 22, fill: "var(--lav)" });
+    };
+
+    // 1 · Why earlier networks struggled: three cards, each with a tiny picture of the problem
+    {
+      const svg = document.querySelector("#txProblem svg.art");
+      arrowHead(svg, "ahTx1", "var(--lav)");
+      [0, 1, 2].forEach(i => el("rect", { x: 120 + i * 600, y: 330, width: 560, height: 670, rx: 16, fill: "#161936", stroke: "var(--rule)", "stroke-width": 2 }, svg));
+      // perceptron: a bag of words, no order
+      [["bug", 210, 520], ["was", 420, 505], ["fixed", 300, 600], ["the", 520, 590], ["finally", 230, 680], ["new", 450, 675]]
+        .forEach(([w, x, y]) => pill(svg, x, y, w));
+      // ConvNet: a 3-word window, and two related words too far apart for it
+      const words = ["bug", "that", "she", "found", "is", "fixed"], wx = k => 790 + k * 84;
+      el("rect", { x: wx(1) - 40, y: 594, width: 248, height: 52, rx: 12, fill: "rgba(0,217,192,.12)", stroke: TEAL, "stroke-width": 3 }, svg);
+      words.forEach((w, k) => text(svg, wx(k), 628, w, { "text-anchor": "middle", "font-size": 22, fill: "var(--lav)" }));
+      el("path", { d: `M${wx(0)} 590 Q${(wx(0) + wx(5)) / 2} 470 ${wx(5)} 590`, fill: "none", stroke: ROSE, "stroke-width": 3, "stroke-dasharray": "8 7" }, svg);
+      text(svg, (wx(0) + wx(5)) / 2, 520, "too far apart", { "text-anchor": "middle", "font-size": 22, "font-style": "italic", fill: ROSE });
+      text(svg, wx(2), 680, "window", { "text-anchor": "middle", "font-size": 20, "font-style": "italic", fill: TEAL });
+      // RNN: one word at a time, a memory that fades along the chain
+      text(svg, 1380, 530, "memory", { "font-size": 20, "font-style": "italic", fill: "var(--muted)" });
+      words.forEach((w, k) => {
+        const x = 1410 + k * 88;
+        el("rect", { x: x - 26, y: 548, width: 52, height: 14, rx: 7, fill: PURPLE, "fill-opacity": 1 - k * .17 }, svg);
+        el("circle", { cx: x, cy: 610, r: 20, fill: CELL, stroke: "var(--lav)", "stroke-width": 2 }, svg);
+        text(svg, x, 668, w, { "text-anchor": "middle", "font-size": 20, fill: "var(--lav)" });
+        if (k) el("line", { x1: x - 88 + 22, y1: 610, x2: x - 24, y2: 610, stroke: "var(--lav)", "stroke-width": 2, "marker-end": "url(#ahTx1)" }, svg);
+      });
+    }
+
+    // 2 · Self-attention on a real sentence: "it" means the trophy or the suitcase, depending on the last word
+    {
+      const slide = document.getElementById("txIdea"), svg = slide.querySelector("svg.art");
+      const sent = slide.querySelector(".attn-sent"), caption = slide.querySelector(".attn-caption");
+      const WORDS = ["The", "trophy", "didn't", "fit", "in", "the", "suitcase", "because", "it", "was", "too", "big."];
+      const IT = 8, base = [.03, 0, .03, .07, .02, .02, 0, .04, 0, .03, .02, .08];
+      const spans = WORDS.map((w, i) => { const sp = document.createElement("span"); sp.textContent = w; if (i === IT) sp.className = "it"; sent.appendChild(sp); return sp; });
+      const arcs = el("g", { fill: "none", stroke: PURPLE, "stroke-linecap": "round" }, svg);
+      // the two boxes underneath
+      [120, 1040].forEach(x => el("rect", { x, y: 710, width: 840, height: 280, rx: 16, fill: "#161936", stroke: "var(--rule)", "stroke-width": 2 }, svg));
+      arrowHead(svg, "ahTx2", "var(--lav)");
+      for (let k = 0; k < 8; k++) {
+        const x = 200 + k * 96;
+        el("circle", { cx: x, cy: 900, r: 14, fill: PURPLE, "fill-opacity": 1 - k * .11 }, svg);
+        if (k) el("line", { x1: x - 96 + 16, y1: 900, x2: x - 18, y2: 900, stroke: "var(--lav)", "stroke-width": 2, "marker-end": "url(#ahTx2)" }, svg);
+      }
+      text(svg, 200, 948, "trophy", { "text-anchor": "middle", "font-size": 22, fill: "var(--lav)" });
+      text(svg, 872, 948, "it", { "text-anchor": "middle", "font-size": 22, fill: "var(--lav)" });
+      el("path", { d: "M1200 912 Q1480 852 1760 912", fill: "none", stroke: PURPLE, "stroke-width": 8, "stroke-linecap": "round" }, svg);
+      el("circle", { cx: 1200, cy: 912, r: 14, fill: PURPLE }, svg); el("circle", { cx: 1760, cy: 912, r: 14, fill: PURPLE }, svg);
+      text(svg, 1200, 960, "trophy", { "text-anchor": "middle", "font-size": 22, fill: "var(--lav)" });
+      text(svg, 1760, 960, "it", { "text-anchor": "middle", "font-size": 22, fill: "var(--lav)" });
+
+      let big = true;
+      const draw = () => {
+        const ref = big ? 1 : 6, other = big ? 6 : 1;
+        spans[11].textContent = big ? "big." : "small.";
+        spans.forEach((sp, i) => sp.classList.toggle("ref", i === ref));
+        caption.textContent = big ? "“it” = the trophy" : "“it” = the suitcase";
+        const w = base.slice(); w[ref] = .52; w[other] = .14;
+        const cx = i => 120 + spans[i].offsetLeft + spans[i].offsetWidth / 2;
+        arcs.textContent = "";
+        spans.forEach((_, i) => {
+          if (i === IT) return;
+          const x0 = cx(IT), x1 = cx(i), h = 36 + Math.min(150, Math.abs(x1 - x0) * .22);
+          el("path", { d: `M${x0} 512 Q${(x0 + x1) / 2} ${512 - 2 * h} ${x1} 512`, "stroke-width": 2 + 18 * w[i], "stroke-opacity": .2 + .8 * Math.min(1, w[i] * 1.8) }, arcs);
+        });
+      };
+      draw(); document.fonts.ready.then(draw);
+      let timer = null;
+      slide.addEventListener("slideenter", () => { big = true; draw(); clearInterval(timer); timer = setInterval(() => { big = !big; draw(); }, 3500); });
+      slide.addEventListener("slideleave", () => { clearInterval(timer); big = true; draw(); });
+    }
+
+    // 3 · Inside a transformer: the block diagram, read bottom to top, colours matching the four rows
+    {
+      const svg = document.querySelector("#txInside svg.art");
+      arrowHead(svg, "ahTx3", "var(--lav)");
+      const up = (x, y1, y2) => el("line", { x1: x, y1, x2: x, y2, stroke: "var(--lav)", "stroke-width": 3, "marker-end": "url(#ahTx3)" }, svg);
+      const box = (x, y, w, h, color, fillOpacity, lines, size = 26) => {
+        el("rect", { x, y, width: w, height: h, rx: 12, fill: color, "fill-opacity": fillOpacity, stroke: color, "stroke-width": 2 }, svg);
+        lines.forEach((l, i) => text(svg, x + w / 2, y + h / 2 + (i - (lines.length - 1) / 2) * (size + 6) + size * .35, l,
+          { "text-anchor": "middle", "font-size": size, "font-weight": 700, fill: "#fff" }));
+      };
+      // output
+      box(250, 330, 400, 56, "var(--thread)", 1, ["predict the next word"], 24);
+      up(450, 428, 392);
+      // the repeated block
+      el("rect", { x: 200, y: 430, width: 500, height: 372, rx: 18, fill: "none", stroke: "var(--lav)", "stroke-width": 2, "stroke-dasharray": "10 8" }, svg);
+      box(260, 448, 380, 30, "var(--lav)", .25, ["add & normalise"], 18);
+      box(260, 494, 380, 82, TEAL, .22, ["Feed-forward"]);
+      box(260, 592, 380, 30, "var(--lav)", .25, ["add & normalise"], 18);
+      box(260, 638, 380, 120, PURPLE, .3, ["Multi-head", "self-attention"]);
+      // the three heads, peeking out behind the attention box
+      [1, 2].forEach(k => el("rect", { x: 260 + k * 8, y: 638 - k * 8, width: 380, height: 120, rx: 12, fill: "none", stroke: LILAC, "stroke-width": 1.5, "stroke-opacity": .7 - k * .2 }, svg));
+      up(450, 638 - 2, 626); up(450, 592 - 2, 580); up(450, 494 - 2, 482);
+      // shortcuts (residual connections) around each part
+      el("path", { d: "M640 776 C 690 776, 690 607, 644 607", fill: "none", stroke: "var(--lav)", "stroke-width": 2, "stroke-dasharray": "6 5", "marker-end": "url(#ahTx3)" }, svg);
+      el("path", { d: "M640 586 C 690 586, 690 463, 644 463", fill: "none", stroke: "var(--lav)", "stroke-width": 2, "stroke-dasharray": "6 5", "marker-end": "url(#ahTx3)" }, svg);
+      text(svg, 700, 540, "shortcut", { "font-size": 20, "font-style": "italic", fill: "var(--muted)" });
+      text(svg, 450, 832, "repeated: GPT-3 stacks 96 of these blocks", { "text-anchor": "middle", "font-size": 22, "font-style": "italic", fill: "var(--muted)" });
+      // words in, turned into numbers, plus position
+      up(450, 866, 806);
+      box(250, 868, 330, 52, "var(--thread)", 1, ["words → numbers"], 22);
+      el("circle", { cx: 630, cy: 894, r: 24, fill: AMBER, "fill-opacity": .25, stroke: AMBER, "stroke-width": 2 }, svg);
+      text(svg, 630, 903, "+", { "text-anchor": "middle", "font-size": 30, "font-weight": 700, fill: AMBER });
+      text(svg, 668, 902, "position", { "font-size": 22, fill: AMBER });
+      up(450, 950, 924);
+      ["The", "trophy", "didn't", "fit", "…"].forEach((w, k) => text(svg, 270 + k * 92, 985, w, { "text-anchor": "middle", "font-size": 22, fill: "var(--lav)" }));
+    }
+
+    // 4 · Model sizes on a log scale (one series: no legend, direct labels, a tooltip per bar)
+    {
+      const svg = document.querySelector("#txImpact svg.art");
+      const MODELS = [
+        ["Transformer", "2017", 213e6, "213 million"],
+        ["BERT", "2018", 340e6, "340 million"],
+        ["GPT-2", "2019", 1.5e9, "1.5 billion"],
+        ["GPT-3", "2020", 175e9, "175 billion"],
+        ["GPT-4", "2023", null, "size not published"],
+      ];
+      const X0 = 440, DECADE = 200, sx = v => X0 + (Math.log10(v) - 8) * DECADE;
+      [[1e8, "100 M"], [1e9, "1 B"], [1e10, "10 B"], [1e11, "100 B"], [1e12, "1 T"]].forEach(([v, label]) => {
+        el("line", { x1: sx(v), y1: 404, x2: sx(v), y2: 900, stroke: "var(--rule)", "stroke-width": 1 }, svg);
+        text(svg, sx(v), 934, label, { "text-anchor": "middle", "font-size": 20, fill: "var(--dim)" });
+      });
+      MODELS.forEach(([name, year, v, label], i) => {
+        const y = 424 + i * 96;
+        text(svg, X0 - 24, y + 22, name, { "text-anchor": "end", "font-family": serif, "font-weight": 700, "font-size": 28, fill: "#fff" });
+        text(svg, X0 - 24, y + 50, year, { "text-anchor": "end", "font-size": 20, fill: "var(--dim)" });
+        if (v == null) { text(svg, X0, y + 32, label, { "font-size": 24, "font-style": "italic", fill: "var(--muted)" }); return; }
+        const w = sx(v) - X0;
+        const bar = el("path", { d: `M${X0} ${y} H${X0 + w - 4} Q${X0 + w} ${y} ${X0 + w} ${y + 4} V${y + 40} Q${X0 + w} ${y + 44} ${X0 + w - 4} ${y + 44} H${X0} Z`, fill: TEAL }, svg);
+        el("title", {}, bar).textContent = `${name} (${year}): ${label} parameters`;
+        text(svg, X0 + w + 14, y + 31, label, { "font-size": 24, fill: "var(--lav)" });
+      });
+    }
+
+    // 5 · The whole road on one line, with the transformer as the link to LLMs
+    {
+      const svg = document.querySelector("#txWhy svg.art");
+      const STOPS = [["Neuron", "1943"], ["Perceptron", "1958"], ["Backprop", "1986"], ["ConvNets", "1989"], ["Transformer", "2017"], ["LLMs", "2018 →"]];
+      const x = i => 200 + i * 320;
+      el("line", { x1: x(0), y1: 480, x2: x(4), y2: 480, stroke: "var(--rule)", "stroke-width": 4 }, svg);
+      el("line", { x1: x(4), y1: 480, x2: x(5), y2: 480, stroke: TEAL, "stroke-width": 4 }, svg);
+      STOPS.forEach(([name, year], i) => {
+        const hot = i === 4;
+        if (hot) el("circle", { cx: x(i), cy: 480, r: 44, fill: "none", stroke: TEAL, "stroke-width": 3, "stroke-opacity": .5 }, svg);
+        el("circle", { cx: x(i), cy: 480, r: hot ? 28 : 16, fill: hot ? TEAL : i === 5 ? PURPLE : "var(--lav)" }, svg);
+        text(svg, x(i), 410, name, { "text-anchor": "middle", "font-family": serif, "font-weight": 700, "font-size": hot ? 36 : 30, fill: hot ? TEAL : "#fff" });
+        text(svg, x(i), 556, year, { "text-anchor": "middle", "font-size": 22, fill: "var(--dim)" });
+      });
+      el("line", { x1: 300, y1: 840, x2: 1700, y2: 840, stroke: "var(--rule)", "stroke-width": 2 }, svg);
+    }
+  }
+
+  // ── Convolutional-nets slides
+  const pixels = (g, x0, y0, rows, cols, size, fill) => {
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++)
+      el("rect", { x: x0 + c * size, y: y0 + r * size, width: size, height: size, fill: fill(r, c),
+        stroke: "var(--bg)", "stroke-width": size > 10 ? 2 : 1 }, g);
+  };
+
+  // ConvNet title slide: a handwritten 7 through stacks of shrinking feature maps to the answer
+  {
+    const svg = document.getElementById("cnnTitle").querySelector("svg.art");
+    const SEVEN = ["........", ".XXXXX..", ".....X..", "....X...", "...X....", "...X....", "...X....", "........"];
+    pixels(el("g", {}, svg), 180, 450, 8, 8, 26, (r, c) => SEVEN[r][c] === "X" ? "#E8E6FF" : CELL);
+    // A stack of n feature maps, drawn back to front
+    const stack = (x, y, size, n, off, color) => {
+      for (let k = n - 1; k >= 0; k--)
+        el("rect", { x: x + k * off, y: y - k * off, width: size, height: size, rx: 4, fill: k ? CELL : color, "fill-opacity": k ? 1 : .22,
+          stroke: k ? "var(--rule)" : color, "stroke-width": 2 }, svg);
+    };
+    stack(520, 470, 180, 4, 16, TEAL);
+    stack(860, 500, 120, 6, 12, PURPLE);
+    stack(1150, 528, 76, 8, 10, "var(--lav)");
+    const defs = el("defs", {}, svg), mk = el("marker", { id: "ahCnn", viewBox: "0 0 10 10", refX: 9, refY: 5, markerWidth: 5, markerHeight: 5, orient: "auto" }, defs);
+    el("path", { d: "M0 0L10 5L0 10z", fill: "var(--lav)" }, mk);
+    for (const [x1, x2] of [[404, 500], [766, 842], [1058, 1132]])
+      el("line", { x1, y1: 560, x2, y2: 560, stroke: "var(--lav)", "stroke-width": 3, "marker-end": "url(#ahCnn)" }, svg);
+    // fully connected end: a few hidden units, then one output per digit
+    const dense = [0, 1, 2, 3, 4].map(i => [1410, 474 + i * 40]);
+    const outs = [...Array(10).keys()].map(d => [1560, 384 + d * 40]);
+    const wires = el("g", { stroke: "var(--lav)", "stroke-opacity": .18, "stroke-width": 1.5 }, svg);
+    dense.forEach(([x, y]) => { el("line", { x1: 1296, y1: 520 + (y - 554) * .4, x2: x - 14, y2: y }, wires);
+      outs.forEach(([ox, oy]) => el("line", { x1: x + 14, y1: y, x2: ox - 10, y2: oy }, wires)); });
+    dense.forEach(([x, y]) => el("circle", { cx: x, cy: y, r: 14, fill: "var(--lav)", "fill-opacity": .8 }, svg));
+    outs.forEach(([x, y], d) => {
+      el("circle", { cx: x, cy: y, r: 10, fill: d === 7 ? TEAL : "var(--thread)" }, svg);
+      const t = el("text", { x: x + 26, y: y + 9, "font-family": "Calibri, Carlito, sans-serif", "font-size": d === 7 ? 30 : 24,
+        "font-weight": d === 7 ? 700 : 400, fill: d === 7 ? TEAL : "var(--dim)" }, svg);
+      t.textContent = d;
+    });
+  }
+
+  // Classic net: the same 7, flattened, before and after a two-pixel shift
+  {
+    const slide = document.getElementById("cnnFlat"), svg = slide.querySelector("svg.art");
+    const SEVEN = ["........", ".XXXXX..", ".....X..", "....X...", "...X....", "...X....", "...X....", "........"];
+    const SHIFT = 2;
+    const lit = (r, c) => SEVEN[r][c] === "X";
+    const moved = (r, c) => c >= SHIFT && lit(r, c - SHIFT);
+    const colA = (r, c) => lit(r, c) ? TEAL : CELL;
+    const colB = (r, c) => moved(r, c) ? (lit(r, c) ? TEAL : PURPLE) : CELL;
+    const ROW_X = 430, CELL_W = 22;
+    // one neuron, wired to every one of the 64 inputs
+    const wires = el("g", { stroke: "var(--purple)", "stroke-opacity": .28, "stroke-width": 1 }, svg);
+    for (let i = 0; i < 64; i++) el("line", { x1: 1134, y1: 378, x2: ROW_X + i * CELL_W + CELL_W / 2, y2: 459 }, wires);
+    el("circle", { cx: 1134, cy: 366, r: 16, fill: PURPLE }, svg);
+    const g = el("g", {}, svg);
+    pixels(g, 120, 382, 8, 8, CELL_W, colA);
+    pixels(g, 120, 652, 8, 8, CELL_W, colB);
+    for (const [y, col] of [[459, colA], [729, colB]]) {
+      pixels(g, ROW_X, y, 1, 64, CELL_W, (_, i) => col(Math.floor(i / 8), i % 8));
+      for (let k = 1; k < 8; k++)   // where one image row ends and the next begins
+        el("line", { x1: ROW_X + k * 8 * CELL_W, y1: y - 10, x2: ROW_X + k * 8 * CELL_W, y2: y + CELL_W + 10, stroke: "var(--lav)", "stroke-width": 2, "stroke-opacity": .5 }, g);
+    }
+    const defs = el("defs", {}, svg), m = el("marker", { id: "ahFlat", viewBox: "0 0 10 10", refX: 9, refY: 5, markerWidth: 5, markerHeight: 5, orient: "auto" }, defs);
+    el("path", { d: "M0 0L10 5L0 10z", fill: "var(--lav)" }, m);
+    for (const y of [470, 740]) {
+      el("line", { x1: 318, y1: y, x2: 410, y2: y, stroke: "var(--lav)", "stroke-width": 3, "marker-end": "url(#ahFlat)" }, svg);
+      const t = el("text", { x: 364, y: y - 14, "text-anchor": "middle", "font-family": "Calibri, Carlito, sans-serif", "font-style": "italic", "font-size": 20, fill: "var(--muted)" }, svg);
+      t.textContent = "flatten";
+    }
+    let total = 0, same = 0;
+    for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) if (moved(r, c)) { total++; if (lit(r, c)) same++; }
+    document.getElementById("flatMatch").textContent = `${same} of ${total}`;
+  }
+
+  // The eye: V1 cells, each a receptive field tuned to one edge angle
+  {
+    const g = document.getElementById("v1cells");
+    const angles = [45, 0, -45, 90, 0, 45, -45, 90, 0];   // degrees from horizontal
+    const tuned = { 0: 1, 3: 2, 4: 3 };                   // cells that fire for receptive fields 1, 2, 3
+    angles.forEach((a, i) => {
+      const x = 930 + (i % 3) * 76, y = 450 + Math.floor(i / 3) * 76, on = i in tuned;
+      el("rect", { x, y, width: 66, height: 66, rx: 10, fill: on ? "rgba(0,217,192,.16)" : CELL, stroke: on ? TEAL : "var(--rule)", "stroke-width": 2 }, g);
+      el("circle", { cx: x + 33, cy: y + 33, r: 22, fill: "none", stroke: on ? TEAL : "var(--thread)", "stroke-width": 2 }, g);
+      const rad = -a * Math.PI / 180, dx = Math.cos(rad) * 15, dy = Math.sin(rad) * 15;
+      el("line", { x1: x + 33 - dx, y1: y + 33 - dy, x2: x + 33 + dx, y2: y + 33 + dy, stroke: on ? "#fff" : "var(--muted)", "stroke-width": 5, "stroke-linecap": "round" }, g);
+      if (on) {
+        const t = el("text", { x: x + 58, y: y + 20, "text-anchor": "middle", "font-family": "Calibri, Carlito, sans-serif", "font-weight": 700, "font-size": 18, fill: PURPLE }, g);
+        t.textContent = tuned[i];
+      }
+    });
+    const rows = [
+      ["Each cell sees only a small patch", "3×3 filter"],
+      ["Tuned to one edge angle", "edge detector"],
+      ["Same cell types tile the whole view", "weight sharing"],
+      ["Complex cells: don't care exactly where", "pooling"],
+    ];
+    const host = document.getElementById("eyeMap");
+    rows.forEach(([bio, cnn], i) => {
+      const y = 410 + i * 116;
+      host.insertAdjacentHTML("beforeend",
+        `<div class="abs" style="left:1250px;top:${y}px;width:330px;white-space:normal;font:400 26px/32px var(--sans);color:var(--lav)">${bio}</div>
+         <div class="abs" style="left:1592px;top:${y}px;font:400 28px var(--sans);color:var(--dim)">→</div>
+         <div class="abs" style="left:1640px;top:${y}px;font:700 32px var(--serif);color:var(--teal)">${cnn}</div>`);
+      if (i) host.insertAdjacentHTML("beforeend", `<div style="position:absolute;left:1250px;top:${y - 26}px;width:640px;height:2px;background:var(--rule)"></div>`);
+    });
+  }
+
+  // How a ConvNet sees: live edge and corner maps of a 16×16 house
+  {
+    const slide = document.getElementById("cnnSee"), svg = slide.querySelector("svg.art");
+    const N = 16, img = Array.from({ length: N }, () => new Array(N).fill(0));
+    for (let r = 1; r <= 6; r++) for (let c = 8 - r; c <= 7 + r; c++) img[r][c] = 1;       // roof
+    for (let r = 7; r <= 14; r++) for (let c = 3; c <= 12; c++) img[r][c] = 1;             // walls
+    for (const [r0, r1, c0, c1] of [[9, 10, 5, 6], [11, 14, 9, 10]])                       // window, door
+      for (let r = r0; r <= r1; r++) for (let c = c0; c <= c1; c++) img[r][c] = 0;
+    const at = (r, c) => (r < 0 || c < 0 || r >= N || c >= N) ? 0 : img[r][c];
+    const conv = k => img.map((row, r) => row.map((_, c) => {
+      let s = 0;
+      for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) s += k[i + 1][j + 1] * at(r + i, c + j);
+      return s;
+    }));
+    const norm = m => { const mx = Math.max(...m.flat().map(Math.abs)) || 1; return m.map(row => row.map(v => Math.abs(v) / mx)); };
+    const KERNELS = {
+      "|":  [[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]],
+      "—":  [[-1, -2, -1], [0, 0, 0], [1, 2, 1]],
+      "/":  [[-2, -1, 0], [-1, 0, 1], [0, 1, 2]],
+      "\\": [[0, 1, 2], [-1, 0, 1], [-2, -1, 0]],
+    };
+    const raw = Object.fromEntries(Object.entries(KERNELS).map(([k, m]) => [k, conv(m)]));
+    // Corners: where edges in different directions meet (Harris response on the | and — maps)
+    const gx = raw["|"], gy = raw["—"];
+    const harris = img.map((row, r) => row.map((_, c) => {
+      let xx = 0, yy = 0, xy = 0;
+      for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) {
+        const a = gx[r + i]?.[c + j] ?? 0, b = gy[r + i]?.[c + j] ?? 0;
+        xx += a * a; yy += b * b; xy += a * b;
+      }
+      return Math.max(0, xx * yy - xy * xy - 0.05 * (xx + yy) ** 2);
+    }));
+    // keep only the strongest point in each neighbourhood (non-maximum suppression), with a faint glow around it
+    const hn = norm(harris);
+    const corners = hn.map((row, r) => row.map((v, c) => {
+      if (v < .15) return 0;
+      for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) if ((hn[r + i]?.[c + j] ?? 0) > v) return .2;
+      return 1;
+    }));
+    const heat = (m, color) => (r, c) => m[r][c] < .1 ? CELL : color;
+    const shade = (g, m) => [...g.children].forEach((rect, i) => { const v = m[Math.floor(i / N)][i % N]; if (v >= .1) rect.setAttribute("fill-opacity", .25 + .75 * v); });
+
+    const ink = (r, c) => img[r][c] ? "#E8E6FF" : CELL;
+    const gIn = el("g", {}, svg); pixels(gIn, 120, 420, N, N, 16, ink);
+    const maps = [];
+    Object.keys(KERNELS).forEach((k, i) => {
+      const x = 490 + (i % 2) * 132, y = 420 + Math.floor(i / 2) * 132, m = norm(raw[k]);
+      const g = el("g", {}, svg); pixels(g, x, y, N, N, 7, heat(m, TEAL)); shade(g, m);
+      maps.push({ x, y });
+      el("rect", { x: x - 4, y: y - 4, width: 26, height: 26, rx: 5, fill: "var(--bg)", stroke: "var(--rule)" }, svg);
+      const t = el("text", { x: x + 9, y: y + 16, "text-anchor": "middle", "font-family": "Calibri, Carlito, sans-serif", "font-weight": 700, "font-size": 18, fill: "#fff" }, svg);
+      t.textContent = k;
+    });
+    const gC = el("g", {}, svg); pixels(gC, 850, 420, N, N, 15, heat(corners, PURPLE)); shade(gC, corners);
+    // Layer 3: parts, cropped from the picture
+    for (const [r0, r1, c0, c1, x, y] of [[1, 6, 2, 13, 1200, 420], [8, 11, 4, 7, 1200, 536], [10, 15, 8, 11, 1200, 616]])
+      pixels(el("g", {}, svg), x, y, r1 - r0 + 1, c1 - c0 + 1, 12, (r, c) => ink(r + r0, c + c0));
+    // Output scores (illustrative)
+    [["house", .94], ["barn", .05], ["boat", .01]].forEach(([label, v], i) => {
+      const y = 540 + i * 50;
+      const t = el("text", { x: 1560, y: y + 20, "font-family": "Calibri, Carlito, sans-serif", "font-size": 22, fill: i ? "var(--muted)" : "#fff" }, svg);
+      t.textContent = label;
+      el("rect", { x: 1640, y, width: 230, height: 26, rx: 13, fill: "var(--track)" }, svg);
+      el("rect", { x: 1640, y, width: Math.max(26, 230 * v), height: 26, rx: 13, fill: i ? "var(--thread)" : TEAL }, svg);
+    });
+    // Arrows between the stages
+    const defs = el("defs", {}, svg), mk = el("marker", { id: "ahSee", viewBox: "0 0 10 10", refX: 9, refY: 5, markerWidth: 5, markerHeight: 5, orient: "auto" }, defs);
+    el("path", { d: "M0 0L10 5L0 10z", fill: "var(--lav)" }, mk);
+    for (const [x1, x2] of [[392, 474], [762, 834], [1106, 1184], [1476, 1544]])
+      el("line", { x1, y1: 548, x2, y2: 548, stroke: "var(--lav)", "stroke-width": 3, "marker-end": "url(#ahSee)" }, svg);
+    // The sliding 3×3 window, and the output cell it writes in every edge map
+    const win = el("rect", { width: 48, height: 48, fill: "rgba(0,217,192,.18)", stroke: TEAL, "stroke-width": 4 }, svg);
+    const outs = maps.map(() => el("rect", { width: 7, height: 7, fill: "none", stroke: "#fff", "stroke-width": 2 }, svg));
+    let pos = 0, timer = null;
+    const step = () => {
+      const r = Math.floor(pos / N), c = pos % N;
+      win.setAttribute("x", 120 + (c - 1) * 16); win.setAttribute("y", 420 + (r - 1) * 16);
+      outs.forEach((o, i) => { o.setAttribute("x", maps[i].x + c * 7); o.setAttribute("y", maps[i].y + r * 7); });
+      pos = (pos + 1) % (N * N);
+    };
+    pos = 5 * N + 4; step();
+    slide.addEventListener("slideenter", () => { clearInterval(timer); timer = setInterval(step, 70); });
+    slide.addEventListener("slideleave", () => clearInterval(timer));
+  }
+
+  // Counting numbers up when a slide comes on screen
+  document.querySelectorAll("[data-count]").forEach(n => {
+    const slide = n.closest(".slide"), target = +n.dataset.count, fmt = v => Math.round(v).toLocaleString("en-US");
+    slide.addEventListener("slideenter", () => {
+      const t0 = performance.now();
+      const tick = now => {
+        const p = Math.min(1, (now - t0) / 1400), e = 1 - (1 - p) ** 3;
+        n.textContent = fmt(target * e);
+        if (p < 1 && slide.classList.contains("active")) requestAnimationFrame(tick); else n.textContent = fmt(target);
+      };
+      requestAnimationFrame(tick);
+    });
+  });
+
+  const slides = [...document.querySelectorAll(".slide")];
+  slides.forEach(s => s.prepend(thread(s.dataset.thread)));
+  document.querySelectorAll("svg.chart").forEach(chart);
+
+  document.querySelectorAll(".qr-url").forEach(a => a.addEventListener("click", e => e.stopPropagation()));
+
+  // ── Scaling & navigation
+  const stage = document.getElementById("stage");
+  const fit = () => {
+    const k = Math.min(innerWidth / 2000, innerHeight / 1125);
+    stage.style.transform = `translate(-50%, -50%) scale(${k})`;
+  };
+  addEventListener("resize", fit); fit();
+
+  const notes = document.getElementById("notes"), count = document.getElementById("count");
+  let cur = 0;
+  function go(n) {
+    cur = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((s, i) => {
+      const on = i === cur;
+      s.classList.toggle("active", on);
+      if (on !== !!s.isOn) { s.isOn = on; s.dispatchEvent(new Event(on ? "slideenter" : "slideleave")); }
+    });
+    notes.innerHTML = `<b>${cur + 1}</b>`;
+    notes.append(slides[cur].dataset.notes);
+    count.textContent = `${cur + 1} / ${slides.length}`;
+    history.replaceState(null, "", "#" + (cur + 1));
+  }
+  function onKey(e) {
+    if (["ArrowRight", "PageDown", " ", "Enter"].includes(e.key)) { e.preventDefault(); go(cur + 1); }
+    else if (["ArrowLeft", "PageUp", "Backspace"].includes(e.key)) { e.preventDefault(); go(cur - 1); }
+    else if (e.key === "Home") go(0);
+    else if (e.key === "End") go(slides.length - 1);
+    else if (e.key === "n" || e.key === "N") notes.classList.toggle("show");
+    else if (e.key === "f" || e.key === "F") document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  }
+  addEventListener("keydown", onKey);
+  // keys pressed inside the embedded neuron simulator are forwarded here
+  addEventListener("message", e => {
+    if (e.data && typeof e.data.deckKey === "string") onKey({ key: e.data.deckKey, preventDefault() {} });
+  });
+  document.getElementById("viewport").addEventListener("click", e => go(cur + (e.clientX > innerWidth / 3 ? 1 : -1)));
+  let tx = null;
+  addEventListener("touchstart", e => tx = e.touches[0].clientX, { passive: true });
+  addEventListener("touchend", e => { if (tx == null) return; const dx = e.changedTouches[0].clientX - tx; if (Math.abs(dx) > 40) go(cur + (dx < 0 ? 1 : -1)); tx = null; });
+
+  go((parseInt(location.hash.slice(1), 10) || 1) - 1);
+})();
+</script>
+</body>
+</html>

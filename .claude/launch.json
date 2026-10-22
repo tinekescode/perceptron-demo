@@ -6,6 +6,18 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["--prefix", "perceptron-frontend", "run", "dev"],
       "port": 5173
+    },
+    {
+      "name": "perceptron-digits",
+      "runtimeExecutable": "mvn",
+      "runtimeArgs": ["-f", "perceptron-digits/pom.xml", "quarkus:dev", "-Dquarkus.console.enabled=false", "-Djvm.args=-Djdk.net.unixdomain.tmpdir=C:/code/Perceptron-demo/perceptron-digits/target"],
+      "port": 8082
+    },
+    {
+      "name": "slides",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["--yes", "http-server@14.1.1", "how-ai-lost-the-thread", "-p", "8090", "-c-1", "-s"],
+      "port": 8090
     }
   ]
 }
