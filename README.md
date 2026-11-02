@@ -2,7 +2,7 @@
 
 From one neuron to a small neural network, in plain Java.
 
-These are the demos from the talk **How AI Lost the Thread: The Strange Path from Neurons to LLMs**. The slides are in [`how-ai-lost-the-thread`](how-ai-lost-the-thread): open `index.html` in a browser.
+These are the demos from the talk **How AI Lost the Thread: The Strange Path from Neurons to LLMs**. The slides are in [`how-ai-lost-the-thread`](how-ai-lost-the-thread): open `index.html` in a browser. There are two more versions: [`how-ai-lost-the-thread-november-2`](how-ai-lost-the-thread-november-2) (10 minutes) and [`how-ai-lost-the-thread-november-3`](how-ai-lost-the-thread-november-3) (in Dutch).
 
 | Project | What it does | Port |
 |---|---|---|

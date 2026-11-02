@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neuron Simulator</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { width:100%; height:100%; }
+  body { margin:0; min-height:100vh; overflow:hidden; font-family:system-ui,-apple-system,Segoe UI,sans-serif; background:#0b1020; color:#eef2ff; }
+  .app { width:100%; height:100vh; padding:12px 16px; display:flex; flex-direction:column; gap:8px; background:#10192d; overflow:hidden; }
+  header { flex:0 0 auto; display:flex; align-items:baseline; justify-content:space-between; gap:16px; }
+  h1 { margin:0; font-size:clamp(19px,2vw,27px); line-height:1.15; }
+  .subtitle { color:#9eabc9; margin:0; font-size:clamp(10px,1vw,13px); text-align:right; }
+  .canvas-wrap { position:relative; flex:1 1 auto; min-height:0; width:100%; background:radial-gradient(ellipse at 42% 48%,#17223a 0%,#0a1020 68%,#070b15 100%); border-radius:12px; overflow:hidden; border:1px solid #26314d; }
+  canvas { width:100%; height:100%; display:block; }
+  .info-row { flex:0 0 auto; display:grid; grid-template-columns: minmax(105px,.7fr) minmax(105px,.7fr) minmax(115px,.75fr) minmax(320px,3fr) minmax(125px,.8fr); gap:8px; min-height:108px; }
+  .metric, .input-panel { background:#0c1325; border:1px solid #293554; border-radius:10px; padding:10px 12px; min-width:0; }
+  .label { color:#9eabc9; font-size:10px; letter-spacing:.04em; text-transform:uppercase; }
+  .value { font-size:clamp(20px,2vw,28px); font-weight:750; margin-top:4px; line-height:1.1; }
+  .threshold { color:#fbbf24; } .fired { color:#fb7185; }
+  .input-panel { display:flex; flex-direction:column; justify-content:center; }
+  #controls { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; margin-top:8px; }
+  .input-row { min-width:0; font-size:11px; }
+  .input-head { display:flex; justify-content:space-between; gap:4px; margin-bottom:5px; white-space:nowrap; }
+  input[type=range] { width:100%; display:block; margin:0; accent-color:#60a5fa; }
+  .actions { display:flex; flex-direction:column; justify-content:center; gap:8px; }
+  button { width:100%; border:0; border-radius:8px; padding:10px 8px; font-size:11px; background:#2563eb; color:white; font-weight:700; cursor:pointer; }
+  button:hover { filter:brightness(1.12); }
+  #auto { background:#059669; }
+  @media (max-width:900px) {
+    body { overflow:auto; }
+    .app { height:auto; min-height:100vh; overflow:visible; }
+    header { align-items:flex-start; flex-direction:column; gap:3px; }
+    .subtitle { text-align:left; }
+    .canvas-wrap { flex:none; height:55vh; min-height:300px; }
+    .info-row { grid-template-columns:repeat(3,minmax(0,1fr)); }
+    .input-panel { grid-column:1 / 3; }
+    .actions { grid-column:3; }
+    #controls { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  }
+  @media (max-height:650px) and (min-width:901px) {
+    .app { padding:8px 12px; gap:6px; }
+    .info-row { min-height:92px; gap:6px; }
+    .metric,.input-panel { padding:7px 9px; }
+    #controls { margin-top:5px; gap:7px; }
+    .input-head { margin-bottom:2px; }
+    button { padding:7px 6px; }
+  }
+  @media (max-width:560px) {
+    .info-row { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .input-panel { grid-column:1 / -1; }
+    .actions { grid-column:1 / -1; flex-direction:row; }
+    #controls { grid-template-columns:repeat(5,minmax(0,1fr)); gap:6px; }
+    .input-row { font-size:10px; }
+    .input-head { flex-direction:column; gap:1px; white-space:normal; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>Neuron Simulator</h1>
+    <div class="subtitle">Summed signals trigger an action potential along the axon.</div>
+  </header>
+  <div class="canvas-wrap"><canvas id="neuron"></canvas></div>
+  <section class="info-row" aria-label="Neuron controls and status">
+    <div class="metric">
+      <div class="label">Summed Input</div>
+      <div class="value" id="sum">1</div>
+    </div>
+    <div class="metric">
+      <div class="label">Threshold</div>
+      <div class="value threshold" id="threshold">10</div>
+    </div>
+    <div class="metric">
+      <div class="label">Neuron State</div>
+      <div class="value" id="state">RESTING</div>
+    </div>
+    <div class="input-panel">
+      <div class="label">Dendrite Inputs</div>
+      <div id="controls"></div>
+    </div>
+    <div class="actions">
+      <button id="reset">Reset inputs</button>
+      <button id="auto">Pause auto inputs</button>
+    </div>
+  </section>
+</div>
+
+<script>
+const canvas = document.getElementById("neuron");
+const ctx = canvas.getContext("2d");
+const sumEl = document.getElementById("sum");
+const stateEl = document.getElementById("state");
+const controls = document.getElementById("controls");
+
+const threshold = 10;
+const values = [1, 0, 0, 0, 0];
+let firing = false;
+let fireStart = 0;
+
+values.forEach((v, i) => {
+  const row = document.createElement("div");
+  row.className = "input-row";
+  row.innerHTML = `
+    <div class="input-head">
+      <span>Dendrite ${i + 1}</span><strong id="v${i}">${v}</strong>
+    </div>
+    <input type="range" min="0" max="5" step="1" value="${v}">
+  `;
+  const slider = row.querySelector("input");
+  slider.addEventListener("input", () => {
+    values[i] = +slider.value;
+    document.getElementById("v" + i).textContent = values[i];
+    update();
+  });
+  controls.appendChild(row);
+});
+
+document.getElementById("reset").onclick = () => {
+  values.fill(0);
+  [...controls.querySelectorAll("input")].forEach((s,i) => {
+    s.value = 0;
+    document.getElementById("v" + i).textContent = "0";
+  });
+  firing = false;
+  update();
+};
+
+let autoMode = true;
+let lastAutoAdd = performance.now();
+
+document.getElementById("auto").onclick = () => {
+  autoMode = !autoMode;
+  document.getElementById("auto").textContent = autoMode ? "Pause automatic inputs" : "Start automatic inputs";
+};
+
+function update() {
+  const sum = values.reduce((a,b) => a+b, 0);
+  sumEl.textContent = sum;
+
+  if (sum >= threshold && !firing) {
+    firing = true;
+    fireStart = performance.now();
+  }
+  stateEl.textContent = firing ? "FIRING!" : "RESTING";
+  stateEl.className = "value " + (firing ? "fired" : "");
+}
+
+function resize() {
+  const r = canvas.getBoundingClientRect();
+  const dpr = devicePixelRatio || 1;
+  canvas.width = r.width * dpr;
+  canvas.height = r.height * dpr;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+addEventListener("resize", resize);
+resize();
+
+function drawNeuron(t) {
+  if (autoMode && !firing && t - lastAutoAdd > 650) {
+    const available = values.map((v,i) => v < 5 ? i : -1).filter(i => i >= 0);
+    if (available.length) {
+      const i = available[Math.floor(Math.random() * available.length)];
+      values[i] = Math.min(5, values[i] + 1);
+      const slider = controls.querySelectorAll("input")[i];
+      slider.value = values[i];
+      document.getElementById("v" + i).textContent = values[i];
+      update();
+    }
+    lastAutoAdd = t;
+  }
+
+  const w = canvas.clientWidth, h = canvas.clientHeight;
+  ctx.clearRect(0,0,w,h);
+  // A soft, clinical-looking backdrop with a faint vignette rather than a grid.
+  const bg = ctx.createRadialGradient(w*.42,h*.46,10,w*.48,h*.5,Math.max(w,h)*.75);
+  bg.addColorStop(0, '#17243b'); bg.addColorStop(1, '#070b15');
+  ctx.fillStyle = bg; ctx.fillRect(0,0,w,h);
+  const sx = w / 700, sy = h / 600, sc = Math.min(sx,sy);
+  ctx.save(); ctx.scale(sx,sy);
+  const cx = 235, cy = 300, somaR = 58;
+  const activeColor = '#79c8ff';
+  const strokeBranch = (pts, width, color, glow=false) => {
+    ctx.save(); ctx.lineCap='round'; ctx.lineJoin='round';
+    ctx.beginPath(); ctx.moveTo(pts[0],pts[1]);
+    for(let i=2;i<pts.length;i+=6) ctx.bezierCurveTo(pts[i],pts[i+1],pts[i+2],pts[i+3],pts[i+4],pts[i+5]);
+    if(glow){ctx.shadowColor=color;ctx.shadowBlur=12;}
+    ctx.strokeStyle=color;ctx.lineWidth=width;ctx.stroke();ctx.shadowBlur=0;
+    // Highlight along the membrane gives the branches a translucent, rounded edge.
+    ctx.strokeStyle='rgba(221,205,255,.42)';ctx.lineWidth=Math.max(0.8,width*.24);ctx.stroke();
+    ctx.restore();
+  };
+  const branch = (pts, width=4, active=false) => {
+    strokeBranch(pts,width,'rgba(95,61,104,.82)');
+    strokeBranch(pts,width*.58,active?'rgba(103,184,230,.95)':'rgba(199,143,180,.88)');
+    // fine inner highlight
+    strokeBranch(pts,Math.max(.7,width*.15),'rgba(255,225,238,.55)');
+  };
+  // Dendritic tree: long, tapered, irregular branches with secondary and tertiary twigs.
+  const trees = [
+    {p:[194,265,166,248,144,220,116,208,91,198,79,178], q:[[117,208,112,187,98,176,88,159],[143,220,150,202,164,192,176,176],[99,199,81,200,69,190,57,180]], i:0},
+    {p:[188,282,155,282,129,267,104,267,78,267,61,248], q:[[105,267,98,247,87,239,78,226],[80,267,71,280,60,288,48,290],[129,267,124,249,128,237,137,229]],i:1},
+    {p:[180,310,147,322,125,341,100,352,76,362,62,384], q:[[101,352,82,344,68,346,54,339],[77,362,72,382,62,396,54,410],[125,341,122,360,108,374,101,390]],i:2},
+    {p:[203,347,190,375,185,403,170,429,159,451,164,477], q:[[185,403,169,399,156,404,143,414],[170,429,184,444,192,458,190,476],[159,451,143,462,135,477,131,491]],i:3},
+    {p:[224,245,217,218,218,193,207,172,199,154,202,134], q:[[218,193,237,184,248,169,257,155],[207,172,190,165,179,151,174,137],[199,154,184,143,181,128,183,116]],i:4},
+    {p:[275,269,302,249,327,235,353,228,378,221,397,207], q:[[327,235,337,249,352,255,369,255],[353,228,364,211,380,207,394,195],[378,221,393,230,405,229,418,224]],i:-1},
+    {p:[278,329,309,340,331,353,354,360,377,367,394,383], q:[[331,353,340,340,355,335,370,335],[354,360,365,377,381,383,394,398],[377,367,393,357,408,358,421,351]],i:-1}
+  ];
+  trees.forEach(tr=>{
+    const active=tr.i>=0 && values[tr.i]>0;
+    branch(tr.p, tr.i===-1?4.5:5.4, active);
+    tr.q.forEach((q,j)=>branch(q, j===1?2.7:2.1, active));
+    if(active){const x=tr.p[tr.p.length-2], y=tr.p[tr.p.length-1];ctx.fillStyle='rgba(121,200,255,.18)';ctx.beginPath();ctx.arc(x,y,8+values[tr.i],0,Math.PI*2);ctx.fill();}
+  });
+  // Axon: a single long, thin, gently undulating process from the soma to its terminal arbor.
+  const axon = [278,289,322,276,360,239,405,231,458,222,493,256,531,276,561,286,585,282,605,264];
+  branch(axon, 7.2, firing);
+  // Fine axon membrane and subtle myelin-like segmented sheaths.
+  ctx.save();ctx.lineCap='round';
+  for(let i=0;i<6;i++){
+    const x=340+i*35, y=250+Math.sin(i*.8)*13;
+    ctx.strokeStyle='rgba(120,195,218,.22)';ctx.lineWidth=8;
+    ctx.beginPath();ctx.moveTo(x-7,y+2);ctx.quadraticCurveTo(x+5,y-5,x+12,y-1);ctx.stroke();
+  }
+  ctx.restore();
+  // Telodendria, with tiny bulb-like synaptic boutons at the tips.
+  const terminalBranches = [
+    [605,264,617,246,623,226,638,214], [623,226,626,209,637,199,648,192],
+    [617,246,638,244,651,235,663,224], [605,264,626,269,642,265,658,254],
+    [626,269,637,284,650,291,664,290], [585,282,601,299,617,307,629,322],
+    [617,307,616,323,624,334,637,340], [638,214,649,211,655,203,660,195]
+  ];
+  terminalBranches.forEach((p,i)=>branch(p, i%3===0?2.7:2.1, firing));
+  [[638,214],[648,192],[663,224],[658,254],[664,290],[629,322],[637,340],[660,195]].forEach(([x,y],i)=>{
+    const r=2.8+(i%3)*.45;const g=ctx.createRadialGradient(x-1,y-1,.2,x,y,r*1.8);
+    g.addColorStop(0,'#ffe4ef');g.addColorStop(.42,firing?'#ff829e':'#d79bc7');g.addColorStop(1,'#785b9c');
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r*1.45,0,Math.PI*2);ctx.fill();
+  });
+  // Organic soma silhouette: a gently irregular membrane, not a perfect circle.
+  ctx.save();ctx.shadowColor='rgba(190,120,205,.3)';ctx.shadowBlur=22;
+  const somaGrad=ctx.createRadialGradient(cx-18,cy-24,4,cx,cy,77);
+  somaGrad.addColorStop(0,'rgba(247,190,215,.98)');somaGrad.addColorStop(.48,'rgba(190,128,181,.98)');somaGrad.addColorStop(.82,'rgba(111,105,171,.98)');somaGrad.addColorStop(1,'rgba(75,101,151,.96)');
+  ctx.beginPath();
+  for(let i=0;i<=40;i++){const a=i/40*Math.PI*2;const rr=somaR+5*Math.sin(a*5)+2.5*Math.cos(a*8);const x=cx+Math.cos(a)*rr,y=cy+Math.sin(a)*rr;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}
+  ctx.closePath();ctx.fillStyle=somaGrad;ctx.fill();ctx.shadowBlur=0;
+  ctx.strokeStyle='rgba(255,220,238,.82)';ctx.lineWidth=2.2;ctx.stroke();ctx.restore();
+  // Nucleus with a double membrane and nucleolus.
+  const ng=ctx.createRadialGradient(cx-13,cy-15,3,cx,cy,31);
+  ng.addColorStop(0,'#8ec8f1');ng.addColorStop(.4,'#6259b4');ng.addColorStop(.82,'#383a83');ng.addColorStop(1,'#272d60');
+  ctx.fillStyle=ng;ctx.beginPath();ctx.ellipse(cx-2,cy+1,29,32,-.2,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle='rgba(218,204,255,.85)';ctx.lineWidth=2;ctx.stroke();
+  ctx.strokeStyle='rgba(124,202,233,.55)';ctx.lineWidth=1;ctx.beginPath();ctx.ellipse(cx-2,cy+1,24,27,-.2,0,Math.PI*2);ctx.stroke();
+  const nucleolus=ctx.createRadialGradient(cx+4,cy+3,1,cx+4,cy+3,11);nucleolus.addColorStop(0,'#ffb879');nucleolus.addColorStop(1,'#d65c70');
+  ctx.fillStyle=nucleolus;ctx.beginPath();ctx.ellipse(cx+4,cy+3,9,11,.3,0,Math.PI*2);ctx.fill();
+  // Organelles and fine speckles inside the cell body.
+  const organelles=[[210,278,8,4,-.6],[252,275,7,4,.4],[215,326,8,4,.3],[254,318,7,4,-.8],[236,267,5,3,.5],[236,338,6,3,-.4],[198,300,5,3,.8],[265,299,5,3,-.2]];
+  organelles.forEach(([x,y,rx,ry,a],i)=>{
+    ctx.save();ctx.translate(x,y);ctx.rotate(a);
+    const og=ctx.createLinearGradient(-rx,-ry,rx,ry);og.addColorStop(0,i%2?'#e8c5d5':'#f8b98e');og.addColorStop(.5,i%2?'#81c5d7':'#df7c89');og.addColorStop(1,'#655d9e');
+    ctx.fillStyle=og;ctx.beginPath();ctx.ellipse(0,0,rx,ry,0,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='rgba(255,235,238,.75)';ctx.lineWidth=.8;ctx.stroke();
+    ctx.strokeStyle='rgba(70,68,129,.65)';ctx.lineWidth=.8;ctx.beginPath();ctx.moveTo(-rx*.6,0);ctx.quadraticCurveTo(0,-ry*.8,rx*.55,ry*.15);ctx.stroke();ctx.restore();
+  });
+  for(let i=0;i<44;i++){
+    const a=i*2.399, r=35+(i%5)*3, x=cx+Math.cos(a)*r, y=cy+Math.sin(a)*r*.88;
+    ctx.fillStyle=i%3===0?'rgba(105,224,213,.8)':'rgba(255,224,239,.78)';
+    ctx.beginPath();ctx.ellipse(x,y,1.2,.8,a,0,Math.PI*2);ctx.fill();
+  }
+  // Action potential follows all three cubic-Bezier sections of the axon.
+  // Arc-length sampling keeps the glow moving smoothly through each bend.
+  const axonSegments = [
+    [[278,289],[322,276],[360,239],[405,231]],
+    [[405,231],[458,222],[493,256],[531,276]],
+    [[531,276],[561,286],[585,282],[605,264]]
+  ];
+  const bezierPoint = (seg,p) => {
+    const u=1-p, a=seg[0], b=seg[1], c=seg[2], d=seg[3];
+    return {x:u*u*u*a[0]+3*u*u*p*b[0]+3*u*p*p*c[0]+p*p*p*d[0],
+            y:u*u*u*a[1]+3*u*u*p*b[1]+3*u*p*p*c[1]+p*p*p*d[1]};
+  };
+  const bezierTangent = (seg,p) => {
+    const u=1-p, a=seg[0], b=seg[1], c=seg[2], d=seg[3];
+    return {x:3*u*u*(b[0]-a[0])+6*u*p*(c[0]-b[0])+3*p*p*(d[0]-c[0]),
+            y:3*u*u*(b[1]-a[1])+6*u*p*(c[1]-b[1])+3*p*p*(d[1]-c[1])};
+  };
+  const axonSamples=[];let axonLength=0, previous=null;
+  axonSegments.forEach((seg,si)=>{
+    for(let j=0;j<=60;j++){
+      if(si>0 && j===0) continue;
+      const p=j/60, point=bezierPoint(seg,p);
+      if(previous) axonLength+=Math.hypot(point.x-previous.x,point.y-previous.y);
+      axonSamples.push({x:point.x,y:point.y,length:axonLength,segment:si,p});previous=point;
+    }
+  });
+  const pointAlongAxon = (fraction) => {
+    const target=Math.max(0,Math.min(1,fraction))*axonLength;
+    let lo=0,hi=axonSamples.length-1;
+    while(lo<hi){const mid=(lo+hi)>>1;if(axonSamples[mid].length<target)lo=mid+1;else hi=mid;}
+    const b=axonSamples[lo],a=axonSamples[Math.max(0,lo-1)];
+    const mix=b.length===a.length?0:(target-a.length)/(b.length-a.length);
+    const seg=axonSegments[b.segment], tangent=bezierTangent(seg,b.p);
+    return {x:a.x+(b.x-a.x)*mix,y:a.y+(b.y-a.y)*mix,angle:Math.atan2(tangent.y,tangent.x)};
+  };
+  if(firing){
+    const elapsed=(t-fireStart)/1000;
+    const travelDuration=1.25;
+    if(elapsed<travelDuration){
+      const p=Math.max(0,Math.min(1,elapsed/travelDuration));
+      const point=pointAlongAxon(p);
+      const angle=point.angle;
+      ctx.save();
+      // A short golden trail hugs the axon behind the moving impulse.
+      ctx.lineCap='round';
+      for(let k=5;k>=1;k--){
+        const tp=Math.max(0,p-k*.018), tail=pointAlongAxon(tp);
+        ctx.globalAlpha=.10+(6-k)*.035;
+        ctx.strokeStyle='#ffb347';ctx.lineWidth=2+(6-k)*.55;
+        ctx.shadowColor='#ff9f43';ctx.shadowBlur=10;
+        ctx.beginPath();ctx.moveTo(tail.x,tail.y);ctx.lineTo(point.x,point.y);ctx.stroke();
+      }
+      ctx.globalAlpha=1;ctx.shadowColor='#ffb347';ctx.shadowBlur=24;
+      const pulse=ctx.createRadialGradient(point.x,point.y,1,point.x,point.y,17);
+      pulse.addColorStop(0,'#fffde7');pulse.addColorStop(.24,'#fff3a3');pulse.addColorStop(.55,'#ffb52e');pulse.addColorStop(1,'rgba(255,133,32,0)');
+      ctx.fillStyle=pulse;ctx.beginPath();ctx.arc(point.x,point.y,17,0,Math.PI*2);ctx.fill();
+      // Directional chevron rotates to match the local tangent of the curved axon.
+      ctx.translate(point.x,point.y);ctx.rotate(angle);
+      ctx.strokeStyle='#fff7c2';ctx.lineWidth=2.4;ctx.lineCap='round';ctx.lineJoin='round';
+      ctx.beginPath();ctx.moveTo(-7,-6);ctx.lineTo(2,0);ctx.lineTo(-7,6);ctx.stroke();
+      ctx.restore();
+      // Briefly light the terminal boutons as the signal reaches the end of the axon.
+      if(p>.88){
+        const a=(p-.88)/.12;
+        ctx.save();ctx.globalAlpha=a;ctx.shadowColor='#ffb347';ctx.shadowBlur=18;
+        [[638,214],[648,192],[663,224],[658,254],[664,290],[629,322],[637,340],[660,195]].forEach(([x,y])=>{
+          ctx.fillStyle='#ffc766';ctx.beginPath();ctx.arc(x,y,4.2,0,Math.PI*2);ctx.fill();
+        });ctx.restore();
+      }
+    }else{
+      firing=false;values.fill(0);
+      [...controls.querySelectorAll('input')].forEach((s,i)=>{s.value=0;document.getElementById('v'+i).textContent='0';});
+      lastAutoAdd=t;update();
+    }
+  }
+  // Small, restrained anatomical labels.
+  ctx.fillStyle='rgba(218,228,250,.72)';ctx.font='10px system-ui';ctx.textAlign='center';
+  ctx.fillText('DENDRITIC TREE',105,445);ctx.fillText('SOMA',235,380);ctx.fillText('AXON',438,207);ctx.fillText('SYNAPTIC TERMINALS',610,365);
+  ctx.restore();
+  requestAnimationFrame(drawNeuron);
+}
+
+update();
+requestAnimationFrame(drawNeuron);
+// When embedded in the slide deck: hand navigation keys back to the deck,
+// so the presenter can keep advancing slides after clicking inside the simulator.
+if (window.parent !== window) {
+  const deckKeys = ["ArrowRight","ArrowLeft","PageDown","PageUp"," ","Enter","Backspace","Home","End","n","N","f","F"];
+  addEventListener("keydown", e => {
+    if (!deckKeys.includes(e.key)) return;
+    e.preventDefault();
+    parent.postMessage({ deckKey: e.key }, "*");
+  }, true);
+}
+</script>
+</body>
+</html>
