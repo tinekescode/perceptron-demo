@@ -1,4 +1,4 @@
-import { fmt, sub } from './format.js';
+import { fmt, inputDigits, sub } from './format.js';
 
 const HEIGHT = 320;
 const CENTER_Y = 175;
@@ -11,7 +11,7 @@ function layout(hiddenSize) {
     { x: 70, y: CENTER_Y - 45 },
     { x: 70, y: CENTER_Y + 45 },
   ];
-  const gap = hiddenSize > 1 ? Math.min(78, (HEIGHT - 110) / (hiddenSize - 1)) : 0;
+  const gap = hiddenSize > 1 ? Math.min(60, (HEIGHT - 110) / (hiddenSize - 1)) : 0;
   const hidden = Array.from({ length: hiddenSize }, (_, j) => ({
     x: 265,
     y: CENTER_Y + (j - (hiddenSize - 1) / 2) * gap,
@@ -88,17 +88,23 @@ export function renderNetwork(svg, { kind, weights, previous, model, x, mapSourc
   const out = pos.output;
   const outputValue = kind === 'and' ? String(result.y) : fmt(result.y, 2);
 
+  // Crop the empty space above and below the nodes, leaving room for the column labels on top
+  const nodeYs = [...pos.inputs, ...pos.hidden].map((p) => p.y);
+  const top = Math.min(...nodeYs) - R - 40;
+  const bottom = Math.max(...nodeYs) + R + 16;
+  svg.setAttribute('viewBox', `0 ${top} 560 ${bottom - top}`);
+
   svg.innerHTML = `
     <defs>
       <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
         <path class="arrow-head" d="M0,0 L10,5 L0,10 z"/>
       </marker>
     </defs>
-    <text class="col-label" x="${pos.inputs[0].x}" y="24">inputs</text>
-    ${model.hiddenSize ? `<text class="col-label" x="${pos.hidden[0].x}" y="24">hidden layer · σ</text>` : ''}
-    <text class="col-label" x="${out.x}" y="24">output · ${kind === 'and' ? 'step' : 'σ'}</text>
+    <text class="col-label" x="${pos.inputs[0].x}" y="${top + 24}">inputs</text>
+    ${model.hiddenSize ? `<text class="col-label" x="${pos.hidden[0].x}" y="${top + 24}">hidden layer · σ</text>` : ''}
+    <text class="col-label" x="${out.x}" y="${top + 24}">output · ${kind === 'and' ? 'step' : 'σ'}</text>
     ${edges.map((e) => edgeSvg(e, maxAbs)).join('')}
-    ${pos.inputs.map((p, i) => nodeSvg(p, `x${sub(i + 1)}`, fmt(x[i], 2), x[i])).join('')}
+    ${pos.inputs.map((p, i) => nodeSvg(p, `x${sub(i + 1)}`, fmt(x[i], inputDigits(x[i])), x[i])).join('')}
     ${pos.hidden
       .map((p, j) =>
         nodeSvg(p, `h${sub(j + 1)}`, fmt(result.hidden[j].a, 2), result.hidden[j].a, {

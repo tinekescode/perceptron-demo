@@ -35,14 +35,14 @@ Vite forwards `/api/and/*` to `localhost:8080` and `/api/xor/*` to `localhost:80
 
 Both backends return their whole training history, and the page plays it back slowly so you can watch the network learn:
 
-- **AND**: one frame per training step (one example), at 1 step per second. A wrong prediction takes two frames: first the mistake with the old weights and the old line, then the update, with the new line and the old one dashed. The calculation panel shows the perceptron learning rule with the real numbers. The example being trained on is circled in the input space, and the weights that just changed are highlighted. The strip under the controls shows every step: red = wrong (weights updated), green = correct (no change).
+- **AND**: one frame per training step (one example), at 1.5 frames per second. A wrong prediction takes two frames: first the mistake with the old weights and the old line, then the update, with the new line and the old one dashed. The calculation panel shows the perceptron learning rule with the real numbers. The example being trained on is circled in the input space, and the weights that just changed are highlighted. The strip under the controls shows every step: red = wrong (weights updated), green = correct (no change).
 - **XOR**: one frame per epoch. Playback always takes about 20 seconds, however many epochs training needed. The loss chart under the controls shows how the error drops. Click or drag on it to jump.
 
-Use the controls to play/pause (or <kbd>Space</kbd>), step (<kbd>←</kbd>/<kbd>→</kbd>), scrub, or change the speed (0.25× to 4×). Every panel below always shows the network as it was at the current frame.
+Use the controls to play/pause (or <kbd>Space</kbd>), step (<kbd>←</kbd>/<kbd>→</kbd>), scrub, or change the speed (1×, 2× or 4×). Every panel below always shows the network as it was at the current frame.
 
 | Panel | Shows |
 |---|---|
-| **Network** | Every weight as a line: green = positive, red = negative, thicker = larger. Lines fade when little signal flows through them for the current input. Node fill = activation. |
+| **Network** | Every weight as a line: green = positive, red = negative, thicker = larger. Lines fade when little signal flows through them for the current input. Node fill = activation (not in the on-screen legend). |
 | **Input space** | Every possible input (x₁, x₂), coloured by the network's output, with the decision boundary as a dark line. AND gives a straight line; XOR gives a curved region. Click or drag to pick an input. For XOR, click a hidden neuron (or use the h₁…h₄ buttons) to see the single straight line that neuron draws. |
 | **Calculation** | The forward pass for the selected input, step by step, with the real numbers. |
 | **Truth table** | Expected vs predicted output for the four training inputs. Click a row to select that input. |

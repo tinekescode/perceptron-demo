@@ -4,7 +4,7 @@ import { renderNetwork } from './network-view.js';
 import { drawMap, fromFraction, renderOverlay, MIN, MAX } from './map-view.js';
 import { renderCalc } from './calc-view.js';
 import { baseRate, buildFrames, frameLabel, predictCorners, renderTimeline, updateTimeline } from './playback.js';
-import { fmt, sub } from './format.js';
+import { fmt, inputDigits, sub } from './format.js';
 
 const CONFIGS = {
   and: {
@@ -33,7 +33,15 @@ const CONFIGS = {
   },
 };
 
-const SPEEDS = [0.25, 0.5, 1, 2, 4];
+const SPEEDS = [1, 2, 4];
+// AND learning rates to pick from: clearly different on stage. 0.01 is left out on purpose: about 1 run in 8 doesn't
+// learn AND within the backend's 100 epochs, and the others take minutes to play back.
+const LEARNING_RATES = [0.02, 0.1, 1];
+
+// ?embed: shown on a slide in the deck (how-ai-lost-the-thread). ?tab=and|xor picks the tab.
+const params = new URLSearchParams(location.search);
+const EMBED = params.has('embed');
+if (EMBED) document.documentElement.classList.add('embed');
 
 const state = {
   active: 'and',
@@ -42,6 +50,9 @@ const state = {
   error: { and: null, xor: null },
   input: { and: [0, 0], xor: [0, 1] },
   mapSource: { and: 'out', xor: 'out' }, // 'out' or index of a hidden neuron
+  // AND only: the learning rate for the next run, and whether it reuses the last run's random start
+  learningRate: 0.1,
+  sameStart: false,
 };
 
 const app = document.querySelector('#app');
@@ -80,13 +91,22 @@ function activate(kind) {
   if (state.status[kind] === 'idle') train(kind);
 }
 
+/** AND: the learning rate, plus the last run's seed when it should start from the same weights. */
+function runQuery(kind) {
+  if (kind !== 'and') return '';
+  const params = new URLSearchParams({ learningRate: state.learningRate });
+  const seed = state.runs.and?.response.seed;
+  if (state.sameStart && seed !== undefined) params.set('seed', seed);
+  return `?${params}`;
+}
+
 async function train(kind) {
   if (state.runs[kind]) state.runs[kind].playing = false;
   state.status[kind] = 'loading';
   state.error[kind] = null;
   if (kind === state.active) renderView();
   try {
-    const res = await fetch(CONFIGS[kind].endpoint, { method: 'POST' });
+    const res = await fetch(CONFIGS[kind].endpoint + runQuery(kind), { method: 'POST' });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const response = await res.json();
     const speed = state.runs[kind]?.speed ?? 1;
@@ -215,6 +235,18 @@ function playerHtml(kind, run) {
     </section>`;
 }
 
+function andOptionsHtml() {
+  return `
+    <label class="option">Learning rate η
+      <select id="learning-rate">
+        ${LEARNING_RATES.map((r) => `<option value="${r}" ${r === state.learningRate ? 'selected' : ''}>${r}</option>`).join('')}
+      </select>
+    </label>
+    <label class="option check" title="Start from the same random weights as the last run, so only the learning rate differs">
+      <input type="checkbox" id="same-start" ${state.sameStart ? 'checked' : ''}> Same start
+    </label>`;
+}
+
 function renderView() {
   const kind = state.active;
   const cfg = CONFIGS[kind];
@@ -242,6 +274,7 @@ function renderView() {
       <button class="primary" id="train" ${state.status[kind] === 'loading' ? 'disabled' : ''}>
         ${run ? 'Train again' : 'Train'}
       </button>
+      ${kind === 'and' ? andOptionsHtml() : ''}
       ${statusHtml(kind)}
       ${run ? `<dl class="stats">${statsHtml(kind, run.response)}</dl>` : ''}
     </section>
@@ -258,9 +291,6 @@ function renderView() {
                 <li><span class="swatch line pos"></span>positive weight</li>
                 <li><span class="swatch line neg"></span>negative weight</li>
                 <li>thicker = larger weight</li>
-                <li>faded = little signal flowing in</li>
-                <li><span class="swatch node"></span>fill = activation</li>
-                ${kind === 'and' ? '<li><span class="swatch changed"></span>just changed</li>' : ''}
               </ul>
             </article>
             <article class="card">
@@ -274,7 +304,6 @@ function renderView() {
                 <li><span class="swatch cls0"></span><span id="legend0"></span></li>
                 <li><span class="swatch cls1"></span><span id="legend1"></span></li>
                 <li><span class="swatch line boundary"></span><span id="legend-line"></span></li>
-                ${kind === 'and' ? '<li><span class="swatch training"></span>example being trained on</li><li><span class="swatch line ghost"></span>line before the update</li>' : ''}
               </ul>
               <p class="hint">Click or drag anywhere to feed that input through the network.</p>
             </article>
@@ -287,7 +316,9 @@ function renderView() {
               <table class="truth" id="table"></table>
               <p class="hint">${
                 kind === 'and'
-                  ? 'Every training run starts from new random weights. Click <b>Train again</b> for a different run.'
+                  ? state.sameStart
+                    ? '<b>Same start</b> is on: every run begins from the same random weights, so only the learning rate differs.'
+                    : 'Every training run starts from new random weights.<br>Click <b>Train again</b> for a different run.'
                   : 'The random seed is fixed (42), so every training run learns the same weights.'
               }</p>
             </article>
@@ -297,6 +328,17 @@ function renderView() {
   `;
 
   view.querySelector('#train').addEventListener('click', () => train(kind));
+  if (kind === 'and') {
+    // A new learning rate trains a new run straight away
+    view.querySelector('#learning-rate').addEventListener('change', (e) => {
+      state.learningRate = Number(e.target.value);
+      train('and');
+    });
+    view.querySelector('#same-start').addEventListener('change', (e) => {
+      state.sameStart = e.target.checked;
+      renderView();
+    });
+  }
   mapResizeObserver.disconnect();
   if (!run) return;
 
@@ -394,8 +436,10 @@ function updateMap() {
   const name = source === 'out' ? 'output' : `h${sub(source + 1)}`;
   const boundary =
     kind === 'and' ? 'decision boundary (z = 0)' : source === 'out' ? 'decision boundary (output = 0.5)' : `line where ${name} = 0.5 (its z = 0)`;
-  view.querySelector('#legend0').textContent = `${name} near 0`;
-  view.querySelector('#legend1').textContent = `${name} near 1`;
+  // A perceptron's output is exactly 0 or 1; a sigmoid's only comes close
+  const near = kind === 'and' ? '' : 'near ';
+  view.querySelector('#legend0').textContent = `${name} ${near}0`;
+  view.querySelector('#legend1').textContent = `${name} ${near}1`;
   view.querySelector('#legend-line').textContent = boundary;
   view.querySelectorAll('[data-source]').forEach((btn) =>
     btn.setAttribute('aria-pressed', String(btn.dataset.source === String(source))),
@@ -419,7 +463,7 @@ function updateDynamic(predictions) {
   });
   const ghost = frame.phase === 'update' ? frame.before : null;
   renderOverlay(view.querySelector('#overlay'), { predictions, x, active, ghost });
-  view.querySelector('#calc-title').textContent = `Calculation for x = (${fmt(x[0], 2)}, ${fmt(x[1], 2)})`;
+  view.querySelector('#calc-title').textContent = `Calculation for x = (${fmt(x[0], inputDigits(x[0]))}, ${fmt(x[1], inputDigits(x[1]))})`;
   renderCalc(view.querySelector('#calc'), {
     kind, weights: frame.snapshot, frame, learningRate: run.response.learningRate, model, x, mapSource,
   });
@@ -488,4 +532,17 @@ function bindMapPointer(overlay) {
   overlay.addEventListener('pointercancel', () => (dragging = false));
 }
 
-activate('and');
+if (EMBED) {
+  // Once the presenter clicks into the demo, this page has the keyboard. Pass the keys the
+  // player doesn't use on to the deck, so a presenter clicker (Page Up/Down) still changes slides.
+  // Esc hands the keyboard back to the deck.
+  const DECK_KEYS = ['PageDown', 'PageUp', 'Escape', 'n', 'N', 'f', 'F'];
+  document.addEventListener('keydown', (e) => {
+    if (!DECK_KEYS.includes(e.key) || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.target.closest('input, select, textarea')) return;
+    e.preventDefault();
+    parent.postMessage({ deckKey: e.key }, '*');
+  });
+}
+
+activate(CONFIGS[params.get('tab')] ? params.get('tab') : 'and');

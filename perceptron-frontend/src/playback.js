@@ -39,7 +39,7 @@ export function buildFrames(kind, response) {
 
 /** Frames per second at 1× speed. XOR always takes about 20 seconds, however many epochs it needs. */
 export function baseRate(kind, frameCount) {
-  return kind === 'and' ? 1 : Math.max(10, (frameCount - 1) / 20);
+  return kind === 'and' ? 1.5 : Math.max(10, (frameCount - 1) / 20);
 }
 
 /** The network's result for the four training inputs, using the given model. */
@@ -53,22 +53,11 @@ export function predictCorners(kind, model) {
 
 export function frameLabel(kind, frames, index, predictions) {
   const frame = frames[index];
-  const correct = predictions.filter((p) => p.correct).length;
-  if (kind === 'and') {
-    if (!frame.step) {
-      return `<b>Start:</b> random weights, before seeing any example · ${correct}/4 correct`;
-    }
-    const { epoch, example, inputs, target, predicted, error } = frame.step;
-    const lastEpoch = frames[frames.length - 1].epoch;
-    const outcome = {
-      check: '<span class="ok">correct → no change</span>',
-      predict: '<span class="bad">wrong!</span> Next: update the weights',
-      update: '<span class="bad">wrong</span> → weights updated, the line moves (dashed = where it was)',
-    }[frame.phase];
-    return `<b>Epoch ${epoch} of ${lastEpoch}</b> · example ${example + 1} of 4:
-      x = (${inputs.join(', ')}), target ${target}, predicted ${predicted} · ${outcome}`;
-  }
   const lastEpoch = frames[frames.length - 1].epoch;
+  if (kind === 'and') {
+    return frame.step ? `<b>Epoch ${frame.step.epoch} of ${lastEpoch}</b>` : '<b>Start</b>';
+  }
+  const correct = predictions.filter((p) => p.correct).length;
   const head = frame.epoch === 0 ? '<b>Start:</b> random weights' : `<b>Epoch ${frame.epoch.toLocaleString('en')}</b> of ${lastEpoch.toLocaleString('en')}`;
   return `${head} · avg. loss ${frame.loss.toPrecision(3)} · ${correct}/4 correct`;
 }
@@ -85,13 +74,13 @@ function stepStrip(frames) {
   const cell = (i) => {
     const { step: s, stepIndex } = frames[i];
     const title = `Epoch ${s.epoch}, (${s.inputs.join(', ')}): ${s.error ? 'wrong, weights updated' : 'correct, no change'}`;
-    return `<button class="cell ${s.error ? 'update' : 'correct'}" data-frame="${i}" data-step="${stepIndex}" title="${title}">${s.inputs.join(',')}</button>`;
+    return `<button class="cell ${s.error ? 'update' : 'correct'}" data-frame="${i}" data-step="${stepIndex}" title="${title}"></button>`;
   };
   return `
     <div class="strip">
       <div class="strip-group">
         <span class="strip-label">start</span>
-        <div class="cells"><button class="cell start" data-frame="0" data-step="-1" title="Random starting weights">·</button></div>
+        <div class="cells"><button class="cell start" data-frame="0" data-step="-1" title="Random starting weights"></button></div>
       </div>
       ${[...epochs]
         .map(
@@ -102,11 +91,7 @@ function stepStrip(frames) {
           </div>`,
         )
         .join('')}
-    </div>
-    <ul class="legend">
-      <li><span class="swatch update"></span>wrong → weights updated</li>
-      <li><span class="swatch correct"></span>correct → no change</li>
-    </ul>`;
+    </div>`;
 }
 
 const CHART = { w: 600, h: 130, left: 44, right: 10, top: 10, bottom: 22 };
@@ -176,6 +161,14 @@ export function updateTimeline(el, kind, frames, index) {
       btn.classList.toggle('current', step === stepIndex);
       btn.classList.toggle('done', step < stepIndex);
     });
+    // In embed mode the strip is one row that scrolls: keep the current step in view
+    const strip = el.querySelector('.strip');
+    const current = el.querySelector('[data-step].current');
+    if (strip && current && strip.scrollWidth > strip.clientWidth) {
+      const s = strip.getBoundingClientRect();
+      const c = current.getBoundingClientRect();
+      if (c.left < s.left || c.right > s.right) strip.scrollLeft += c.left - s.left - (s.width - c.width) / 2;
+    }
     return;
   }
   const { w, h, left, right, top, bottom } = CHART;

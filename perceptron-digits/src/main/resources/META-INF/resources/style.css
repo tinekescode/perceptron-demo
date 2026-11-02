@@ -425,3 +425,39 @@ canvas {
 .swatch.act {
   border: 2px solid var(--accent);
 }
+
+/* ?embed: on a slide in the deck (how-ai-lost-the-thread). No page header or intro, and the
+   panels in two rows, so the whole demo fits on one slide. */
+.embed #app {
+  max-width: none;
+  padding: 16px 20px;
+}
+
+.embed .top,
+.embed .intro {
+  display: none;
+}
+
+.embed .toolbar {
+  margin-bottom: 14px;
+}
+
+.embed .grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-areas:
+    'draw prediction accuracy'
+    'neurons neurons mistakes';
+  align-items: start;
+  gap: 14px;
+}
+
+.embed .card {
+  padding: 14px;
+}
+
+/* The cards in page order: draw, prediction, accuracy, mistakes, hidden neurons */
+.embed .grid > :nth-child(1) { grid-area: draw; }
+.embed .grid > :nth-child(2) { grid-area: prediction; }
+.embed .grid > :nth-child(3) { grid-area: accuracy; }
+.embed .grid > :nth-child(4) { grid-area: mistakes; }
+.embed .grid > :nth-child(5) { grid-area: neurons; }

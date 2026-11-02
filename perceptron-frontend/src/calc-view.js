@@ -1,4 +1,4 @@
-import { fmt, signed, sub, term } from './format.js';
+import { fmt, inputDigits, signed, sub, term } from './format.js';
 
 const isTrainingInput = (x) => x.every((v) => v === 0 || v === 1);
 
@@ -71,7 +71,7 @@ function andCalc(weights, model, x, frame, learningRate) {
       <li>
         <span class="step-title">Weighted sum</span>
         <code>z = b + w₁·x₁ + w₂·x₂</code>
-        <code>z = ${term(b)} + ${term(w1)} × ${term(x[0], 2)} + ${term(w2)} × ${term(x[1], 2)} = <b>${fmt(z)}</b></code>
+        <code>z = ${term(b)} + ${term(w1)} × ${term(x[0], inputDigits(x[0]))} + ${term(w2)} × ${term(x[1], inputDigits(x[1]))} = <b>${fmt(z)}</b></code>
       </li>
       <li>
         <span class="step-title">Step activation</span>
@@ -100,7 +100,7 @@ function xorCalc(weights, model, x, mapSource, frame) {
       (h, j) => `
       <tr class="${mapSource === j ? 'selected' : ''}">
         <th>h${sub(j + 1)}</th>
-        <td>${fmt(biasHidden[j])}${signed(weightsInputHidden[j][0])} × ${term(x[0], 2)}${signed(weightsInputHidden[j][1])} × ${term(x[1], 2)} = <b>${fmt(h.z)}</b></td>
+        <td>${fmt(biasHidden[j])}${signed(weightsInputHidden[j][0])} × ${term(x[0], inputDigits(x[0]))}${signed(weightsInputHidden[j][1])} × ${term(x[1], inputDigits(x[1]))} = <b>${fmt(h.z)}</b></td>
         <td><b>${fmt(h.a)}</b></td>
       </tr>`,
     )

@@ -4,6 +4,10 @@ const POLL_MS = 400; // while loading or training
 const IDLE_POLL_MS = 2000;
 const HIDDEN_EVERY_MS = 1000; // weight images are larger, so refresh them less often
 
+// ?embed: shown on a slide in the deck (how-ai-lost-the-thread)
+const EMBED = new URLSearchParams(location.search).has('embed');
+if (EMBED) document.documentElement.classList.add('embed');
+
 const $ = (id) => document.getElementById(id);
 const pad = $('pad');
 const padCtx = pad.getContext('2d', { willReadFrequently: true });
@@ -430,6 +434,18 @@ $('sample').addEventListener('click', async () => {
     alert(err.message);
   }
 });
+
+if (EMBED) {
+  // Once the presenter clicks into the demo, this page has the keyboard. It doesn't use any
+  // slide keys itself, so pass them on to the deck. Esc hands the keyboard back to the deck.
+  const DECK_KEYS = ['ArrowRight', 'ArrowLeft', 'PageDown', 'PageUp', ' ', 'Enter', 'Escape', 'n', 'N', 'f', 'F'];
+  document.addEventListener('keydown', (e) => {
+    if (!DECK_KEYS.includes(e.key) || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.target.closest('input, select, textarea, button')) return;
+    e.preventDefault();
+    parent.postMessage({ deckKey: e.key }, '*');
+  });
+}
 
 clearInput();
 refreshHidden().catch(() => {});

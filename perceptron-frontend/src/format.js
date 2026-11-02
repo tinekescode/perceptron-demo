@@ -9,6 +9,9 @@ export function fmt(v, digits = 3) {
   return (v < 0 && Number(s) !== 0 ? '−' : '') + s;
 }
 
+/** Decimals for an input value: "0" and "1" at the corners, two decimals for a point picked in between. */
+export const inputDigits = (v) => (Number.isInteger(v) ? 0 : 2);
+
 /** Like fmt, but negative values get parentheses so they read well inside a formula. */
 export function term(v, digits = 3) {
   const s = fmt(v, digits);

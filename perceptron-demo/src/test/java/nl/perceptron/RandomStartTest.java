@@ -21,7 +21,7 @@ class RandomStartTest {
     void startingLineCrossesUnitSquareAndHasSomethingToLearn() {
         Random random = new Random(1);
         for (int run = 0; run < 1_000; run++) {
-            Perceptron perceptron = PerceptronResource.randomStart(random);
+            Perceptron perceptron = PerceptronResource.randomStart(random, PerceptronResource.LEARNING_RATE);
 
             boolean anyZero = false;
             boolean anyOne = false;

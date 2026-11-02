@@ -12,6 +12,7 @@ public record PerceptronRunResponse(
         List<Prediction> predictions,
         List<Double> initialWeights,
         double initialBias,
-        List<TrainingStep> history
+        List<TrainingStep> history,
+        int seed
 ) {
 }

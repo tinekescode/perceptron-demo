@@ -56,4 +56,43 @@ class PerceptronResourceTest {
         assertEquals(json.getList("weights"), json.getList("history[-1].weights"));
         assertEquals(json.getDouble("bias"), json.getDouble("history[-1].bias"));
     }
+
+    @Test
+    void runUsesTheGivenLearningRate() {
+        given()
+                .queryParam("learningRate", 0.5)
+                .when().post("/perceptron/run")
+                .then()
+                .statusCode(200)
+                .body("learningRate", is(0.5f))
+                .body("learned", is(true));
+    }
+
+    @Test
+    void runRejectsLearningRateOutOfRange() {
+        given().queryParam("learningRate", 0).when().post("/perceptron/run").then().statusCode(400);
+        given().queryParam("learningRate", 5).when().post("/perceptron/run").then().statusCode(400);
+    }
+
+    @Test
+    void sameSeedGivesSameStartWhateverTheLearningRate() {
+        int seed = given().when().post("/perceptron/run").then().statusCode(200).extract().path("seed");
+
+        JsonPath slow = run(seed, 0.1);
+        JsonPath fast = run(seed, 1.0);
+
+        assertEquals(seed, slow.getInt("seed"));
+        assertEquals(slow.getList("initialWeights"), fast.getList("initialWeights"));
+        assertEquals(slow.getDouble("initialBias"), fast.getDouble("initialBias"));
+    }
+
+    private static JsonPath run(int seed, double learningRate) {
+        return given()
+                .queryParam("seed", seed)
+                .queryParam("learningRate", learningRate)
+                .when().post("/perceptron/run")
+                .then()
+                .statusCode(200)
+                .extract().jsonPath();
+    }
 }

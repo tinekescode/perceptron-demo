@@ -155,6 +155,27 @@ button.primary:disabled {
   cursor: progress;
 }
 
+/* AND options in the toolbar: learning rate and "same start" */
+.option {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.option select {
+  margin-left: 6px;
+  padding: 4px 6px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card);
+  color: var(--fg);
+  font: inherit;
+}
+
+.option.check input {
+  accent-color: var(--accent);
+  vertical-align: -2px;
+}
+
 .status {
   font-size: 0.85rem;
   color: var(--muted);
@@ -322,10 +343,6 @@ button.primary:disabled {
   border-color: var(--fg);
 }
 
-.swatch.update { background: color-mix(in srgb, var(--bad) 40%, transparent); }
-.swatch.correct { background: color-mix(in srgb, var(--ok) 35%, transparent); }
-.swatch.changed { background: var(--accent); }
-.swatch.training { border: 2px solid var(--fg); border-radius: 50%; }
 
 .loss-chart {
   display: block;
@@ -420,7 +437,6 @@ button.primary:disabled {
 .swatch.pos { background: var(--pos); }
 .swatch.neg { background: var(--neg); }
 .swatch.boundary { background: var(--fg); }
-.swatch.node { background: var(--class1); border-radius: 50%; }
 .swatch.cls0 { background: var(--class0); opacity: 0.6; }
 .swatch.cls1 { background: var(--class1); opacity: 0.6; }
 
@@ -601,11 +617,6 @@ button.primary:disabled {
   stroke-width: 2;
   stroke-dasharray: 6 5;
   stroke-opacity: 0.55;
-}
-
-.swatch.ghost {
-  background: repeating-linear-gradient(90deg, var(--fg) 0 4px, transparent 4px 7px);
-  opacity: 0.6;
 }
 
 .map .training {
@@ -841,4 +852,122 @@ button.primary:disabled {
   display: block;
   height: 100%;
   background: var(--class1);
+}
+
+/* ?embed: on a slide in the deck (how-ai-lost-the-thread). No page header or intro, and the
+   four panels side by side, so a whole demo fits on one slide. */
+/* Bigger text for the back of the room: everything sized in rem grows with this */
+.embed {
+  font-size: 19px;
+}
+
+.embed h2 {
+  font-size: 1.25rem;
+}
+
+/* The calculation is there to read later, so it stays compact */
+.embed .grid > :nth-child(3) {
+  font-size: 15px;
+}
+
+.embed .grid > :nth-child(3) h2 {
+  font-size: 1.25rem;
+}
+
+.embed .steps code,
+.embed .calc-table {
+  font-size: 13.5px;
+}
+
+.embed #net {
+  max-height: 258px;
+}
+
+/* The texts under the network, the input space and the truth table */
+.embed .grid > :nth-child(1) .legend,
+.embed .grid > :nth-child(2) .legend,
+.embed .grid > :nth-child(2) .hint,
+.embed .grid > :nth-child(4) .hint {
+  font-size: 1rem;
+}
+
+/* Fixed-size labels in the two diagrams */
+.embed #net .edge-label {
+  font-size: 15px;
+}
+
+.embed #net .node-name,
+.embed #net .node-note {
+  font-size: 13px;
+}
+
+.embed #net .col-label {
+  font-size: 16px;
+}
+
+.embed #net .node-value {
+  font-size: 16px;
+}
+
+.embed #net .prediction {
+  font-size: 20px;
+}
+
+.embed .map text {
+  font-size: 14px;
+}
+
+.embed .map .axis {
+  font-size: 15px;
+}
+
+.embed #app {
+  max-width: none;
+  padding: 16px 20px;
+}
+
+.embed .top,
+.embed .intro {
+  display: none;
+}
+
+.embed .toolbar,
+.embed .player {
+  margin-bottom: 14px;
+}
+
+.embed .grid {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.15fr);
+  grid-template-areas:
+    'net map calc'
+    'table map calc';
+  grid-template-rows: auto 1fr;
+  align-items: start;
+  gap: 14px;
+}
+
+/* The cards in page order: network, input space, calculation, truth table */
+.embed .grid > :nth-child(1) { grid-area: net; }
+.embed .grid > :nth-child(2) { grid-area: map; }
+.embed .grid > :nth-child(3) { grid-area: calc; }
+.embed .grid > :nth-child(4) { grid-area: table; }
+
+.embed .card {
+  padding: 14px;
+}
+
+.embed .loss-chart {
+  max-height: 88px;
+}
+
+/* One row of training steps that scrolls, however many epochs a run needs (up to ~85 at η = 0.02) */
+.embed .strip {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: thin;
+}
+
+.embed .strip-group {
+  flex-shrink: 0;
 }

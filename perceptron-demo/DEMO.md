@@ -8,7 +8,7 @@ A **5–10 minute** live demo of the finished app, shown in the **visualizer** (
 
 A Quarkus app with one REST endpoint: `POST /perceptron/run`.
 It trains a **single-node perceptron** on logical **AND** and returns the weights, the predictions and **every training step**.
-The visualizer replays those steps one per second, so the audience watches the line move until it separates the points.
+The visualizer replays those steps at 1.5 frames per second, so the audience watches the line move until it separates the points.
 
 **Takeaway:** a perceptron is a tiny trainable classifier: weighted sum, threshold, nudge when wrong. AND is linearly separable, so one node (one straight line) is enough.
 
@@ -32,8 +32,8 @@ The AND tab trains and starts playing as soon as the page opens. Press **⏮** t
 | Panel | What it shows for AND |
 |---|---|
 | **Toolbar** | **Train again**, epochs, learning rate, learned ✓/✗ |
-| **Player** | Play/pause, step **⏴ ⏵**, scrub, speed. The label says which example is being trained on and whether it was right |
-| **Step strip** | One cell per training step, grouped by epoch: **red** = wrong (weights updated), **green** = correct (no change) |
+| **Player** | Play/pause, step **⏴ ⏵**, scrub, speed. The label shows the current epoch |
+| **Step strip** | One cell per training step, grouped by epoch: **red** = wrong (weights updated), **green** = correct (no change). There are no numbers or legend on screen, so say this out loud |
 | **Network** | x₁, x₂ → one node. Line thickness/colour = weight. Changed weights are highlighted |
 | **Input space** | The four points, coloured by the output, with the decision line. The current example is circled; after an update the old line is dashed |
 | **Calculation** | `z = w₁·x₁ + w₂·x₂ + b`, the step, and the learning rule, **with the real numbers** |
@@ -57,7 +57,7 @@ The AND tab trains and starts playing as soon as the page opens. Press **⏮** t
 2. **The neuron (1 min)**: at the start frame (**⏮**), point at **Network** and **Calculation**:
    two inputs → weighted sum + bias → step (`z ≥ 0` → 1, else 0). The weights are random, so the line is in a random place and some answers are wrong.
 
-3. **Watch it learn (2 min)**: press **▶ Play** (1 step per second).
+3. **Watch it learn (2 min)**: press **▶ Play** (1.5 frames per second; use **Speed** to go faster, or pause on a step to explain it).
    - Green step: “Right, so leave it.”
    - Red step: the player **stops on the mistake** for one frame, then shows the update. **The line jumps; the dashed line is where it was.** Pause here once and read the update in **Calculation**: `w += η · error · x`.
    - Point at the **step strip**: red early, an all-green epoch at the end. That clean epoch is why training stops.
@@ -93,7 +93,17 @@ Stay in `Perceptron.java` except the first stop. Each stop maps to something the
 
 ### Live tweak
 
-In `PerceptronResource.java` set `LEARNING_RATE = 1.0`, save, click **Train again**. The line takes bigger jumps (it may overshoot). Set it to `0.01`: tiny moves, many more epochs. Revert to `0.1`.
+All in the visualizer, so it works on the slide too:
+
+1. Tick **Same start**, so the next runs begin from the same random weights as the current one. Now only the learning rate differs.
+2. Ask the room: "If it takes bigger steps, will it learn faster?"
+3. Set **Learning rate η** to **1**: it trains straight away. The line takes big jumps and may overshoot.
+4. Set it to **0.02**: tiny moves, and usually about three times as many epochs as 0.1. Set **Speed** to 4× or drag the slider to the end: at normal speed this run usually takes over a minute, sometimes more than three.
+5. Set it back to **0.1** and untick **Same start**.
+
+The punchline: too small is slow, but ten times bigger isn't ten times faster. Past a certain point it just jumps around. Picking the step size is a real choice, in every neural network since.
+
+Measured over 2,000 random starts: median epochs 19 at η = 0.02, 7 at 0.1, 6 at 1. The dropdown leaves out 0.01 on purpose: about 1 run in 8 doesn't learn AND within the 100-epoch limit.
 
 Don't change `AND_TARGETS`: the visualizer computes the expected AND values itself, so the truth table and calculation would disagree with the backend.
 
@@ -113,7 +123,7 @@ if wrong:
   bias += η · (target − output)
 ```
 
-- **η** = `0.1`
+- **η** = `0.1` by default; the visualizer offers 0.02, 0.1 and 1
 - AND: one straight line separates `(1,1)` from the other three points
 - XOR (if asked): not linearly separable → one perceptron cannot learn it (that is the MLP demo)
 
