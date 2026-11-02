@@ -5,7 +5,7 @@
       "name": "perceptron-frontend",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["--prefix", "perceptron-frontend", "run", "dev"],
-      "port": 5173
+      "port": 5180
     },
     {
       "name": "perceptron-digits",
@@ -16,19 +16,19 @@
     {
       "name": "slides",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["--yes", "http-server@14.1.1", "how-ai-lost-the-thread", "-p", "8090", "-c-1", "-s"],
+      "runtimeArgs": ["--yes", "http-server@14.1.1", "presentations/2026-11-12-how-ai-lost-the-thread", "-p", "8090", "-c-1", "-s"],
       "port": 8090
     },
     {
       "name": "slides-november-2",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["--yes", "http-server@14.1.1", "how-ai-lost-the-thread-november-2", "-p", "8091", "-c-1", "-s"],
+      "runtimeArgs": ["--yes", "http-server@14.1.1", "presentations/2026-11-02-how-ai-lost-the-thread-10-min", "-p", "8091", "-c-1", "-s"],
       "port": 8091
     },
     {
       "name": "slides-november-3",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["--yes", "http-server@14.1.1", "how-ai-lost-the-thread-november-3", "-p", "8092", "-c-1", "-s"],
+      "runtimeArgs": ["--yes", "http-server@14.1.1", "presentations/2026-11-03-how-ai-lost-the-thread-nl", "-p", "8092", "-c-1", "-s"],
       "port": 8092
     }
   ]

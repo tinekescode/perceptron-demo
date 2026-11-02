@@ -426,7 +426,7 @@ canvas {
   border: 2px solid var(--accent);
 }
 
-/* ?embed: on a slide in the deck (how-ai-lost-the-thread). No page header or intro, and the
+/* ?embed: on a slide in the decks (presentations/). No page header or intro, and the
    panels in two rows, so the whole demo fits on one slide. */
 .embed #app {
   max-width: none;

@@ -1,6 +1,6 @@
 # How AI Lost the Thread: November 2 (10 minutes)
 
-The short version of the talk, for the feedback session: 10 minutes, 15 at most. The full talk is in [`how-ai-lost-the-thread`](../how-ai-lost-the-thread).
+The short version of the talk, for the feedback session: 10 minutes, 15 at most. The full talk is in [`2026-11-12-how-ai-lost-the-thread`](../2026-11-12-how-ai-lost-the-thread).
 
 It stops at the moment AI and biology part ways:
 
@@ -16,7 +16,7 @@ It stops at the moment AI and biology part ways:
 | 10 | XOR demo, a quick look: 961 epochs against a handful for AND | 1:00 |
 | 11 | Thank you + QR codes | |
 
-Compared with the full talk: slide 3 promises only the first stretch of the road, the XOR demo is only played once to show how long it takes, and the speaker notes of the demo, backprop and thank-you slides are adapted.
+Compared with the full talk: slide 3 promises only the first stretch of the road, the XOR demo is only played once to show how long it takes, and the speaker notes of the demo, backprop and thank-you slides are adapted. The speaker notes are local only, in `speaker-notes.js` and `speaker-notes.docx` (see the [full talk's README](../2026-11-12-how-ai-lost-the-thread/README.md#speaker-notes)).
 
 ## Run
 
@@ -35,7 +35,7 @@ cd perceptron-frontend && npm run dev
 ```
 
 ```shell
-npx --yes http-server@14.1.1 how-ai-lost-the-thread-november-2 -p 8091 -c-1 -s
+npx --yes http-server@14.1.1 presentations/2026-11-02-how-ai-lost-the-thread-10-min -p 8091 -c-1 -s
 ```
 
 | Open | For |
@@ -46,4 +46,4 @@ npx --yes http-server@14.1.1 how-ai-lost-the-thread-november-2 -p 8091 -c-1 -s
 
 Slide 4 builds up: it starts with just the name, and each press of next reveals one stop on the path (four presses). To add this to another slide, put `data-step="1"`, `"2"`, and so on on its elements.
 
-The keys are the same as in the full talk, see its [README](../how-ai-lost-the-thread/README.md). **T** cycles off → 10 → 15 → off here.
+The keys are the same as in the full talk, see its [README](../2026-11-12-how-ai-lost-the-thread/README.md). **T** cycles off → 10 → 15 → off here.

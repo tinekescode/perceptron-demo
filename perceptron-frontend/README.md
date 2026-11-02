@@ -27,7 +27,7 @@ npm install   # first time only
 npm run dev
 ```
 
-Open http://localhost:5173. Each tab trains its network as soon as you open it and then replays the training. If a backend isn't running, the page tells you which one to start.
+Open http://localhost:5180. Each tab trains its network as soon as you open it and then replays the training. If a backend isn't running, the page tells you which one to start.
 
 Vite forwards `/api/and/*` to `localhost:8080` and `/api/xor/*` to `localhost:8081` (see `vite.config.js`), so the backends need no CORS settings.
 

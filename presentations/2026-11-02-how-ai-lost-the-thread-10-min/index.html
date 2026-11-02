@@ -206,7 +206,7 @@
 <div id="viewport"><div id="stage">
 
 <!-- 1 · Title -->
-<section class="slide" data-thread="plain" data-notes="~10 sec. Quick intro of yourself and the talk title, then move on fast.">
+<section class="slide" data-thread="plain" data-secs="10">
   <div class="abs kicker teal" style="left:150px;top:280px">AI's Founding Myth</div>
   <div class="abs title" style="left:150px;top:385px;font-size:100px">How AI Lost the Thread</div>
   <div class="abs" style="left:150px;top:572px;font:italic 400 38px var(--sans);color:var(--lav)">The Strange Path from Neurons to LLMs</div>
@@ -214,7 +214,7 @@
 </section>
 
 <!-- 2 · How we use it -->
-<section class="slide" id="llmUse" data-thread="plain" data-notes="~40 sec. Let the demo run behind you while you talk. Ask the room: 'Hands up if you asked an AI something this week.' Then point at the labels on the right as they light up: it's in your IDE, your inbox, your chats, your phone. Writing tests, explaining errors, summarising, translating, deciding what's for dinner. Don't explain anything yet — just establish how completely normal this has become.">
+<section class="slide" id="llmUse" data-thread="plain" data-secs="40">
   <div class="abs kicker" style="left:120px;top:94px">Sound Familiar?</div>
   <div class="abs title" style="left:120px;top:152px">What We Ask It, Every Day</div>
   <div class="chat-win" style="left:120px;top:290px;width:1360px;height:740px">
@@ -233,7 +233,7 @@
 </section>
 
 <!-- 3 · Why listen -->
-<section class="slide" id="llmWhy" data-thread="plain" data-notes="~20 sec. Let the question type itself out — pause. Then: 'We all use this, every day. But ask most people where it actually came from, and you get a shrug — or a vague story about brains.' This is the promise, stated up front: not how to use an LLM, but where it came from. Today only the first stretch of that road; the full talk goes all the way to LLMs. Keep it short and conversational — this is the moment the audience decides whether to lean in.">
+<section class="slide" id="llmWhy" data-thread="plain" data-secs="20">
   <div class="abs kicker teal" style="left:150px;top:154px">Why Listen to This</div>
   <div class="ask-bar"><span class="ask-typed">Where did you actually come from?</span><span class="caret"></span><b class="chat-send ready">↑</b></div>
   <div class="abs statement late" style="left:150px;top:430px;width:1800px">We use it every day.<br><span class="late" style="transition-delay:.7s">Most of us have no idea <span class="t">where it came from.</span></span></div>
@@ -242,7 +242,7 @@
 </section>
 
 <!-- 4 · About me -->
-<section class="slide" data-thread="plain" data-notes="~30 sec. The slide starts with just your name: each press of next reveals one stop on the path, four in total. Keep this brief and light — one or two sentences per stop. The callback line at the bottom is optional to say out loud; it can just sit there as a wink for anyone paying close attention.">
+<section class="slide" data-thread="plain" data-secs="30">
   <div class="abs kicker" style="left:120px;top:94px">About Me</div>
   <div class="abs title" style="left:120px;top:152px">Tineke Slotegraaf</div>
   <div class="abs" style="left:120px;top:244px;font:italic 400 30px var(--sans);color:var(--muted)">Software and AI Engineer - Alvant</div>
@@ -266,7 +266,7 @@
 </section>
 
 <!-- 5 · Neuron -->
-<section class="slide" data-thread="plain" data-notes="~50 sec. Open with the stakes line before diving in. Let the simulator run and narrate it in plain words: signals arrive on the branches on the left, the cell body adds them up — watch 'Summed input' climb — and the moment it reaches the threshold of 10, the cell fires: one pulse runs down the long wire to the far end, then everything resets. Point out that it's all-or-nothing: a bigger sum doesn't make a bigger pulse. Avoid 'dendrite,' 'soma,' 'axon' as jargon; use 'branches,' 'cell body,' 'wire' where it helps. Mention in one sentence that this is a simplification — the brain has hundreds of kinds of neurons. Bridge: 'In 1943 McCulloch and Pitts boiled exactly this down to an on/off switch: add up the inputs, compare to a threshold. Hold onto that switch — it comes back in a few slides. But first: how does a neuron learn?'">
+<section class="slide" data-thread="plain" data-secs="50">
   <div class="abs kicker" style="left:120px;top:87px">The Hook — 1943</div>
   <div class="abs title" style="left:120px;top:135px">How a Neuron Decides</div>
   <div class="card"><iframe src="assets/neuron-simulator.html" title="Neuron simulator: summed dendrite inputs trigger an action potential along the axon"></iframe></div>
@@ -278,7 +278,7 @@
 </section>
 
 <!-- 5b · How a neuron learns -->
-<section class="slide" id="hebb" data-thread="plain" data-notes="~60 sec. (Donald Hebb, 1949.) Walk the animation: A and B tend to fire together. When they do, their combined push makes the cell fire — and both of their connections get a little stronger. Watch the lines thicken. C fires on its own, never manages to make the cell fire, and its connection slowly weakens. That's 'neurons that fire together, wire together', plus its flip side. When the pattern has settled, the animation starts over. The key point for later: each connection changes using only what happens right where it sits — did I just fire, did the cell just fire? Nobody sends it a precise, personal 'you were off by this much'. The brain does have broad reward signals like dopamine, but those are a broadcast to many cells at once, not a correction for each connection. Hold onto that: backprop will need exactly that personal correction, and that's where AI and biology part ways. Bridge: 'Rosenblatt took the 1943 switch and gave it a learning rule loosely inspired by this. That's the perceptron.'">
+<section class="slide" id="hebb" data-thread="plain" data-secs="60">
   <div class="abs kicker" style="left:120px;top:87px">The Hook — 1949</div>
   <div class="abs title" style="left:120px;top:135px">How a Neuron Learns</div>
   <svg class="art" viewBox="0 0 2000 1125">
@@ -294,7 +294,7 @@
 </section>
 
 <!-- 6 · Perceptron -->
-<section class="slide" data-thread="plain" data-notes="~45 sec. (Rosenblatt, 1958.) This is the honest starting point of the metaphor. Walk the diagram as the neuron from two slides ago: the inputs are the signals arriving on the branches, each weight is a connection strength, the Σ adds everything up like the cell body, and f is the threshold — fire or don't. Then the learning line: wrong? nudge each weight a little; right? leave it. Every weight changes using only its own input and this one unit's own error — a real, if crude, echo of Hebbian learning. High plausibility bar on purpose: this step wasn't the lie. Point at the small graph: AND is only true in one corner, and one straight line cuts that corner off — exactly what a single perceptron can draw. Optional colour: in 1958 the press got very excited — a New York Times piece reported the Navy expected it to one day walk, talk and be conscious of its existence (double-check the exact wording before quoting it). Then: 'Let me show you one learning, live.'">
+<section class="slide" data-thread="plain" data-secs="45">
   <div class="abs kicker" style="left:120px;top:94px">1958 — Rosenblatt</div>
   <div class="abs title" style="left:120px;top:152px">The Perceptron</div>
   <svg class="art" viewBox="0 0 2000 1125">
@@ -343,9 +343,9 @@
 </section>
 
 <!-- 6b · Demo -->
-<section class="slide demo" id="demoAnd" data-thread="plain" data-notes="Demo, 4 min, or 8 if you get the full 15 (see perceptron-demo/DEMO.md). Before the talk: perceptron-demo running on :8080 and the frontend on :5173; it opens on the AND tab; press ⏮ to rewind. The demo runs on this slide: click into it to use it. While it has the keyboard, Page Up/Down (a clicker) still change slides; press Esc to give the arrow keys back to the slides. Flow: 1) Truth table — only the top-right corner is 1, one line can cut it off. 2) At the start frame, point at the network and the calculation: weighted sum + bias, then the step. 3) Press play: green = right, leave it; red = wrong, the line jumps and the dashed line shows where it was. Pause once on a red step and read w += η · error · x with the real numbers. 4) Learned ✓, then 'Train again' for a different path to the same result. If you get the full 15 minutes: the learning-rate tweak (tick Same start, then try η = 1, and 0.02 at 4× speed). Skip the code peek. Close with the XOR teaser: 'Now the 1s are on opposite corners — no single line can do this.' That's the next slide.">
+<section class="slide demo" id="demoAnd" data-thread="plain">
   <div class="abs kicker small demo-kicker">Demo · AND with one perceptron</div>
-  <div class="demo-card" data-src="http://localhost:5173/?embed&amp;tab=and">
+  <div class="demo-card" data-src="http://localhost:5180/?embed&amp;tab=and">
     <div class="demo-off">
       <div class="demo-off-h">Start the demo, and it appears here</div>
       <pre>cd perceptron-demo &amp;&amp; mvn quarkus:dev
@@ -356,7 +356,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 7 · Backprop -->
-<section class="slide" data-thread="break" data-notes="~45 sec. This is the last idea of this short version, and the real break: it happens almost immediately. (Rumelhart, Hinton & Williams, 1986.) The moment you stack layers, you need a way to assign credit backward — and backprop's mechanism has no known biological analog. This is the step that stays unbiological in everything that comes after it. Point at the small graph: XOR can't be split by one line — but two lines (i.e. two hidden units, combined by an output unit) can. That combining step is exactly what a hidden layer buys you, and exactly what needs backprop to train it. Then: 'Let me show you what that costs.'">
+<section class="slide" data-thread="break" data-secs="45">
   <div class="abs kicker" style="left:120px;top:94px">1986 — Rumelhart, Hinton &amp; Williams</div>
   <div class="abs title" style="left:120px;top:152px">+ Backpropagation</div>
   <svg class="art" viewBox="0 0 2000 1125">
@@ -393,9 +393,9 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 7b · Demo -->
-<section class="slide demo" id="demoXor" data-thread="break" data-notes="Demo, 1 min, a quick look only (the full version is in perceptron-mlp/DEMO.md). Before the talk: perceptron-mlp running on :8081 as well. The demo runs on this slide: click into it to use it. While it has the keyboard, Page Up/Down (a clicker) still change slides; press Esc to give the arrow keys back to the slides. Don't explain the network; make one point: how much longer it takes. 1) 'AND took a handful of epochs. Watch this.' 2) Press play: the whole run takes about 20 seconds at 1×. Point at the epoch counter and the loss dropping, then the curved region appearing. 3) Learned ✓ after 961 epochs: 'Almost a thousand rounds, for four points. And in every round, every weight gets its own personal error sent back.' Close: 'This is where AI and biology part ways. In the full talk I follow that split all the way to LLMs.' Then go to the last slide.">
+<section class="slide demo" id="demoXor" data-thread="break">
   <div class="abs kicker small demo-kicker">Demo · XOR with a hidden layer</div>
-  <div class="demo-card" data-src="http://localhost:5173/?embed&amp;tab=xor">
+  <div class="demo-card" data-src="http://localhost:5180/?embed&amp;tab=xor">
     <div class="demo-off">
       <div class="demo-off-h">Start the demo, and it appears here</div>
       <pre>cd perceptron-mlp &amp;&amp; mvn quarkus:dev
@@ -406,7 +406,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 13 · Thank you -->
-<section class="slide" id="thanks" data-thread="end" data-notes="Leave this slide up during Q&amp;A. Point at the two codes: the first one has everything from today — the full talk and all the demo code, including the digits demo you can draw on yourself, which we skipped today; the second is LinkedIn if they want to connect or ask something later. Then: 'Questions?'">
+<section class="slide" id="thanks" data-thread="end">
   <div class="abs" style="left:150px;top:250px;font:700 120px var(--serif)">Thank you</div>
   <div class="abs" style="left:150px;top:432px;font:700 48px var(--serif)">Tineke Slotegraaf</div>
   <div class="abs" style="left:150px;top:500px;font:italic 400 30px var(--sans);color:var(--muted)">Software and AI Engineer - Alvant</div>
@@ -427,6 +427,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 <div id="rehearse" aria-live="off"></div>
 <div id="hud"><span id="count"></span> · <kbd>←</kbd><kbd>→</kbd> navigate · <kbd>N</kbd> notes · <kbd>F</kbd> fullscreen · <kbd>T</kbd> rehearsal timer</div>
 
+<script src="speaker-notes.js"></script>
 <script>
 (() => {
   const STATIC = new URLSearchParams(location.search).has("static");
@@ -769,7 +770,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
     });
     notes.innerHTML = `<b>${cur + 1}</b>`;
     if (plan) notes.innerHTML += `<span class="plan">${plan.label}: start this slide at ${clock(plan.starts[cur])}, take ${clock(plan.secs[cur])}</span>`;
-    notes.append(slides[cur].dataset.notes);
+    notes.append((window.SPEAKER_NOTES || [])[cur] || "No notes: speaker-notes.js is not next to this deck.");
     slideStart = Date.now();
     renderRehearsal();
     count.textContent = `${cur + 1} / ${slides.length}`;
@@ -798,13 +799,13 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 
   // ── Rehearsal timer (T). Shows the time against a plan for a 10- or 15-minute slot, so you can
   //    practise slowing down. T cycles off → 10 → 15 → off; Shift+T restarts the clock.
-  //    Talk slides get their "~NN sec" from the notes, stretched to fill the slot; demos get a fixed
+  //    Talk slides get their data-secs, stretched to fill the slot; demos get a fixed
   //    budget; the last slide is the Q&A. Never shown unless you turn it on.
   const SLOTS = [
     { minutes: 10, qa: 0, demos: { demoAnd: 4, demoXor: 1 } },
     { minutes: 15, qa: 0, demos: { demoAnd: 8, demoXor: 1 } },
   ];
-  const noteSecs = slides.map(s => +(/^~(\d+) sec/.exec(s.dataset.notes) || [0, 0])[1]);
+  const noteSecs = slides.map(s => +(s.dataset.secs || 0));
   const buildPlan = slot => {
     const last = slides.length - 1;
     const demoSecs = slides.reduce((t, s) => t + (slot.demos[s.id] || 0) * 60, 0);

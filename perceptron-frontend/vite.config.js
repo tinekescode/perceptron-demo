@@ -15,6 +15,6 @@ const proxy = Object.fromEntries(
 );
 
 export default defineConfig({
-  server: { port: 5173, proxy },
+  server: { port: 5180, strictPort: true, proxy },
   preview: { port: 4173, proxy },
 });

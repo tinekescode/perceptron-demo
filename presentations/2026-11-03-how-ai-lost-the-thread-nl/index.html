@@ -202,7 +202,7 @@
 <div id="viewport"><div id="stage">
 
 <!-- 1 · Title -->
-<section class="slide" data-thread="plain" data-notes="~10 sec. Stel jezelf en de titel van de talk kort voor, en ga snel door.">
+<section class="slide" data-thread="plain" data-secs="10">
   <div class="abs kicker teal" style="left:150px;top:280px">De ontstaansmythe van AI</div>
   <div class="abs title" style="left:150px;top:385px;font-size:100px">How AI Lost the Thread</div>
   <div class="abs" style="left:150px;top:572px;font:italic 400 38px var(--sans);color:var(--lav)">The Strange Path from Neurons to LLMs</div>
@@ -210,7 +210,7 @@
 </section>
 
 <!-- 2 · How we use it -->
-<section class="slide" id="llmUse" data-thread="plain" data-notes="~40 sec. Laat de demo achter je doorlopen terwijl je praat. Vraag de zaal: 'Handen omhoog als je deze week iets aan een AI hebt gevraagd.' Wijs dan naar de labels rechts als ze oplichten: het zit in je IDE, je inbox, je chats, je telefoon. Tests schrijven, foutmeldingen uitleggen, samenvatten, vertalen, bedenken wat we eten. Leg nog niets uit — laat alleen zien hoe volkomen normaal dit is geworden.">
+<section class="slide" id="llmUse" data-thread="plain" data-secs="40">
   <div class="abs kicker" style="left:120px;top:94px">Klinkt bekend?</div>
   <div class="abs title" style="left:120px;top:152px">Wat we het elke dag vragen</div>
   <div class="chat-win" style="left:120px;top:290px;width:1360px;height:740px">
@@ -229,7 +229,7 @@
 </section>
 
 <!-- 3 · Why listen -->
-<section class="slide" id="llmWhy" data-thread="plain" data-notes="~20 sec. Laat de vraag zichzelf uittypen — pauzeer. Dan: 'We gebruiken dit allemaal, elke dag. Maar vraag de meeste mensen waar het eigenlijk vandaan komt, en je krijgt een schouderophalen — of een vaag verhaal over hersenen.' Dit is de belofte, meteen aan het begin: niet hoe je een LLM gebruikt, maar waar het vandaan komt en hoe het hier is gekomen. Houd het kort en informeel — dit is het moment waarop het publiek besluit of het gaat opletten.">
+<section class="slide" id="llmWhy" data-thread="plain" data-secs="20">
   <div class="abs kicker teal" style="left:150px;top:154px">Waarom dit de moeite waard is</div>
   <div class="ask-bar"><span class="ask-typed">Waar kom jij eigenlijk vandaan?</span><span class="caret"></span><b class="chat-send ready">↑</b></div>
   <div class="abs statement late" style="left:150px;top:430px;width:1800px">We gebruiken het elke dag.<br><span class="late" style="transition-delay:.7s">Bijna niemand weet <span class="t">waar het vandaan komt.</span></span></div>
@@ -238,7 +238,7 @@
 </section>
 
 <!-- 4 · About me -->
-<section class="slide" data-thread="plain" data-notes="~30 sec. Houd dit kort en luchtig — een of twee zinnen per stap op je pad.">
+<section class="slide" data-thread="plain" data-secs="30">
   <div class="abs kicker" style="left:120px;top:94px">Over mij</div>
   <div class="abs title" style="left:120px;top:152px">Tineke Slotegraaf</div>
   <div class="abs" style="left:120px;top:244px;font:italic 400 30px var(--sans);color:var(--muted)">Software and AI Engineer - Alvant</div>
@@ -260,7 +260,7 @@
 </section>
 
 <!-- 5 · Neuron -->
-<section class="slide" data-thread="plain" data-notes="~50 sec. Begin met wat er op het spel staat en duik er dan in. Laat de simulator lopen en vertel in gewone woorden wat er gebeurt: signalen komen binnen op de takken links, het cellichaam telt ze op — kijk hoe 'Opgeteld signaal' oploopt — en zodra de drempel van 10 is bereikt, vuurt de cel: één puls loopt door de lange draad naar het andere uiteinde, en daarna begint alles opnieuw. Benadruk dat het alles of niets is: een grotere som geeft geen grotere puls. Vermijd 'dendriet', 'soma' en 'axon' als jargon; zeg 'takken', 'cellichaam' en 'draad' waar dat helpt. Zeg in één zin dat dit een vereenvoudiging is — de hersenen hebben honderden soorten neuronen. Brug: 'In 1943 brachten McCulloch en Pitts precies dit terug tot een aan/uit-schakelaar: tel de inputs op, vergelijk met een drempel. Onthoud die schakelaar — die komt over een paar slides terug. Maar eerst: hoe leert een neuron?'">
+<section class="slide" data-thread="plain" data-secs="50">
   <div class="abs kicker" style="left:120px;top:87px">Het begin — 1943</div>
   <div class="abs title" style="left:120px;top:135px">Hoe een neuron beslist</div>
   <div class="card"><iframe src="assets/neuron-simulator.html" title="Neuronsimulator: opgetelde signalen op de dendrieten activeren een actiepotentiaal langs het axon"></iframe></div>
@@ -272,7 +272,7 @@
 </section>
 
 <!-- 5b · How a neuron learns -->
-<section class="slide" id="hebb" data-thread="plain" data-notes="~60 sec. (Donald Hebb, 1949.) Loop de animatie door: A en B vuren vaak samen. Als ze dat doen, zorgt hun gezamenlijke duw ervoor dat de cel vuurt — en worden hun verbindingen allebei een beetje sterker. Kijk hoe de lijnen dikker worden. C vuurt in zijn eentje, krijgt de cel nooit aan het vuren, en zijn verbinding wordt langzaam zwakker. Dat is 'neurons that fire together, wire together', plus de keerzijde daarvan. Als het patroon is uitgekristalliseerd, begint de animatie opnieuw. Het belangrijke punt voor straks: elke verbinding verandert alleen op basis van wat er op haar eigen plek gebeurt — heb ik net gevuurd, heeft de cel net gevuurd? Niemand stuurt haar een precies, persoonlijk 'je zat er zoveel naast'. De hersenen hebben wel brede beloningssignalen zoals dopamine, maar die gaan naar heel veel cellen tegelijk; het is geen correctie per verbinding. Onthoud dat: backprop heeft juist die persoonlijke correctie nodig, en daar gaan AI en biologie uit elkaar. Brug: 'Rosenblatt nam de schakelaar van 1943 en gaf die een leerregel die hier losjes op is geïnspireerd. Dat is het perceptron.'">
+<section class="slide" id="hebb" data-thread="plain" data-secs="60">
   <div class="abs kicker" style="left:120px;top:87px">Het begin — 1949</div>
   <div class="abs title" style="left:120px;top:135px">Hoe een neuron leert</div>
   <svg class="art" viewBox="0 0 2000 1125">
@@ -288,7 +288,7 @@
 </section>
 
 <!-- 6 · Perceptron -->
-<section class="slide" data-thread="plain" data-notes="~45 sec. (Rosenblatt, 1958.) Dit is het eerlijke startpunt van de metafoor. Loop het schema door als het neuron van twee slides geleden: de inputs zijn de signalen op de takken, elk gewicht is een verbindingssterkte, de Σ telt alles op zoals het cellichaam, en f is de drempel — vuren of niet. Dan de leerregel: fout? Geef elk gewicht een klein duwtje; goed? Laat het met rust. Elk gewicht verandert alleen op basis van zijn eigen input en de eigen fout van deze ene eenheid — een echte, zij het grove, echo van Hebbiaans leren. De balk staat bewust hoog: deze stap was niet de leugen. Wijs naar de kleine grafiek: AND is maar in één hoek waar, en één rechte lijn snijdt die hoek af — precies wat één perceptron kan tekenen. Optionele anekdote: in 1958 raakte de pers erg opgewonden — een artikel in de New York Times meldde dat de marine verwachtte dat het ooit zou kunnen lopen, praten en zich bewust zijn van zijn eigen bestaan (controleer de exacte formulering voordat je het citeert). Dan: 'Ik laat er een live zien, terwijl het leert.'">
+<section class="slide" data-thread="plain" data-secs="45">
   <div class="abs kicker" style="left:120px;top:94px">1958 — Rosenblatt</div>
   <div class="abs title" style="left:120px;top:152px">Het perceptron</div>
   <svg class="art" viewBox="0 0 2000 1125">
@@ -337,9 +337,9 @@
 </section>
 
 <!-- 6b · Demo -->
-<section class="slide demo" id="demoAnd" data-thread="plain" data-notes="Demo, 5–10 min (zie perceptron-demo/DEMO.md). Voor de talk: perceptron-demo draait op :8080 en de frontend op :5173; hij opent op de AND-tab; druk op ⏮ om terug te spoelen. De demo draait op deze slide: klik erin om hem te gebruiken. Zolang hij het toetsenbord heeft, wisselen Page Up/Down (een clicker) nog steeds van slide; druk op Esc om de pijltjestoetsen terug te geven aan de slides. De demo zelf is in het Engels. Verloop: 1) Truth table — alleen de hoek rechtsboven is 1, één lijn kan die afsnijden. 2) Wijs bij het startframe naar het netwerk en de berekening: gewogen som + bias, dan de stap. 3) Druk op play: groen = goed, laat het met rust; rood = fout, de lijn springt en de stippellijn laat zien waar hij stond. Pauzeer één keer op een rode stap en lees w += η · error · x voor met de echte getallen. 4) Learned ✓, dan 'Train again' voor een andere route naar hetzelfde resultaat. Als er tijd is: de blik in de code (predict, dan train) of de learning rate aanpassen. Sluit af met de XOR-teaser: 'Nu staan de enen op tegenoverliggende hoeken — geen enkele lijn kan dit.' Dat is de volgende slide.">
+<section class="slide demo" id="demoAnd" data-thread="plain">
   <div class="abs kicker small demo-kicker">Demo · AND met één perceptron</div>
-  <div class="demo-card" data-src="http://localhost:5173/?embed&amp;tab=and">
+  <div class="demo-card" data-src="http://localhost:5180/?embed&amp;tab=and">
     <div class="demo-off">
       <div class="demo-off-h">Start de demo, dan verschijnt hij hier</div>
       <pre>cd perceptron-demo &amp;&amp; mvn quarkus:dev
@@ -350,7 +350,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 7 · Backprop -->
-<section class="slide" data-thread="break" data-notes="~35 sec. Dit is de echte breuk, en die komt bijna meteen. (Rumelhart, Hinton &amp; Williams, 1986.) Zodra je lagen stapelt, moet je achteruit kunnen bepalen wie waar verantwoordelijk voor is — en het mechanisme van backprop heeft geen bekende biologische tegenhanger. Deze stap blijft de rest van de talk onbiologisch, onder elke architectuur die volgt. Wijs naar de kleine grafiek: XOR is niet te splitsen met één lijn — maar wel met twee (dus twee verborgen eenheden, gecombineerd door een output-eenheid). Dat combineren is precies wat een verborgen laag je oplevert, en precies waarvoor je backprop nodig hebt om hem te trainen.">
+<section class="slide" data-thread="break" data-secs="35">
   <div class="abs kicker" style="left:120px;top:94px">1986 — Rumelhart, Hinton &amp; Williams</div>
   <div class="abs title" style="left:120px;top:152px">+ Backpropagation</div>
   <svg class="art" viewBox="0 0 2000 1125">
@@ -387,9 +387,9 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 7b · Demo -->
-<section class="slide demo" id="demoXor" data-thread="break" data-notes="Demo, 5–10 min (zie perceptron-mlp/DEMO.md). Voor de talk: perceptron-demo op :8080 (voor het contrast), perceptron-mlp op :8081, de frontend op :5173; eventueel Perceptron.java en MultiLayerPerceptron.java naast elkaar in de IDE. De demo draait op deze slide: klik erin om hem te gebruiken. Zolang hij het toetsenbord heeft, wisselen Page Up/Down (een clicker) nog steeds van slide; druk op Esc om de pijltjestoetsen terug te geven aan de slides. De demo zelf is in het Engels. Verloop: 1) Probleem: (0,1) en (1,0) zijn 1, de andere hoeken 0 — trek één rechte lijn die ze scheidt. Dat lukt niet. 2) Schets: 2 inputs → 4 verborgen knopen → 1 output; elke verborgen knoop trekt zijn eigen lijn, de output combineert ze. 3) Druk op play: de loss daalt, dan verschijnt het gebogen gebied; klik op h₁…h₄ om de lijn van elke verborgen knoop te laten zien. Learned ✓ na ongeveer 961 epochs, tegen een handvol bij AND. Als er tijd is, de code-diff — niet de wiskunde, alleen wat er veranderde: één lijst gewichten werd een laag; de stap werd een sigmoid (een stap is vlak, dus er is geen helling om terug te sturen); één som werd twee lagen; 'duwtje als het fout is' werd backprop — een verborgen knoop heeft geen eigen doel, dus de output-fout wordt achteruit doorgegeven via het gewicht dat ze verbindt. Optionele aanpassing: HIDDEN_SIZE = 1 mislukt (weer één lijn), 2 lukt net. Eindig bij de biologie: die achterwaartse fout, een persoonlijk 'je zat er zoveel naast' voor elk gewicht, is precies wat volgens de neuron-slide niemand stuurt.">
+<section class="slide demo" id="demoXor" data-thread="break">
   <div class="abs kicker small demo-kicker">Demo · XOR met een verborgen laag</div>
-  <div class="demo-card" data-src="http://localhost:5173/?embed&amp;tab=xor">
+  <div class="demo-card" data-src="http://localhost:5180/?embed&amp;tab=xor">
     <div class="demo-off">
       <div class="demo-off-h">Start de demo, dan verschijnt hij hier</div>
       <pre>cd perceptron-mlp &amp;&amp; mvn quarkus:dev
@@ -400,7 +400,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 7c · Demo -->
-<section class="slide demo" id="demoDigits" data-thread="break" data-notes="Demo, 5–10 min (zie perceptron-digits/DEMO.md). Voor de talk: perceptron-digits draait op :8082 (in de log staat 'MNIST ready'), druk op Reset weights, Epochs 1, Slow aangevinkt. De demo draait op deze slide: klik erin om hem te gebruiken. Zolang hij het toetsenbord heeft, wisselen Page Up/Down (een clicker) nog steeds van slide; druk op Esc om de pijltjestoetsen terug te geven aan de slides. De demo zelf is in het Engels. Verloop: 1) Een paar keer Random test image: 28 × 28 = 784 getallen, dat is de input; 10 outputs, één per cijfer. 2) Teken een 3 voor het trainen: elke balk staat op ongeveer 10%, hij gokt; de verborgen neuronen zijn ruis. 3) Druk op Train en praat eroverheen (~45 s): de nauwkeurigheid schiet van 10% naar ~75% in de eerste 1.000 voorbeelden en kruipt dan naar ~95%; de balken voor jouw 3 veranderen; de verborgen neuronen veranderen in streken en vlekken. 4) Clear en teken cijfers, laat iemand uit de zaal er een tekenen; een slordige 4 of 7 laat de op één na hoogste balk zien. 5) Wijs naar de fouten: had jij deze goed gehad? De boodschap: niets nieuws sinds XOR, dezelfde neuronen en dezelfde backprop, alleen groter. Brug naar de volgende slide: dit is nog steeds het klassieke, volledig verbonden netwerk, elke pixel zijn eigen input. Dat werkt, maar het heeft een blinde vlek, en daar komt convolutie in beeld.">
+<section class="slide demo" id="demoDigits" data-thread="break">
   <div class="abs kicker small demo-kicker">Demo · Handgeschreven cijfers</div>
   <div class="demo-card" data-src="http://localhost:8082/?embed">
     <div class="demo-off">
@@ -412,7 +412,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 8 · CNNs -->
-<section class="slide" id="cnnTitle" data-thread="knot" data-notes="~35 sec. Dit is de echte gedeeltelijke terugkeer — de wending die de meeste mensen niet verwachten. Wijs van links naar rechts naar het plaatje, zonder het al uit te leggen: er gaat een handgeschreven 7 in, en elke laag maakt van het plaatje een stapel kleinere kaarten — eerst randen, dan hoeken, dan delen — tot er één antwoord oplicht: 7. Dat is het netwerk van LeCun uit 1989 dat postcodes leest, in één plaatje; de volgende slides pakken het uit. CNN's waren niet alleen losjes geïnspireerd op het zien; Fukushima bouwde het Neocognitron rechtstreeks op basis van elektrofysiologie. Later werk (de groep van Yamins &amp; DiCarlo) liet zien dat activaties van CNN's die puur op objectherkenning zijn getraind, het vuren van echte cortexcellen bij makaken voorspellen. (Controleer beide verwijzingen voordat je er hardop op leunt.) De balk gaat hier bewust weer omhoog.">
+<section class="slide" id="cnnTitle" data-thread="knot" data-secs="35">
   <div class="abs kicker" style="left:120px;top:94px">1989 — LeCun</div>
   <div class="abs title" style="left:120px;top:152px">Convolutionele netwerken</div>
   <svg class="art" viewBox="0 0 2000 1125"></svg>
@@ -426,7 +426,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 8a · Classic nets on images -->
-<section class="slide" id="cnnFlat" data-thread="knot" data-notes="~40 sec. Vóór convolutie was de voor de hand liggende manier om een afbeelding aan een neuraal netwerk te geven: uitrollen. Elke pixel wordt één input met een eigen gewicht, verbonden met elk neuron. Wijs naar de twee rijen: dezelfde 7, twee pixels naar rechts — de meeste verlichte pixels komen nu op andere inputs terecht, dus wat het netwerk over de eerste 7 leerde, geldt niet voor de tweede. Een klassiek netwerk moet 'een 7 op elke mogelijke positie' apart leren. Dat is het probleem dat convolutie oplost.">
+<section class="slide" id="cnnFlat" data-thread="knot" data-secs="40">
   <div class="abs kicker" style="left:120px;top:94px">Convolutionele netwerken — het probleem</div>
   <div class="abs title" style="left:120px;top:152px">Hoe een klassiek netwerk een afbeelding ziet</div>
   <div class="abs" style="left:120px;top:262px;font:400 32px var(--sans);color:var(--lav)">Elke pixel krijgt een eigen gewicht — schuif de afbeelding twee pixels op en het netwerk ziet een vreemde.</div>
@@ -441,7 +441,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 8b · Inspired by the eye -->
-<section class="slide" data-thread="knot" data-notes="~45 sec. (Hubel &amp; Wiesel, 1959; Nobelprijs 1981.) Ze maten losse neuronen in de visuele cortex van een kat en vonden cellen die elk alleen reageren op een klein stukje van het gezichtsveld — en alleen op een rand of streep onder één bepaalde hoek. Andere, 'complexe' cellen reageren op die rand waar hij ook in de buurt verschijnt. Loop het plaatje door: licht van het huis valt op het netvlies, het signaal gaat naar de visuele cortex, en daar bekijkt elke cel één klein stukje — de genummerde cirkels — en vuurt bij één randhoek. Fukushima vertaalde dit bijna letterlijk naar het Neocognitron (1980); LeCun voegde backprop toe en liet het handgeschreven postcodes lezen (1989). Loop dan de rechterkolom door: elk biologisch idee hoort één op één bij een onderdeel van een ConvNet.">
+<section class="slide" data-thread="knot" data-secs="45">
   <div class="abs kicker" style="left:120px;top:94px">Convolutionele netwerken — de inspiratie</div>
   <div class="abs title" style="left:120px;top:152px">Afgekeken van het oog</div>
   <div class="abs" style="left:120px;top:262px;font:400 32px var(--sans);color:var(--lav)">Zien begint klein: elke cel in de visuele cortex bekijkt één piepklein stukje en vuurt bij één randhoek.</div>
@@ -496,7 +496,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 8c · Edges → corners → parts -->
-<section class="slide" id="cnnSee" data-thread="knot" data-notes="~50 sec. Van links naar rechts. Het kleine venster schuift over de pixels; op elke plek stelt het één vraag — 'is hier een rand, onder deze hoek?' — en schrijft het antwoord in een randkaart, één kaart per filter. De volgende laag kijkt naar die randkaarten en vindt de plekken waar randen samenkomen: hoeken. De laag daarna combineert hoeken tot delen — een dak, een raam, een deur. Pas helemaal aan het eind zegt iets 'huis'. De rand- en hoekkaarten op deze slide worden live uit de pixels berekend met handgemaakte filters; een echt netwerk leert zijn eigen filters — en de eerste laag gaat er vrijwel altijd uitzien als randdetectoren. Hetzelfde verhaal als de visuele cortex op de vorige slide.">
+<section class="slide" id="cnnSee" data-thread="knot" data-secs="50">
   <div class="abs kicker" style="left:120px;top:94px">Convolutionele netwerken — hoe ze zien</div>
   <div class="abs title" style="left:120px;top:152px">Randen, dan hoeken, dan dingen</div>
   <div class="abs" style="left:120px;top:262px;font:400 32px var(--sans);color:var(--lav)">Eén klein venster schuift over het plaatje. Elke laag vindt iets grotere patronen, opgebouwd uit die eronder.</div>
@@ -515,7 +515,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 8d · Parameter comparison -->
-<section class="slide" id="cnnParams" data-thread="knot" data-notes="~40 sec. Laat de getallen binnenkomen. Een bescheiden kleurenfoto van 224×224 is 150.528 getallen. Verbind die op de klassieke manier met slechts 1.000 neuronen, en de eerste laag alleen heeft al meer dan 150 miljoen gewichten nodig. De eerste laag van een ConvNet, met 64 filters van 3×3×3, heeft er 1.728 nodig. De vierkanten zijn op schaal — die van de ConvNet is de piepkleine stip. En het is niet alleen goedkoper: omdat hetzelfde filter op elke positie wordt hergebruikt, activeert een vorm die naar rechts schuift hetzelfde filter — en dat lost het probleem van drie slides geleden op.">
+<section class="slide" id="cnnParams" data-thread="knot" data-secs="40">
   <div class="abs kicker" style="left:120px;top:94px">Convolutionele netwerken — de opbrengst</div>
   <div class="abs title" style="left:120px;top:152px">De gewichten tellen</div>
   <div class="abs" style="left:120px;top:262px;font:400 32px var(--sans);color:var(--lav)">Eén gewone kleurenfoto van 224 × 224. Alleen de eerste laag.</div>
@@ -540,7 +540,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 9 · Transformers -->
-<section class="slide" data-thread="cut" data-notes="~40 sec. De draad is hier helemaal doorgeknipt — geen enkele biologische tegenhanger. Wijs naar het plaatje: één woord dat stil aan elk ander woord vraagt ‘hoeveel moet ik om jou geven?’ — dikke bogen voor de woorden die ertoe doen. Dan de kleine grafiek: een dambord is niet op te lossen met één of twee lijnen — je moet punten rechtstreeks met elkaar in verband brengen, ongeacht de afstand. Dat is wat attention doet: het verbindt twee willekeurige punten op basis van geleerde relevantie, niet van nabijheid. De balk zakt bewust tot bijna niets. Brug: ‘Waarom had juist taal dit nodig? Laten we kijken wat ervoor kwam.’">
+<section class="slide" data-thread="cut" data-secs="40">
   <div class="abs kicker" style="left:120px;top:94px">2017 — Vaswani e.a.</div>
   <div class="abs title" style="left:120px;top:152px">Attention / Transformers</div>
   <svg class="art" viewBox="0 0 2000 1125">
@@ -571,7 +571,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 9a · Why language was hard -->
-<section class="slide" id="txProblem" data-thread="cut" data-notes="~50 sec. Vóór transformers was taal het moeilijke geval. Loop de drie kaarten van links naar rechts door. Een perceptron of eenvoudig netwerk ziet een vaste set inputs: geen besef van volgorde, geen geheugen van het vorige woord, niet genoeg diepte. Een convolutioneel netwerk — briljant voor afbeeldingen — schuift een klein venster over de tekst: het vangt woorden die naast elkaar staan, maar in ‘de bug die zij vond is gefikst’ horen ‘bug’ en ‘gefikst’ bij elkaar en staan ze te ver uit elkaar voor het venster. RNN's en LSTM's (jaren 90) waren gemaakt voor reeksen: ze lezen één woord tegelijk en nemen een geheugen mee. Twee problemen: het geheugen vervaagt bij lange teksten, en woord 100 moet wachten op woord 99 — je kunt het werk niet verdelen over duizenden GPU-kernen. Dat is het gat dat de transformer dicht.">
+<section class="slide" id="txProblem" data-thread="cut" data-secs="50">
   <div class="abs kicker" style="left:120px;top:94px">Transformers — het probleem</div>
   <div class="abs title" style="left:120px;top:152px">Waarom eerdere netwerken vastliepen op taal</div>
   <div class="abs" style="left:120px;top:262px;font:400 32px var(--sans);color:var(--lav)">Taal is een reeks, en woorden die bij elkaar horen, kunnen ver uit elkaar staan.</div>
@@ -591,7 +591,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 9b · Self-attention -->
-<section class="slide" id="txIdea" data-thread="cut" data-notes="~60 sec. Lees de zin hardop voor: ‘De trofee paste niet in de koffer omdat hij te groot was.’ Wat is ‘hij’? De trofee. Kijk nu hoe ‘groot’ verandert in ‘klein’ — opeens is ‘hij’ de koffer. Eén woord vlak voor het einde verandert de betekenis van een woord eerder in de zin: dat is een afhankelijkheid over lange afstand, en taal zit daar vol mee. Self-attention lost dat direct op: elk woord kijkt naar elk ander woord en vraagt ‘hoe relevant ben jij voor mij?’ — de dikte van de bogen. Wijs dan naar de twee vakken. Een RNN moet de informatie stap voor stap doorgeven, zeven stappen van ‘trofee’ naar ‘hij’, en onderweg vervaagt ze. Een transformer verbindt elk paar in één stap — en omdat geen enkel woord op het vorige wacht, worden alle woorden tegelijk verwerkt, en daardoor gaat trainen op GPU's zo snel. De gewichten op de slide zijn ter illustratie, niet van een echt model.">
+<section class="slide" id="txIdea" data-thread="cut" data-secs="60">
   <div class="abs kicker" style="left:120px;top:94px">Transformers — het idee</div>
   <div class="abs title" style="left:120px;top:152px">Elk woord kijkt naar elk ander woord</div>
   <div class="abs" style="left:120px;top:262px;font:400 32px var(--sans);color:var(--lav)">Self-attention verbindt twee woorden rechtstreeks, hoe ver ze ook uit elkaar staan.</div>
@@ -606,7 +606,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 9c · Inside a transformer -->
-<section class="slide" id="txInside" data-thread="cut" data-notes="~70 sec. Ga niet de diepte in — vier ideeën, elk één zin, en wijs naar de bijpassende kleur in het schema. Lees van onder naar boven. Woorden worden omgezet in getallen, en er komt een positiesignaal bij (amber) — attention kijkt naar alle woorden tegelijk, dus zonder dat zouden ‘hond bijt man’ en ‘man bijt hond’ er hetzelfde uitzien. Dan het blok: multi-head self-attention (paars) — wat we net zagen, meerdere keren parallel, want de ene head volgt misschien de grammatica, de andere waar ‘hij’ naar verwijst. Dan een feed-forward-laag (teal): een klein klassiek netwerk voor elk woord — het perceptron is terug. Om elk onderdeel heen: een shortcut die de input weer optelt, en een normalisatiestap — die houden een heel diepe stapel stabiel tijdens het trainen. En dat blok wordt gewoon herhaald: GPT-3 stapelt er 96. Bovenaan: voorspel het volgende woord.">
+<section class="slide" id="txInside" data-thread="cut" data-secs="70">
   <div class="abs kicker" style="left:120px;top:94px">Transformers — vanbinnen</div>
   <div class="abs title" style="left:120px;top:152px">Binnen in een transformer</div>
   <div class="abs" style="left:120px;top:262px;font:400 32px var(--sans);color:var(--lav)">Een stapel identieke blokken: eerst attention, dan een klein klassiek netwerk.</div>
@@ -618,7 +618,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 9d · Impact on LLMs -->
-<section class="slide" id="txImpact" data-thread="cut" data-notes="~45 sec. Dit is waarom transformers het hebben overgenomen: ze schalen. Hetzelfde ontwerp wordt steeds beter als je lagen, data en rekenkracht toevoegt — en omdat alles parallel draait, kun je het ook echt betalen om het op enorme hoeveelheden tekst te trainen. Loop de grafiek door — let op, het is een logschaal, elke rasterlijn is tien keer zoveel: de oorspronkelijke transformer, 213 miljoen parameters; BERT, 340 miljoen; GPT-2, 1,5 miljard; GPT-3, 175 miljard — getraind op zo'n 300 miljard tokens. De grootte van GPT-4 is nooit gepubliceerd. Twee families: modellen in de stijl van BERT lezen en begrijpen — denk aan zoeken; modellen in de stijl van GPT schrijven, steeds één volgend woord — denk aan chat. Allebei zijn het transformers.">
+<section class="slide" id="txImpact" data-thread="cut" data-secs="45">
   <div class="abs kicker" style="left:120px;top:94px">Transformers — de impact</div>
   <div class="abs title" style="left:120px;top:152px">De motor in elk LLM</div>
   <div class="abs" style="left:120px;top:262px;font:400 32px var(--sans);color:var(--lav)">Hetzelfde ontwerp schaalt: meer lagen, meer data, meer rekenkracht, en het wordt steeds beter.</div>
@@ -631,7 +631,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 9e · Why transformers matter -->
-<section class="slide" id="txWhy" data-thread="cut" data-notes="~40 sec. Doe een stap terug en laat de hele weg op één lijn zien: het neuron, het perceptron, backprop, convolutie — en de transformer is de schakel die dat alles omzet in de taalmodellen van nu. Zeg de stelling: geen self-attention en geen parallel trainen, geen GPT-4. Dan de onthulling: open een modern LLM en dezelfde gewogen som met activatie van de perceptron-slide zit er nog steeds in, alleen herhaald over miljarden parameters, met attention erbovenop. Dat is het moment waarop de mystiek en de biologie samen verdwijnen — wat overblijft is niet mysterieus meer, alleen groot.">
+<section class="slide" id="txWhy" data-thread="cut" data-secs="40">
   <div class="abs kicker" style="left:120px;top:94px">Transformers — waarom het ertoe doet</div>
   <div class="abs title" style="left:120px;top:152px">De ontbrekende schakel</div>
   <svg class="art" viewBox="0 0 2000 1125"></svg>
@@ -641,7 +641,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 10 · The turn -->
-<section class="slide" data-thread="cut" data-notes="~45 sec. Zeg de kernzin en loop dan de grafiek door: het perceptron was echt een eerlijk startpunt (hoge plausibiliteit). Backprop trok ons daar vrijwel meteen van weg. CNN's zijn een echte gedeeltelijke terugkeer — rechtstreeks gebouwd op metingen in de visuele cortex. Daarna knipten transformers de draad helemaal door. Het punt is niet dat de metafoor een leugen was — het punt is dat we zijn doorgebouwd voorbij het punt waarop hij nog klopte, en zelden zijn gaan terugkijken. Ondertussen bleef het vermogen de hele tijd stijgen.">
+<section class="slide" data-thread="cut" data-secs="45">
   <div class="abs kicker teal" style="left:150px;top:102px">De wending</div>
   <div class="abs statement" style="left:150px;top:200px;width:1800px;line-height:92px">Het begon als een <span class="p">echte metafoor.</span><br>We bouwden erop voort — en <span class="t">dreven af</span>, stukje bij beetje.</div>
   <svg class="art chart" viewBox="0 0 2000 1125" data-x="264,759,1253,1748" data-a="915,757,690,555" data-b="600,825,735,960"></svg>
@@ -652,7 +652,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 11 · The loop -->
-<section class="slide" data-thread="loop" data-notes="~45 sec. De lus sluit: neurowetenschappers gebruiken nu modellen in transformer-stijl om hersenactiviteit te helpen ontcijferen die we nog steeds niet helemaal begrijpen. Het is geen volledige terugkeer — de plausibiliteit stijgt een beetje, maar herstelt niet — maar de richting is omgekeerd. Het vermogen is nooit gestopt met stijgen. Laat dit binnenkomen en ga dan meteen door naar de boodschap — een aparte brugslide is niet nodig, de kop hier zegt het al.">
+<section class="slide" data-thread="loop" data-secs="45">
   <div class="abs kicker teal" style="left:150px;top:102px">De lus</div>
   <div class="abs statement" style="left:150px;top:200px;width:1800px;line-height:92px">We <span class="p">liepen weg</span> van de biologie om dit te bouwen.<br>Nu <span class="t">loopt het terug</span>.</div>
   <svg class="art chart" viewBox="0 0 2000 1125" data-x="231,610,989,1369,1748" data-a="915,757,690,555,546" data-b="600,825,735,960,847">
@@ -666,7 +666,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 12 · Takeaway -->
-<section class="slide" data-thread="end" data-notes="~30 sec. Dit is het echte einde — de ene zin die je mensen bij de lunch wilt horen herhalen. Zeg hem langzaam, pauzeer na 'breinen', laat de wending naar 'gewogen som' binnenkomen. Dan de opbrengst: deze andere blik is niet alleen netter, hij is NUTTIGER — brein-achtig gedrag verwachten van een systeem dat niet op een brein lijkt, is precies waarom hallucineren of breken op een andere formulering je verrast. Als je gewogen-som-gedrag verwacht, verrast het je niet. Eindig hier, op de stelling, niet op de vraag.">
+<section class="slide" data-thread="end" data-secs="30">
   <div class="abs kicker teal" style="left:150px;top:154px">De boodschap</div>
   <div class="abs statement" style="left:150px;top:268px;width:1800px">Redeneer niet over LLM's alsof het <span class="p">breinen</span> zijn.<br>Redeneer erover als een heel grote <span class="t">gewogen som.</span></div>
   <div class="short-rule" style="top:562px"></div>
@@ -675,7 +675,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 13 · Thank you -->
-<section class="slide" id="thanks" data-thread="end" data-notes="Laat deze slide staan tijdens de vragen. Wijs naar de twee codes: de eerste heeft alles van vandaag — de slides en alle democode (AND, XOR en de cijferdemo waarop je zelf kunt tekenen); de tweede is LinkedIn, voor wie contact wil of later nog iets wil vragen. Dan: 'Vragen?'">
+<section class="slide" id="thanks" data-thread="end">
   <div class="abs" style="left:150px;top:250px;font:700 120px var(--serif)">Bedankt</div>
   <div class="abs" style="left:150px;top:432px;font:700 48px var(--serif)">Tineke Slotegraaf</div>
   <div class="abs" style="left:150px;top:500px;font:italic 400 30px var(--sans);color:var(--muted)">Software and AI Engineer - Alvant</div>
@@ -696,6 +696,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 <div id="rehearse" aria-live="off"></div>
 <div id="hud"><span id="count"></span> · <kbd>←</kbd><kbd>→</kbd> navigeren · <kbd>N</kbd> notities · <kbd>F</kbd> volledig scherm · <kbd>T</kbd> oefentimer</div>
 
+<script src="speaker-notes.js"></script>
 <script>
 (() => {
   const STATIC = new URLSearchParams(location.search).has("static");
@@ -1377,7 +1378,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
     });
     notes.innerHTML = `<b>${cur + 1}</b>`;
     if (plan) notes.innerHTML += `<span class="plan">${plan.label}: begin deze slide op ${clock(plan.starts[cur])}, neem ${clock(plan.secs[cur])}</span>`;
-    notes.append(slides[cur].dataset.notes);
+    notes.append((window.SPEAKER_NOTES || [])[cur] || "No notes: speaker-notes.js is not next to this deck.");
     slideStart = Date.now();
     renderRehearsal();
     count.textContent = `${cur + 1} / ${slides.length}`;
@@ -1406,13 +1407,13 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 
   // ── Rehearsal timer (T). Shows the time against a plan for a 35- or 50-minute slot, so you can
   //    practise slowing down. T cycles off → 35 → 50 → off; Shift+T restarts the clock.
-  //    Talk slides get their "~NN sec" from the notes, stretched to fill the slot; demos get a fixed
+  //    Talk slides get their data-secs, stretched to fill the slot; demos get a fixed
   //    budget; the last slide is the Q&A. Never shown unless you turn it on.
   const SLOTS = [
     { minutes: 35, qa: 3, demos: { demoAnd: 5, demoXor: 5, demoDigits: 6 } },
     { minutes: 50, qa: 5, demos: { demoAnd: 8, demoXor: 9, demoDigits: 10 } },
   ];
-  const noteSecs = slides.map(s => +(/^~(\d+) sec/.exec(s.dataset.notes) || [0, 0])[1]);
+  const noteSecs = slides.map(s => +(s.dataset.secs || 0));
   const buildPlan = slot => {
     const last = slides.length - 1;
     const demoSecs = slides.reduce((t, s) => t + (slot.demos[s.id] || 0) * 60, 0);

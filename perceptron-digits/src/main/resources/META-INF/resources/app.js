@@ -4,7 +4,7 @@ const POLL_MS = 400; // while loading or training
 const IDLE_POLL_MS = 2000;
 const HIDDEN_EVERY_MS = 1000; // weight images are larger, so refresh them less often
 
-// ?embed: shown on a slide in the deck (how-ai-lost-the-thread)
+// ?embed: shown on a slide in the decks (presentations/)
 const EMBED = new URLSearchParams(location.search).has('embed');
 if (EMBED) document.documentElement.classList.add('embed');
 

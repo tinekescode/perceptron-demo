@@ -18,7 +18,7 @@ The visualizer replays those steps at 1.5 frames per second, so the audience wat
 
 - [ ] Backend running: `cd perceptron-demo && mvn quarkus:dev` (http://localhost:8080)
 - [ ] Frontend running: `cd perceptron-frontend && npm run dev` (run `npm install` first, once)
-- [ ] Browser open on http://localhost:5173, **AND** tab, zoomed so all four panels fit on the screen
+- [ ] Browser open on http://localhost:5180, **AND** tab, zoomed so all four panels fit on the screen
 - [ ] Toolbar says **Connected to :8080** and **Learned: Yes ✓**
 - [ ] Optional: `Perceptron.java` and `PerceptronResource.java` open in the IDE
 - [ ] Optional: `perceptron-mlp` running on 8081, if you'll tease XOR at the end
@@ -134,7 +134,7 @@ if wrong:
 | Pitfall | Mitigation |
 |---------|------------|
 | Red box “Can't reach perceptron-demo on port 8080” | Backend not running: `cd perceptron-demo && mvn quarkus:dev`, then click **Train** |
-| Port 8080 in use | Stop the other process (`perceptron-mlp` is 8081, the frontend 5173) |
+| Port 8080 in use | Stop the other process (`perceptron-mlp` is 8081, the frontend 5180) |
 | Animation already finished when you start talking | **⏮** back to the start, then **▶ Play** |
 | A run that's too short (solved in 1–2 updates) | Click **Train again** until there are a few red steps |
 | Too slow for the time you have | Set speed to 2× or 4×, or scrub to the end |
@@ -153,7 +153,7 @@ mvn quarkus:dev
 # terminal 2
 cd perceptron-frontend
 npm install   # first time only
-npm run dev   # http://localhost:5173
+npm run dev   # http://localhost:5180
 
 # without the frontend
 curl -X POST http://localhost:8080/perceptron/run

@@ -202,7 +202,7 @@
 <div id="viewport"><div id="stage">
 
 <!-- 1 · Title -->
-<section class="slide" data-thread="plain" data-notes="~10 sec. Quick intro of yourself and the talk title, then move on fast.">
+<section class="slide" data-thread="plain" data-secs="10">
   <div class="abs kicker teal" style="left:150px;top:280px">AI's Founding Myth</div>
   <div class="abs title" style="left:150px;top:385px;font-size:100px">How AI Lost the Thread</div>
   <div class="abs" style="left:150px;top:572px;font:italic 400 38px var(--sans);color:var(--lav)">The Strange Path from Neurons to LLMs</div>
@@ -210,7 +210,7 @@
 </section>
 
 <!-- 2 · How we use it -->
-<section class="slide" id="llmUse" data-thread="plain" data-notes="~40 sec. Let the demo run behind you while you talk. Ask the room: 'Hands up if you asked an AI something this week.' Then point at the labels on the right as they light up: it's in your IDE, your inbox, your chats, your phone. Writing tests, explaining errors, summarising, translating, deciding what's for dinner. Don't explain anything yet — just establish how completely normal this has become.">
+<section class="slide" id="llmUse" data-thread="plain" data-secs="40">
   <div class="abs kicker" style="left:120px;top:94px">Sound Familiar?</div>
   <div class="abs title" style="left:120px;top:152px">What We Ask It, Every Day</div>
   <div class="chat-win" style="left:120px;top:290px;width:1360px;height:740px">
@@ -229,7 +229,7 @@
 </section>
 
 <!-- 3 · Why listen -->
-<section class="slide" id="llmWhy" data-thread="plain" data-notes="~20 sec. Let the question type itself out — pause. Then: 'We all use this, every day. But ask most people where it actually came from, and you get a shrug — or a vague story about brains.' This is the promise, stated up front: not how to use an LLM, but where it came from and how it got here. Keep it short and conversational — this is the moment the audience decides whether to lean in.">
+<section class="slide" id="llmWhy" data-thread="plain" data-secs="20">
   <div class="abs kicker teal" style="left:150px;top:154px">Why Listen to This</div>
   <div class="ask-bar"><span class="ask-typed">Where did you actually come from?</span><span class="caret"></span><b class="chat-send ready">↑</b></div>
   <div class="abs statement late" style="left:150px;top:430px;width:1800px">We use it every day.<br><span class="late" style="transition-delay:.7s">Most of us have no idea <span class="t">where it came from.</span></span></div>
@@ -238,7 +238,7 @@
 </section>
 
 <!-- 4 · About me -->
-<section class="slide" data-thread="plain" data-notes="~30 sec. Keep this brief and light — one or two sentences per stop on the path. The callback line at the bottom is optional to say out loud; it can just sit there as a wink for anyone paying close attention.">
+<section class="slide" data-thread="plain" data-secs="30">
   <div class="abs kicker" style="left:120px;top:94px">About Me</div>
   <div class="abs title" style="left:120px;top:152px">Tineke Slotegraaf</div>
   <div class="abs" style="left:120px;top:244px;font:italic 400 30px var(--sans);color:var(--muted)">Software and AI Engineer - Alvant</div>
@@ -260,7 +260,7 @@
 </section>
 
 <!-- 5 · Neuron -->
-<section class="slide" data-thread="plain" data-notes="~50 sec. Open with the stakes line before diving in. Let the simulator run and narrate it in plain words: signals arrive on the branches on the left, the cell body adds them up — watch 'Summed input' climb — and the moment it reaches the threshold of 10, the cell fires: one pulse runs down the long wire to the far end, then everything resets. Point out that it's all-or-nothing: a bigger sum doesn't make a bigger pulse. Avoid 'dendrite,' 'soma,' 'axon' as jargon; use 'branches,' 'cell body,' 'wire' where it helps. Mention in one sentence that this is a simplification — the brain has hundreds of kinds of neurons. Bridge: 'In 1943 McCulloch and Pitts boiled exactly this down to an on/off switch: add up the inputs, compare to a threshold. Hold onto that switch — it comes back in a few slides. But first: how does a neuron learn?'">
+<section class="slide" data-thread="plain" data-secs="50">
   <div class="abs kicker" style="left:120px;top:87px">The Hook — 1943</div>
   <div class="abs title" style="left:120px;top:135px">How a Neuron Decides</div>
   <div class="card"><iframe src="assets/neuron-simulator.html" title="Neuron simulator: summed dendrite inputs trigger an action potential along the axon"></iframe></div>
@@ -272,7 +272,7 @@
 </section>
 
 <!-- 5b · How a neuron learns -->
-<section class="slide" id="hebb" data-thread="plain" data-notes="~60 sec. (Donald Hebb, 1949.) Walk the animation: A and B tend to fire together. When they do, their combined push makes the cell fire — and both of their connections get a little stronger. Watch the lines thicken. C fires on its own, never manages to make the cell fire, and its connection slowly weakens. That's 'neurons that fire together, wire together', plus its flip side. When the pattern has settled, the animation starts over. The key point for later: each connection changes using only what happens right where it sits — did I just fire, did the cell just fire? Nobody sends it a precise, personal 'you were off by this much'. The brain does have broad reward signals like dopamine, but those are a broadcast to many cells at once, not a correction for each connection. Hold onto that: backprop will need exactly that personal correction, and that's where AI and biology part ways. Bridge: 'Rosenblatt took the 1943 switch and gave it a learning rule loosely inspired by this. That's the perceptron.'">
+<section class="slide" id="hebb" data-thread="plain" data-secs="60">
   <div class="abs kicker" style="left:120px;top:87px">The Hook — 1949</div>
   <div class="abs title" style="left:120px;top:135px">How a Neuron Learns</div>
   <svg class="art" viewBox="0 0 2000 1125">
@@ -288,7 +288,7 @@
 </section>
 
 <!-- 6 · Perceptron -->
-<section class="slide" data-thread="plain" data-notes="~45 sec. (Rosenblatt, 1958.) This is the honest starting point of the metaphor. Walk the diagram as the neuron from two slides ago: the inputs are the signals arriving on the branches, each weight is a connection strength, the Σ adds everything up like the cell body, and f is the threshold — fire or don't. Then the learning line: wrong? nudge each weight a little; right? leave it. Every weight changes using only its own input and this one unit's own error — a real, if crude, echo of Hebbian learning. High plausibility bar on purpose: this step wasn't the lie. Point at the small graph: AND is only true in one corner, and one straight line cuts that corner off — exactly what a single perceptron can draw. Optional colour: in 1958 the press got very excited — a New York Times piece reported the Navy expected it to one day walk, talk and be conscious of its existence (double-check the exact wording before quoting it). Then: 'Let me show you one learning, live.'">
+<section class="slide" data-thread="plain" data-secs="45">
   <div class="abs kicker" style="left:120px;top:94px">1958 — Rosenblatt</div>
   <div class="abs title" style="left:120px;top:152px">The Perceptron</div>
   <svg class="art" viewBox="0 0 2000 1125">
@@ -337,9 +337,9 @@
 </section>
 
 <!-- 6b · Demo -->
-<section class="slide demo" id="demoAnd" data-thread="plain" data-notes="Demo, 5–10 min (see perceptron-demo/DEMO.md). Before the talk: perceptron-demo running on :8080 and the frontend on :5173; it opens on the AND tab; press ⏮ to rewind. The demo runs on this slide: click into it to use it. While it has the keyboard, Page Up/Down (a clicker) still change slides; press Esc to give the arrow keys back to the slides. Flow: 1) Truth table — only the top-right corner is 1, one line can cut it off. 2) At the start frame, point at the network and the calculation: weighted sum + bias, then the step. 3) Press play: green = right, leave it; red = wrong, the line jumps and the dashed line shows where it was. Pause once on a red step and read w += η · error · x with the real numbers. 4) Learned ✓, then 'Train again' for a different path to the same result. If there's time: the code peek (predict, then train) or the learning-rate tweak. Close with the XOR teaser: 'Now the 1s are on opposite corners — no single line can do this.' That's the next slide.">
+<section class="slide demo" id="demoAnd" data-thread="plain">
   <div class="abs kicker small demo-kicker">Demo · AND with one perceptron</div>
-  <div class="demo-card" data-src="http://localhost:5173/?embed&amp;tab=and">
+  <div class="demo-card" data-src="http://localhost:5180/?embed&amp;tab=and">
     <div class="demo-off">
       <div class="demo-off-h">Start the demo, and it appears here</div>
       <pre>cd perceptron-demo &amp;&amp; mvn quarkus:dev
@@ -350,7 +350,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 7 · Backprop -->
-<section class="slide" data-thread="break" data-notes="~35 sec. This is the real break, and it happens almost immediately. (Rumelhart, Hinton & Williams, 1986.) The moment you stack layers, you need a way to assign credit backward — and backprop's mechanism has no known biological analog. This is the step that stays unbiological for the rest of the talk, underneath every architecture that follows. Point at the small graph: XOR can't be split by one line — but two lines (i.e. two hidden units, combined by an output unit) can. That combining step is exactly what a hidden layer buys you, and exactly what needs backprop to train it.">
+<section class="slide" data-thread="break" data-secs="35">
   <div class="abs kicker" style="left:120px;top:94px">1986 — Rumelhart, Hinton &amp; Williams</div>
   <div class="abs title" style="left:120px;top:152px">+ Backpropagation</div>
   <svg class="art" viewBox="0 0 2000 1125">
@@ -387,9 +387,9 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 7b · Demo -->
-<section class="slide demo" id="demoXor" data-thread="break" data-notes="Demo, 5–10 min (see perceptron-mlp/DEMO.md). Before the talk: perceptron-demo on :8080 (for the contrast), perceptron-mlp on :8081, the frontend on :5173; optionally Perceptron.java and MultiLayerPerceptron.java side by side in the IDE. The demo runs on this slide: click into it to use it. While it has the keyboard, Page Up/Down (a clicker) still change slides; press Esc to give the arrow keys back to the slides. Flow: 1) Problem: (0,1) and (1,0) are 1, the corners are 0 — draw one straight line that separates them. You can't. 2) Sketch: 2 inputs → 4 hidden nodes → 1 output; each hidden node draws its own line, the output combines them. 3) Press play: the loss drops, then the curved region appears; click h₁…h₄ to show the line each hidden node draws. Learned ✓ after about 961 epochs, against a handful for AND. If there's time, the code diff — not the maths, just what changed: one weight list became a layer; step became sigmoid (a step is flat, so there is no slope to send back); one sum became two layers; 'nudge if wrong' became backprop — a hidden node has no target of its own, so the output error is passed backwards through the weight that connects them. Optional tweak: HIDDEN_SIZE = 1 fails (one line again), 2 just works. Land on the biology: that backward error, a personal 'you were off by this much' for every weight, is exactly what the neuron slide said nobody sends.">
+<section class="slide demo" id="demoXor" data-thread="break">
   <div class="abs kicker small demo-kicker">Demo · XOR with a hidden layer</div>
-  <div class="demo-card" data-src="http://localhost:5173/?embed&amp;tab=xor">
+  <div class="demo-card" data-src="http://localhost:5180/?embed&amp;tab=xor">
     <div class="demo-off">
       <div class="demo-off-h">Start the demo, and it appears here</div>
       <pre>cd perceptron-mlp &amp;&amp; mvn quarkus:dev
@@ -400,7 +400,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 7c · Demo -->
-<section class="slide demo" id="demoDigits" data-thread="break" data-notes="Demo, 5–10 min (see perceptron-digits/DEMO.md). Before the talk: perceptron-digits running on :8082 (the log says 'MNIST ready'), press Reset weights, Epochs 1, Slow ticked. The demo runs on this slide: click into it to use it. While it has the keyboard, Page Up/Down (a clicker) still change slides; press Esc to give the arrow keys back to the slides. Flow: 1) Random test image a few times: 28 × 28 = 784 numbers, that's the input; 10 outputs, one per digit. 2) Draw a 3 before training: every bar is about 10%, it's guessing; the hidden neurons are noise. 3) Press Train and talk over it (~45 s): accuracy shoots from 10% to ~75% in the first 1,000 examples, then creeps to ~95%; the bars for your 3 change; the hidden neurons turn into strokes and blobs. 4) Clear and draw digits, let someone from the room draw one; a sloppy 4 or 7 shows the second-highest bar. 5) Point at the mistakes: would you have got these right? The point: nothing new since XOR, the same neurons and the same backprop, only bigger. Bridge to the next slide: this is still the classic, fully connected net, every pixel its own input. That works, but it has a blind spot, and that's where convolution comes in.">
+<section class="slide demo" id="demoDigits" data-thread="break">
   <div class="abs kicker small demo-kicker">Demo · Handwritten digits</div>
   <div class="demo-card" data-src="http://localhost:8082/?embed">
     <div class="demo-off">
@@ -412,7 +412,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 8 · CNNs -->
-<section class="slide" id="cnnTitle" data-thread="knot" data-notes="~35 sec. This is the genuine partial return — the twist most people don't expect. Point at the picture, left to right, without explaining it yet: a handwritten 7 goes in, and each layer turns the picture into a stack of smaller maps — first edges, then corners, then parts — until one answer lights up: 7. That's LeCun's 1989 network reading zip codes, in one picture; the next slides unpack it. CNNs weren't just loosely inspired by vision; Fukushima built the Neocognitron directly from electrophysiology. Later work (Yamins &amp; DiCarlo's group) found CNN activations trained purely for object recognition predict real macaque cortical firing. (Double-check both references before leaning on them out loud.) The bar goes back up here on purpose.">
+<section class="slide" id="cnnTitle" data-thread="knot" data-secs="35">
   <div class="abs kicker" style="left:120px;top:94px">1989 — LeCun</div>
   <div class="abs title" style="left:120px;top:152px">Convolutional Nets</div>
   <svg class="art" viewBox="0 0 2000 1125"></svg>
@@ -426,7 +426,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 8a · Classic nets on images -->
-<section class="slide" id="cnnFlat" data-thread="knot" data-notes="~40 sec. Before convolution, the obvious way to feed an image to a neural net was to unroll it: every pixel becomes one input with its own weight, wired to every neuron. Point at the two rows: same 7, moved two pixels to the right — most of the lit pixels now land on different inputs, so what the network learned about the first 7 doesn't carry over to the second. A classic net has to learn 'a 7 in every possible position' separately. That's the problem convolution solves.">
+<section class="slide" id="cnnFlat" data-thread="knot" data-secs="40">
   <div class="abs kicker" style="left:120px;top:94px">Convolutional Nets — The Problem</div>
   <div class="abs title" style="left:120px;top:152px">How a Classic Network Sees an Image</div>
   <div class="abs" style="left:120px;top:262px;font:400 32px var(--sans);color:var(--lav)">Every pixel gets its own weight — so nudge the image two pixels right, and the network sees a stranger.</div>
@@ -441,7 +441,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 8b · Inspired by the eye -->
-<section class="slide" data-thread="knot" data-notes="~45 sec. (Hubel & Wiesel, 1959; Nobel Prize 1981.) Recording from single neurons in a cat's visual cortex, they found cells that each respond only to a small patch of the visual field — and only to an edge or bar at one particular angle. Other 'complex' cells respond to that edge wherever it appears nearby. Walk the picture: light from the house lands on the retina, the signal goes back to the visual cortex, and there each cell watches one little patch — the numbered circles — and fires for one edge angle. Fukushima turned this almost literally into the Neocognitron (1980); LeCun added backprop and had it reading handwritten zip codes (1989). Then walk the right column: each biological idea maps one-to-one onto a ConvNet ingredient.">
+<section class="slide" data-thread="knot" data-secs="45">
   <div class="abs kicker" style="left:120px;top:94px">Convolutional Nets — The Inspiration</div>
   <div class="abs title" style="left:120px;top:152px">Borrowing from the Eye</div>
   <div class="abs" style="left:120px;top:262px;font:400 32px var(--sans);color:var(--lav)">Vision starts small: each cell in the visual cortex watches one tiny patch, and fires for one edge angle.</div>
@@ -496,7 +496,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 8c · Edges → corners → parts -->
-<section class="slide" id="cnnSee" data-thread="knot" data-notes="~50 sec. Walk left to right. The little window slides over the pixels; at each spot it asks one question — 'is there an edge here, at this angle?' — and writes the answer into an edge map, one map per filter. The next layer looks at those edge maps and finds the places where edges meet: corners. The layer after that combines corners into parts — a roof, a window, a door. Only at the very end does something say 'house'. The edge and corner maps on this slide are computed live from the pixels with hand-made filters; a real network learns its own — and its first layer almost always ends up looking like edge detectors. Same story as the visual cortex on the previous slide.">
+<section class="slide" id="cnnSee" data-thread="knot" data-secs="50">
   <div class="abs kicker" style="left:120px;top:94px">Convolutional Nets — How They See</div>
   <div class="abs title" style="left:120px;top:152px">Edges, Then Corners, Then Things</div>
   <div class="abs" style="left:120px;top:262px;font:400 32px var(--sans);color:var(--lav)">One small window slides over the picture. Each layer finds slightly bigger patterns, built from the ones below.</div>
@@ -515,7 +515,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 8d · Parameter comparison -->
-<section class="slide" id="cnnParams" data-thread="knot" data-notes="~40 sec. Let the numbers land. A modest 224×224 colour photo is 150,528 numbers. Wire it to just 1,000 neurons the classic way, and the first layer alone needs over 150 million weights. A ConvNet's first layer, with 64 filters of 3×3×3, needs 1,728. The squares are to scale — the ConvNet's is the tiny dot. And it's not just cheaper: because the same filter is reused at every position, a shape moved to the right triggers the same filter — which fixes the problem from three slides back.">
+<section class="slide" id="cnnParams" data-thread="knot" data-secs="40">
   <div class="abs kicker" style="left:120px;top:94px">Convolutional Nets — The Payoff</div>
   <div class="abs title" style="left:120px;top:152px">Counting the Weights</div>
   <div class="abs" style="left:120px;top:262px;font:400 32px var(--sans);color:var(--lav)">One ordinary 224 × 224 colour photo. First layer only.</div>
@@ -540,7 +540,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 9 · Transformers -->
-<section class="slide" data-thread="cut" data-notes="~40 sec. The cord is fully cut here — no biological analog at all. Point at the picture: one word, silently asking every other word ‘how much should I care about you?’ — thick arcs for the words that matter. Then the small graph: a checkerboard can’t be solved by one line or by two — it needs to relate points to each other directly, regardless of distance. That’s what attention does: it connects any two points based on learned relevance, not geometric proximity. The bar drops to almost nothing on purpose. Bridge: ‘So why did language, of all things, need this? Let’s look at what came before.’">
+<section class="slide" data-thread="cut" data-secs="40">
   <div class="abs kicker" style="left:120px;top:94px">2017 — Vaswani et al.</div>
   <div class="abs title" style="left:120px;top:152px">Attention / Transformers</div>
   <svg class="art" viewBox="0 0 2000 1125">
@@ -571,7 +571,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 9a · Why language was hard -->
-<section class="slide" id="txProblem" data-thread="cut" data-notes="~50 sec. Before transformers, language was the hard case. Walk the three cards left to right. A perceptron or simple network sees a fixed set of inputs: no sense of order, no memory of the previous word, not enough depth. A convolutional net — brilliant for images — slides a small window along the text: it catches neighbouring words, but in ‘the bug that she found is fixed’, ‘bug’ and ‘fixed’ belong together and are too far apart for the window. RNNs and LSTMs (1990s) were built for sequences: they read one word at a time and carry a memory along. Two problems: the memory fades over long texts, and word 100 has to wait for word 99 — you can’t spread the work over thousands of GPU cores. That’s the gap the transformer closes.">
+<section class="slide" id="txProblem" data-thread="cut" data-secs="50">
   <div class="abs kicker" style="left:120px;top:94px">Transformers — The Problem</div>
   <div class="abs title" style="left:120px;top:152px">Why Earlier Networks Struggled with Language</div>
   <div class="abs" style="left:120px;top:262px;font:400 32px var(--sans);color:var(--lav)">Language is a sequence, and the words that belong together can be far apart.</div>
@@ -591,7 +591,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 9b · Self-attention -->
-<section class="slide" id="txIdea" data-thread="cut" data-notes="~60 sec. Read the sentence out loud: ‘The trophy didn’t fit in the suitcase because it was too big.’ What is ‘it’? The trophy. Now watch the last word change to ‘small’ — suddenly ‘it’ is the suitcase. One word at the very end changes the meaning of a word eight places earlier: that’s a long-range dependency, and language is full of them. Self-attention handles it directly: every word looks at every other word and asks ‘how relevant are you to me?’ — the thickness of the arcs. Then point at the two boxes. An RNN has to pass the information hop by hop, seven steps from ‘trophy’ to ‘it’, and it fades on the way. A transformer connects every pair in one step — and because no word waits for the previous one, all words are processed at the same time, which is what makes training on GPUs so fast. The weights on the slide are illustrative, not from a real model.">
+<section class="slide" id="txIdea" data-thread="cut" data-secs="60">
   <div class="abs kicker" style="left:120px;top:94px">Transformers — The Idea</div>
   <div class="abs title" style="left:120px;top:152px">Every Word Looks at Every Other Word</div>
   <div class="abs" style="left:120px;top:262px;font:400 32px var(--sans);color:var(--lav)">Self-attention connects any two words directly, however far apart they are.</div>
@@ -606,7 +606,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 9c · Inside a transformer -->
-<section class="slide" id="txInside" data-thread="cut" data-notes="~70 sec. Don’t go deep — four ideas, one sentence each, pointing at the matching colour in the diagram. Read it bottom to top. Words are turned into numbers, and a position signal is added (amber) — attention looks at all words at once, so without it ‘dog bites man’ and ‘man bites dog’ would look identical. Then the block: multi-head self-attention (purple) — what we just saw, several times in parallel, because one head might track grammar, another what ‘it’ refers to. Then a feed-forward layer (teal): a small classic network applied to every word — the perceptron is back. Around each part: a shortcut that adds the input back, and a normalisation step — they keep a very deep stack stable to train. And that block is simply repeated: GPT-3 stacks 96 of them. At the top: predict the next word.">
+<section class="slide" id="txInside" data-thread="cut" data-secs="70">
   <div class="abs kicker" style="left:120px;top:94px">Transformers — Inside</div>
   <div class="abs title" style="left:120px;top:152px">Inside a Transformer</div>
   <div class="abs" style="left:120px;top:262px;font:400 32px var(--sans);color:var(--lav)">A stack of identical blocks: attention first, then a small classic network.</div>
@@ -618,7 +618,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 9d · Impact on LLMs -->
-<section class="slide" id="txImpact" data-thread="cut" data-notes="~45 sec. This is why transformers took over: they scale. The same design keeps getting better as you add layers, data and compute — and because everything runs in parallel, you can actually afford to train it on enormous amounts of text. Walk the chart — careful, it’s a log scale, every gridline is ten times more: the original transformer, 213 million parameters; BERT, 340 million; GPT-2, 1.5 billion; GPT-3, 175 billion — trained on about 300 billion tokens. GPT-4’s size was never published. Two families: BERT-style models read and understand — think search; GPT-style models write, one next word at a time — think chat. Both are transformers.">
+<section class="slide" id="txImpact" data-thread="cut" data-secs="45">
   <div class="abs kicker" style="left:120px;top:94px">Transformers — The Impact</div>
   <div class="abs title" style="left:120px;top:152px">The Engine Inside Every LLM</div>
   <div class="abs" style="left:120px;top:262px;font:400 32px var(--sans);color:var(--lav)">The same design scales: more layers, more data, more compute, and it keeps getting better.</div>
@@ -631,7 +631,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 9e · Why transformers matter -->
-<section class="slide" id="txWhy" data-thread="cut" data-notes="~40 sec. Step back and show the whole road on one line: the neuron, the perceptron, backprop, convolution — and the transformer is the link that turns all of that into today’s language models. Say the statement: no self-attention and no parallel training, no GPT-4. Then the reveal: crack open a modern LLM and the same weighted-sum-plus-activation from the perceptron slide is still sitting in there, just repeated across billions of parameters, with attention added on top. That’s the moment the mystique and the biology dissolve together — what’s left isn’t mysterious anymore, just large.">
+<section class="slide" id="txWhy" data-thread="cut" data-secs="40">
   <div class="abs kicker" style="left:120px;top:94px">Transformers — Why It Matters</div>
   <div class="abs title" style="left:120px;top:152px">The Missing Link</div>
   <svg class="art" viewBox="0 0 2000 1125"></svg>
@@ -641,7 +641,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 10 · The turn -->
-<section class="slide" data-thread="cut" data-notes="~45 sec. Say the thesis line, then walk the chart: the perceptron really was a fair starting point (high plausibility). Backprop pulled us away from it almost immediately. CNNs are a genuine partial return — built directly from visual-cortex recordings. Then transformers cut the cord completely. The point isn't that the metaphor was a lie — it's that we kept building past the point where it still applied, and rarely checked back in. Capability kept climbing the whole time, regardless.">
+<section class="slide" data-thread="cut" data-secs="45">
   <div class="abs kicker teal" style="left:150px;top:102px">The Turn</div>
   <div class="abs statement" style="left:150px;top:200px;width:1800px;line-height:92px">It started as a <span class="p">real metaphor.</span><br>We built on it — then <span class="t">drifted</span>, piece by piece.</div>
   <svg class="art chart" viewBox="0 0 2000 1125" data-x="264,759,1253,1748" data-a="915,757,690,555" data-b="600,825,735,960"></svg>
@@ -652,7 +652,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 11 · The loop -->
-<section class="slide" data-thread="loop" data-notes="~45 sec. The loop closes: neuroscientists are now using transformer-style models to help decode brain activity we still don't fully understand. It's not a full return — plausibility ticks up, it doesn't recover — but the direction of travel reversed. Capability never stopped climbing. Let this land, then move straight into the takeaway — no separate bridge slide needed, the headline here already says it.">
+<section class="slide" data-thread="loop" data-secs="45">
   <div class="abs kicker teal" style="left:150px;top:102px">The Loop</div>
   <div class="abs statement" style="left:150px;top:200px;width:1800px;line-height:92px">We <span class="p">walked away</span> from biology to build this.<br>Now it's <span class="t">walking back</span>.</div>
   <svg class="art chart" viewBox="0 0 2000 1125" data-x="231,610,989,1369,1748" data-a="915,757,690,555,546" data-b="600,825,735,960,847">
@@ -666,7 +666,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 12 · Takeaway -->
-<section class="slide" data-thread="end" data-notes="~30 sec. This is the actual ending — the one sentence you want people repeating at lunch. Say it slowly, pause after 'brains,' let the turn to 'weighted sum' land. Then the payoff: this reframe isn't just tidier, it's more USEFUL — expecting brain-like behavior from a non-brain-like system is exactly what makes hallucination or brittle rephrasing feel surprising. Expecting weighted-sum behavior doesn't. End here, on the statement, not the question.">
+<section class="slide" data-thread="end" data-secs="30">
   <div class="abs kicker teal" style="left:150px;top:154px">The Takeaway</div>
   <div class="abs statement" style="left:150px;top:268px;width:1800px">Stop reasoning about LLMs like <span class="p">brains.</span><br>Reason about them like a very large <span class="t">weighted sum.</span></div>
   <div class="short-rule" style="top:562px"></div>
@@ -675,7 +675,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 13 · Thank you -->
-<section class="slide" id="thanks" data-thread="end" data-notes="Leave this slide up during Q&amp;A. Point at the two codes: the first one has everything from today — the slides and all the demo code (AND, XOR and the digits demo you can draw on yourself); the second is LinkedIn if they want to connect or ask something later. Then: 'Questions?'">
+<section class="slide" id="thanks" data-thread="end">
   <div class="abs" style="left:150px;top:250px;font:700 120px var(--serif)">Thank you</div>
   <div class="abs" style="left:150px;top:432px;font:700 48px var(--serif)">Tineke Slotegraaf</div>
   <div class="abs" style="left:150px;top:500px;font:italic 400 30px var(--sans);color:var(--muted)">Software and AI Engineer - Alvant</div>
@@ -696,6 +696,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 <div id="rehearse" aria-live="off"></div>
 <div id="hud"><span id="count"></span> · <kbd>←</kbd><kbd>→</kbd> navigate · <kbd>N</kbd> notes · <kbd>F</kbd> fullscreen · <kbd>T</kbd> rehearsal timer</div>
 
+<script src="speaker-notes.js"></script>
 <script>
 (() => {
   const STATIC = new URLSearchParams(location.search).has("static");
@@ -1377,7 +1378,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
     });
     notes.innerHTML = `<b>${cur + 1}</b>`;
     if (plan) notes.innerHTML += `<span class="plan">${plan.label}: start this slide at ${clock(plan.starts[cur])}, take ${clock(plan.secs[cur])}</span>`;
-    notes.append(slides[cur].dataset.notes);
+    notes.append((window.SPEAKER_NOTES || [])[cur] || "No notes: speaker-notes.js is not next to this deck.");
     slideStart = Date.now();
     renderRehearsal();
     count.textContent = `${cur + 1} / ${slides.length}`;
@@ -1406,13 +1407,13 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 
   // ── Rehearsal timer (T). Shows the time against a plan for a 35- or 50-minute slot, so you can
   //    practise slowing down. T cycles off → 35 → 50 → off; Shift+T restarts the clock.
-  //    Talk slides get their "~NN sec" from the notes, stretched to fill the slot; demos get a fixed
+  //    Talk slides get their data-secs, stretched to fill the slot; demos get a fixed
   //    budget; the last slide is the Q&A. Never shown unless you turn it on.
   const SLOTS = [
     { minutes: 35, qa: 3, demos: { demoAnd: 5, demoXor: 5, demoDigits: 6 } },
     { minutes: 50, qa: 5, demos: { demoAnd: 8, demoXor: 9, demoDigits: 10 } },
   ];
-  const noteSecs = slides.map(s => +(/^~(\d+) sec/.exec(s.dataset.notes) || [0, 0])[1]);
+  const noteSecs = slides.map(s => +(s.dataset.secs || 0));
   const buildPlan = slot => {
     const last = slides.length - 1;
     const demoSecs = slides.reduce((t, s) => t + (slot.demos[s.id] || 0) * 60, 0);

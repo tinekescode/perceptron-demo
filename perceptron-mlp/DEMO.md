@@ -17,7 +17,7 @@ It trains a **2-4-1 network** (2 inputs → 4 hidden sigmoid nodes → 1 sigmoid
 
 - [ ] `cd perceptron-demo && mvn quarkus:dev` running (http://localhost:8080), for the contrast
 - [ ] `cd perceptron-mlp && mvn quarkus:dev` running (http://localhost:8081)
-- [ ] Optional: frontend running (`npm --prefix perceptron-frontend run dev`, http://localhost:5173)
+- [ ] Optional: frontend running (`npm --prefix perceptron-frontend run dev`, http://localhost:5180)
 - [ ] Open in the IDE, side by side: `perceptron-demo/.../Perceptron.java` (left) and `perceptron-mlp/.../MultiLayerPerceptron.java` (right)
 - [ ] XOR truth table visible (slide or whiteboard)
 

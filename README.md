@@ -2,13 +2,13 @@
 
 From one neuron to a small neural network, in plain Java.
 
-These are the demos from the talk **How AI Lost the Thread: The Strange Path from Neurons to LLMs**. The slides are in [`how-ai-lost-the-thread`](how-ai-lost-the-thread): open `index.html` in a browser. There are two more versions: [`how-ai-lost-the-thread-november-2`](how-ai-lost-the-thread-november-2) (10 minutes) and [`how-ai-lost-the-thread-november-3`](how-ai-lost-the-thread-november-3) (in Dutch).
+These are the demos from the talk **How AI Lost the Thread: The Strange Path from Neurons to LLMs**. The slides are in [`2026-11-12-how-ai-lost-the-thread`](presentations/2026-11-12-how-ai-lost-the-thread): open `index.html` in a browser. There are two more versions: [`2026-11-02-how-ai-lost-the-thread-10-min`](presentations/2026-11-02-how-ai-lost-the-thread-10-min) (10 minutes) and [`2026-11-03-how-ai-lost-the-thread-nl`](presentations/2026-11-03-how-ai-lost-the-thread-nl) (in Dutch).
 
 | Project | What it does | Port |
 |---|---|---|
 | [`perceptron-demo`](perceptron-demo) | A single perceptron learns **AND** | 8080 |
 | [`perceptron-mlp`](perceptron-mlp) | A 2-4-1 network with backpropagation learns **XOR**, which one perceptron cannot | 8081 |
-| [`perceptron-frontend`](perceptron-frontend) | Browser visualizer that replays the training of AND and XOR | 5173 |
+| [`perceptron-frontend`](perceptron-frontend) | Browser visualizer that replays the training of AND and XOR | 5180 |
 | [`perceptron-digits`](perceptron-digits) | A 784-64-10 network learns handwritten digits (MNIST); watch it learn and draw digits for it | 8082 |
 
 The AND and XOR backends are Quarkus apps with one endpoint, `POST /perceptron/run`, which trains a fresh network and returns the weights, the predictions and the training history. `perceptron-digits` is a Quarkus app with its own page; it downloads MNIST (~11 MB) on its first start.
@@ -34,7 +34,7 @@ cd perceptron-mlp && mvn quarkus:dev
 cd perceptron-frontend && npm install && npm run dev
 ```
 
-Then open http://localhost:5173, or call a backend directly:
+Then open http://localhost:5180, or call a backend directly:
 
 ```shell
 curl -X POST http://localhost:8080/perceptron/run

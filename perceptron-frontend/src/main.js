@@ -38,7 +38,7 @@ const SPEEDS = [1, 2, 4];
 // learn AND within the backend's 100 epochs, and the others take minutes to play back.
 const LEARNING_RATES = [0.02, 0.1, 1];
 
-// ?embed: shown on a slide in the deck (how-ai-lost-the-thread). ?tab=and|xor picks the tab.
+// ?embed: shown on a slide in the decks (presentations/). ?tab=and|xor picks the tab.
 const params = new URLSearchParams(location.search);
 const EMBED = params.has('embed');
 if (EMBED) document.documentElement.classList.add('embed');

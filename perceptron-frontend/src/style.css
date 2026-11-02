@@ -854,7 +854,7 @@ button.primary:disabled {
   background: var(--class1);
 }
 
-/* ?embed: on a slide in the deck (how-ai-lost-the-thread). No page header or intro, and the
+/* ?embed: on a slide in the decks (presentations/). No page header or intro, and the
    four panels side by side, so a whole demo fits on one slide. */
 /* Bigger text for the back of the room: everything sized in rem grows with this */
 .embed {
