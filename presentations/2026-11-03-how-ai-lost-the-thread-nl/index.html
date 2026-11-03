@@ -41,106 +41,99 @@
   .slide > svg.art { position: absolute; inset: 0; width: 2000px; height: 1125px; overflow: visible; }
 
   .abs { position: absolute; line-height: 1; white-space: nowrap; }
-  .kicker { font: 700 30px var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--purple); }
+  .kicker { font: 700 38px var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--purple); }
   .kicker.teal { color: var(--teal); }
-  .kicker.small { font-size: 24px; color: var(--dim); }
-  .title { font: 700 80px var(--serif); }
-  .statement { font: 700 72px/98px var(--serif); white-space: normal; }
-  .body { font: 400 32px/57px var(--sans); color: var(--lav); white-space: normal; }
-  .caption { font: italic 400 22px/30px var(--sans); color: var(--muted); white-space: normal; text-align: center; }
+  .kicker.small { font-size: 30px; color: var(--dim); }
+  .title { font: 700 100px var(--serif); }
+  .statement { font: 700 84px/108px var(--serif); white-space: normal; }
+  .body { font: 400 40px/64px var(--sans); color: var(--lav); white-space: normal; }
+  .caption { font: italic 400 29px/38px var(--sans); color: var(--muted); white-space: normal; text-align: center; }
   .p { color: var(--purple); } .t { color: var(--teal); }
   .short-rule { position: absolute; left: 135px; width: 450px; height: 3px; background: var(--rule); }
 
-  /* chat demo (slides 2–3) */
-  .chat-win { position: absolute; background: #0E1026; border: 2px solid var(--rule); border-radius: 18px; overflow: hidden;
-    box-shadow: 0 30px 80px rgba(0,0,0,.45); }
-  .chat-bar { height: 56px; display: flex; align-items: center; gap: 10px; padding: 0 22px; border-bottom: 1px solid var(--rule); background: #151838; }
-  .chat-bar i { width: 14px; height: 14px; border-radius: 50%; background: var(--thread); }
-  .chat-bar span { margin-left: 16px; font: 700 22px var(--sans); color: var(--lav); }
-  .chat-side { position: absolute; left: 0; top: 56px; bottom: 0; width: 300px; border-right: 1px solid var(--rule); padding: 26px 18px; background: #121433; }
-  .chat-side-h { font: 700 18px var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--dim); margin: 0 0 14px 12px; }
-  .chat-hist { font: 400 24px var(--sans); color: var(--muted); padding: 12px 14px; border-radius: 10px; margin-bottom: 6px;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: background .3s, color .3s; }
-  .chat-hist.on { background: rgba(108,99,255,.25); color: #fff; }
-  .chat-main { position: absolute; left: 300px; right: 0; top: 56px; bottom: 0; padding: 40px 48px 140px; }
-  .chat-log { display: flex; flex-direction: column; gap: 26px; }
-  .msg-user { align-self: flex-end; max-width: 78%; background: var(--purple); color: #fff; padding: 16px 24px;
-    border-radius: 22px 22px 6px 22px; font: 400 28px/1.35 var(--sans); }
-  .msg-bot { align-self: flex-start; max-width: 92%; color: var(--lav); font: 400 28px/1.5 var(--sans); white-space: pre-wrap; }
-  .msg-bot.code { font: 400 23px/1.55 Consolas, "Cascadia Mono", "Courier New", monospace; color: #E8E6FF; background: #1A1D3D;
-    border: 1px solid var(--rule); border-radius: 12px; padding: 18px 24px; }
-  .dots { align-self: flex-start; display: flex; gap: 8px; padding: 14px 0; }
-  .dots i { width: 12px; height: 12px; border-radius: 50%; background: var(--muted); animation: dot 1s infinite ease-in-out; }
-  .dots i:nth-child(2) { animation-delay: .15s; } .dots i:nth-child(3) { animation-delay: .3s; }
-  @keyframes dot { 0%, 100% { opacity: .25; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-5px); } }
-  .chat-input { position: absolute; left: 48px; right: 48px; bottom: 34px; height: 78px; border: 2px solid var(--rule); border-radius: 39px;
-    background: #151838; display: flex; align-items: center; padding: 0 90px 0 32px; font: 400 27px var(--sans); color: #fff; }
-  .chat-typed:empty::before { content: "Vraag maar raak…"; color: var(--dim); }
+  /* slide 2: one question at a time, in the middle of the screen */
+  .asks { position: absolute; inset: 0; display: grid; place-items: center; }
+  .ask, .ask-intro { grid-area: 1 / 1; max-width: 1880px; color: #fff; font: 400 120px/1.2 var(--sans); text-align: center;
+    opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; }
+  .ask-intro { font: 700 120px/1.2 var(--serif); color: var(--teal); }
+  .ask.on, .ask-intro.on { opacity: 1; transform: none; }
+
+  /* ask bar (slide 3) */
   .caret { width: 3px; height: 34px; background: var(--teal); margin-left: 3px; animation: blink 1s steps(1) infinite; }
   @keyframes blink { 50% { opacity: 0; } }
   .chat-send { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 54px; height: 54px; border-radius: 50%;
     background: var(--thread); color: #fff; display: grid; place-items: center; font: 700 26px var(--sans); transition: background .2s; }
   .chat-send.ready { background: var(--purple); }
-  .chip { position: absolute; left: 1560px; width: 330px; padding: 20px 24px; border-radius: 14px; border: 2px solid var(--rule);
-    font: 700 30px var(--serif); color: var(--muted); transition: border-color .3s, color .3s, background .3s; }
-  .chip.on { border-color: var(--teal); color: #fff; background: rgba(0,217,192,.1); }
-  .ask-bar { position: absolute; left: 150px; top: 236px; width: 1700px; height: 100px; border: 2px solid var(--rule); border-radius: 50px;
-    background: #151838; display: flex; align-items: center; padding: 0 110px 0 44px; font: 400 40px var(--sans); color: #fff; }
-  .ask-bar .chat-send { width: 70px; height: 70px; right: 16px; font-size: 32px; }
-  .ask-bar .caret { height: 46px; }
-  .late { transition: opacity .7s ease; }
-  .slide.asking .late { opacity: 0; transition: none; }
+  .ask-bar { position: absolute; left: 60px; top: 442px; width: 1880px; height: 240px; border: 3px solid var(--rule); border-radius: 120px;
+    background: #151838; display: flex; align-items: center; padding: 0 230px 0 80px; font: 400 120px var(--sans); color: #fff; }
+  .ask-bar .chat-send { width: 180px; height: 180px; right: 30px; font-size: 84px; }
+  .ask-bar .caret { width: 7px; height: 130px; }
 
   /* timeline */
-  .tl-h { font: 700 34px var(--serif); transform: translateX(-50%); }
-  .tl-d { font: italic 400 24px var(--sans); color: var(--muted); transform: translateX(-50%); }
+  .tl-h { font: 700 42px var(--serif); transform: translateX(-50%); }
+  .tl-d { font: italic 400 30px var(--sans); color: var(--muted); transform: translateX(-50%); }
+  /* the about-me timeline: big, wrapping labels; headings are bottom-anchored so a second line grows upward, away from the line */
+  /* the eye → network timeline: headings bottom-anchored above the line, descriptions below it */
+  .eye-h, .eye-d { width: 600px; white-space: normal; text-align: center; }
+  .eye-h { bottom: 515px; font: 700 60px/1.15 var(--serif); }
+  .eye-d { top: 690px; font: italic 400 46px/1.25 var(--sans); }
+  #aboutMe .tl-h { width: 450px; white-space: normal; text-align: center; bottom: 370px; font: 700 54px/1.15 var(--serif); }
 
   /* neuron */
-  .card { position: absolute; left: 54px; top: 301px; width: 1138px; height: 749px; background: #10192d;
+  .card { position: absolute; left: 60px; top: 150px; width: 1880px; height: 930px; background: #10192d;
     border-radius: 14px; border: 2px solid var(--rule); overflow: hidden; }
-  .card iframe { width: 100%; height: 100%; border: 0; display: block; }
-  .hold { position: absolute; left: 1250px; font: 700 34px var(--serif); padding-left: 52px; line-height: 1; }
-  .hold::before { content: ""; position: absolute; left: 0; top: 9px; width: 14px; height: 14px; border-radius: 50%; background: var(--teal); }
+  /* rendered at 2/3 size and scaled up 1.5×, so the simulator's own labels and sliders grow along with the card */
+  /* full-bleed zoom from a person to one neuron; clicks pass through to the deck */
+  .zoom-frame { position: absolute; inset: 0; width: 2000px; height: 1125px; border: 0; pointer-events: none; background: var(--bg); }
+  .card iframe { width: calc(100% / 1.5); height: calc(100% / 1.5); border: 0; display: block; transform: scale(1.5); transform-origin: 0 0; }
 
-  .hebb-reset { position: absolute; left: 1010px; top: 322px; padding: 8px 16px; border-radius: 8px; border: 1px solid var(--rule);
-    background: var(--bg); color: var(--lav); font: 400 22px var(--sans); cursor: pointer; }
-  .hebb-reset:hover { color: #fff; border-color: var(--purple); }
+  /* how a neuron learns: the drawing (laid out at 54,301 – 1454,1050) scaled up 1.24× and centred below the kicker */
+  #hebb .hebb-art { transform-origin: 0 0; transform: translate(65px, -223px) scale(1.24); }
 
   #cnnTitle > svg.art:last-of-type { transform: translateY(50px); }
-  .cnn-label { position: absolute; top: 790px; transform: translateX(-50%); font: italic 400 26px var(--sans); color: var(--muted); white-space: nowrap; }
+  /* how ConvNets see: the one-row pipeline (laid out at y 370–690) split into two rows, each scaled up 1.4× and centred */
+  .see-row { position: absolute; left: 0; top: 0; width: 2000px; height: 1125px; transform-origin: 0 0; }
+  .see-row1 { transform: translate(142px, -378px) scale(1.4); }
+  .see-row2 { transform: translate(-1083px, 92px) scale(1.4); }
+  .cnn-label { position: absolute; top: 790px; transform: translateX(-50%); font: italic 400 33px var(--sans); color: var(--muted); white-space: nowrap; }
 
   /* transformer section */
-  .tx-card-h { position: absolute; top: 368px; font: 700 36px var(--serif); white-space: nowrap; }
-  .tx-era { position: absolute; top: 422px; font: 700 20px var(--sans); letter-spacing: .14em; color: var(--dim); }
-  .tx-good, .tx-bad { position: absolute; width: 488px; font: 400 24px/34px var(--sans); color: var(--lav); }
-  .tx-good { top: 724px; } .tx-good b { color: var(--teal); }
-  .tx-bad { top: 812px; } .tx-bad b { color: #FB7185; }
+  .tx-era { font: 700 36px var(--sans); letter-spacing: .14em; color: var(--dim); }
+  .tx-good, .tx-bad { left: 120px; width: 1760px; white-space: normal; font: 400 48px/1.25 var(--sans); color: var(--lav); }
+  .tx-good { top: 800px; } .tx-good b { color: var(--teal); }
+  .tx-bad { top: 880px; } .tx-bad b { color: #FB7185; }
   .attn-sent { position: absolute; left: 120px; width: 1760px; top: 520px; display: flex; justify-content: center; gap: 20px;
-    font: 400 48px var(--serif); color: #fff; white-space: nowrap; }
+    font: 400 58px var(--serif); color: #fff; white-space: nowrap; }
   .attn-sent span { transition: color .4s; }
   .attn-sent .it { color: var(--purple); font-weight: 700; }
   .attn-sent .ref { color: var(--teal); font-weight: 700; }
-  .attn-caption { position: absolute; left: 0; width: 2000px; top: 612px; text-align: center; font: italic 400 30px var(--sans); color: var(--teal); }
+  /* the one word that changes between the two versions of the sentence */
+  .attn-sent .swap { color: #F5B94A; font-weight: 700; padding: 0 14px; border-radius: 12px; background: rgba(245,185,74,.16); box-shadow: inset 0 0 0 3px #F5B94A; }
+  .attn-sent .swap.changed { animation: swap .7s ease; }
+  @keyframes swap { 0% { transform: scale(1); } 35% { transform: scale(1.3); background: rgba(245,185,74,.5); } 100% { transform: scale(1); } }
+  .attn-caption { position: absolute; left: 0; width: 2000px; top: 612px; text-align: center; font: italic 400 38px var(--sans); color: var(--teal); }
   .tx-row { position: absolute; left: 880px; width: 1000px; padding-left: 46px; }
   .tx-row i { position: absolute; left: 0; top: 9px; width: 24px; height: 24px; border-radius: 50%; }
-  .tx-row h3 { font: 700 34px var(--serif); }
-  .tx-row p { margin-top: 8px; font: 400 24px/34px var(--sans); color: var(--lav); }
+  .tx-row h3 { font: 700 42px var(--serif); }
+  .tx-row p { margin-top: 8px; font: 400 30px/40px var(--sans); color: var(--lav); }
+  #txInside .tx-row { left: 1400px; width: 520px; }
   .tx-row.wide { left: 1400px; width: 480px; }
 
   /* closing slide */
   .qr-card { position: absolute; top: 300px; width: 360px; height: 360px; padding: 30px; border-radius: 20px; background: #fff; }
   .qr-card svg { width: 300px; height: 300px; display: block; shape-rendering: crispEdges; }
-  .qr-label { position: absolute; top: 700px; transform: translateX(-50%); font: 700 36px var(--serif); white-space: nowrap; }
-  .qr-url { position: absolute; top: 756px; transform: translateX(-50%); font: 400 24px var(--sans); color: var(--lav); text-decoration: none; white-space: nowrap; }
+  .qr-label { position: absolute; top: 700px; transform: translateX(-50%); font: 700 44px var(--serif); white-space: nowrap; }
+  .qr-url { position: absolute; top: 762px; transform: translateX(-50%); font: 400 28px var(--sans); color: var(--lav); text-decoration: none; white-space: nowrap; }
   .qr-url:hover { color: #fff; text-decoration: underline; }
 
   /* brain-likeness meter */
-  .meter-label { position: absolute; left: 0; width: 1995px; text-align: center; font: 700 22px var(--sans);
+  .meter-label { position: absolute; left: 0; width: 1995px; text-align: center; font: 700 28px var(--sans);
     letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
   .meter { position: absolute; left: 240px; width: 1515px; height: 30px; border-radius: 15px; background: var(--track); overflow: hidden; }
   .meter i { display: block; height: 100%; width: 0; border-radius: 15px; background: var(--teal);
     transition: width 1.1s cubic-bezier(.2,.7,.2,1) .25s; }
   .slide.active .meter i { width: var(--v); }
+  :root:not(.static) .meter[data-step]:not(.shown) i { width: 0; }   /* a meter that is a build-up step fills when it appears */
 
   /* live demo slides: the running demo app in an iframe, or how to start it */
   .demo-kicker { left: 62px; top: 70px; }
@@ -158,6 +151,10 @@
     color: var(--lav); font: 400 24px var(--sans); cursor: pointer; }
   .demo-retry:hover { color: #fff; border-color: var(--purple); }
 
+  /* build-up steps: elements with data-step="n" appear one by one, see next() in the script */
+  [data-step] { opacity: 0; transition: opacity .4s ease; }
+  [data-step].shown, .static [data-step] { opacity: 1; }
+
   /* line drawing on enter */
   .draw { stroke-dasharray: 1; stroke-dashoffset: 1; }
   .slide.active .draw { stroke-dashoffset: 0; transition: stroke-dashoffset 1.4s ease .3s; }
@@ -172,8 +169,8 @@
   }
   #notes.show { display: block; }
   #notes b { color: var(--teal); font-weight: 700; margin-right: 8px; }
-  #hud { position: fixed; right: 16px; bottom: 12px; font: 400 14px var(--sans); color: var(--dim); opacity: 0; transition: opacity .3s; z-index: 11; }
-  body:hover #hud { opacity: .8; }
+  /* slide count and key hints: kept for the script, never shown to the audience */
+  #hud { display: none; }
   /* rehearsal timer (T): only shown when turned on */
   #rehearse { position: fixed; right: 16px; top: 12px; z-index: 12; display: none; min-width: 290px; padding: 12px 16px;
     background: rgba(18,20,43,.94); border: 1px solid var(--rule); border-radius: 10px; font: 400 15px/1.5 var(--sans); color: var(--lav); }
@@ -193,8 +190,8 @@
     #viewport { position: static; display: block; }
     #stage { transform: none !important; width: auto; height: auto; box-shadow: none; background: none; }
     .slide { position: relative; opacity: 1; visibility: visible; width: 2000px; height: 1125px; background: var(--bg); break-after: page; }
-    .meter i { width: var(--v); } .draw { stroke-dashoffset: 0; } .pop { opacity: 1; }
-    #notes, #hud, #rehearse, .hebb-reset, .demo-retry { display: none !important; }
+    .meter i { width: var(--v); } .draw { stroke-dashoffset: 0; } .pop, [data-step] { opacity: 1; }
+    #notes, #hud, #rehearse, .demo-retry { display: none !important; }
   }
 </style>
 </head>
@@ -203,94 +200,74 @@
 
 <!-- 1 · Title -->
 <section class="slide" data-thread="plain" data-secs="10">
-  <div class="abs kicker teal" style="left:150px;top:280px">De ontstaansmythe van AI</div>
-  <div class="abs title" style="left:150px;top:385px;font-size:100px">How AI Lost the Thread</div>
-  <div class="abs" style="left:150px;top:572px;font:italic 400 38px var(--sans);color:var(--lav)">The Strange Path from Neurons to LLMs</div>
-  <img src="assets/circuit.png" alt="" style="position:absolute;left:1440px;top:90px;width:480px;height:480px;opacity:.15">
+  <div class="abs title" style="left:150px;top:280px;font-size:160px">How AI Lost the Thread</div>
+  <div class="abs" style="left:150px;top:530px;font:italic 400 88px var(--sans);color:var(--lav)">The Strange Path from Neurons to LLMs</div>
+  <img src="assets/circuit.png" alt="" style="position:absolute;left:1520px;top:720px;width:360px;height:360px;opacity:.15">
 </section>
 
 <!-- 2 · How we use it -->
 <section class="slide" id="llmUse" data-thread="plain" data-secs="40">
-  <div class="abs kicker" style="left:120px;top:94px">Klinkt bekend?</div>
-  <div class="abs title" style="left:120px;top:152px">Wat we het elke dag vragen</div>
-  <div class="chat-win" style="left:120px;top:290px;width:1360px;height:740px">
-    <div class="chat-bar"><i></i><i></i><i></i><span>Assistent</span></div>
-    <div class="chat-side"><div class="chat-side-h">Vandaag</div></div>
-    <div class="chat-main">
-      <div class="chat-log"></div>
-      <div class="chat-input"><span class="chat-typed"></span><span class="caret"></span><b class="chat-send">↑</b></div>
-    </div>
+  <i data-step="1" hidden></i><!-- one "next" press: start the questions -->
+  <div class="asks">
+    <div class="ask-intro on">Wie heeft de afgelopen week iets aan een model gevraagd?</div>
+    <div class="ask">Schrijf een JUnit-test voor calculateDiscount()</div>
+    <div class="ask">Waarom krijg ik een NullPointerException op regel 42?</div>
+    <div class="ask">Vat deze e-mailreeks van 38 berichten samen in drie punten</div>
+    <div class="ask">Maak dit bericht vriendelijker, en in het Engels</div>
+    <div class="ask">Wat kan ik koken met eieren, spinazie en feta?</div>
+    <div class="ask">Boek een campervakantie naar Spanje voor twee personen</div>
   </div>
-  <div class="abs kicker small" style="left:1560px;top:300px">Waar je het tegenkomt</div>
-  <div class="chip" style="top:348px" data-chip="ide">In je IDE</div>
-  <div class="chip" style="top:448px" data-chip="mail">In je inbox</div>
-  <div class="chip" style="top:548px" data-chip="chat">In je chats</div>
-  <div class="chip" style="top:648px" data-chip="phone">Op je telefoon</div>
 </section>
 
 <!-- 3 · Why listen -->
 <section class="slide" id="llmWhy" data-thread="plain" data-secs="20">
-  <div class="abs kicker teal" style="left:150px;top:154px">Waarom dit de moeite waard is</div>
   <div class="ask-bar"><span class="ask-typed">Waar kom jij eigenlijk vandaan?</span><span class="caret"></span><b class="chat-send ready">↑</b></div>
-  <div class="abs statement late" style="left:150px;top:430px;width:1800px">We gebruiken het elke dag.<br><span class="late" style="transition-delay:.7s">Bijna niemand weet <span class="t">waar het vandaan komt.</span></span></div>
-  <div class="short-rule late" style="top:700px;transition-delay:1.4s"></div>
-  <div class="abs body late" style="left:150px;top:736px;width:1500px;transition-delay:1.4s">Deze talk volgt de draad terug: van een idee over hersencellen uit de jaren 40 tot de tool op je telefoon.</div>
 </section>
 
 <!-- 4 · About me -->
-<section class="slide" data-thread="plain" data-secs="30">
-  <div class="abs kicker" style="left:120px;top:94px">Over mij</div>
-  <div class="abs title" style="left:120px;top:152px">Tineke Slotegraaf</div>
-  <div class="abs" style="left:120px;top:244px;font:italic 400 30px var(--sans);color:var(--muted)">Software and AI Engineer - Alvant</div>
+<section class="slide" id="aboutMe" data-thread="plain" data-secs="30">
+  <div class="abs title" style="left:120px;top:100px;font-size:112px">Tineke Slotegraaf</div>
+  <div class="abs" style="left:120px;top:250px;font:italic 400 50px var(--sans);color:var(--muted)">Software and AI Engineer - Alvant</div>
   <svg class="art" viewBox="0 0 2000 1125">
-    <line x1="240" y1="630" x2="1702" y2="630" stroke="var(--rule)" stroke-width="4"/>
-    <circle cx="240" cy="630" r="15" fill="#fff"/>
-    <circle cx="727" cy="630" r="15" fill="#fff"/>
-    <circle cx="1215" cy="630" r="15" fill="#fff"/>
-    <circle cx="1702" cy="630" r="19" fill="var(--purple)"/>
+    <line data-step="2" x1="240" y1="790" x2="727" y2="790" stroke="var(--rule)" stroke-width="4"/>
+    <line data-step="3" x1="727" y1="790" x2="1215" y2="790" stroke="var(--rule)" stroke-width="4"/>
+    <line data-step="4" x1="1215" y1="790" x2="1702" y2="790" stroke="var(--rule)" stroke-width="4"/>
+    <circle data-step="1" cx="240" cy="790" r="15" fill="#fff"/>
+    <circle data-step="2" cx="727" cy="790" r="15" fill="#fff"/>
+    <circle data-step="3" cx="1215" cy="790" r="15" fill="#fff"/>
+    <circle data-step="4" cx="1702" cy="790" r="19" fill="var(--purple)"/>
   </svg>
-  <div class="abs tl-h" style="left:240px;top:512px">BSc Artificial Intelligence</div>
-  <div class="abs tl-h" style="left:727px;top:512px">MSc Cognitive Science</div>
-  <div class="abs tl-h" style="left:1215px;top:512px">Software Engineer</div>
-  <div class="abs tl-h p" style="left:1702px;top:512px">Terug naar AI — jan 2025</div>
-  <div class="abs tl-d" style="left:240px;top:696px">de basis</div>
-  <div class="abs tl-d" style="left:727px;top:696px">hoe de geest echt werkt</div>
-  <div class="abs tl-d" style="left:1215px;top:696px">full-stack, een aantal jaren</div>
-  <div class="abs tl-d" style="left:1702px;top:696px">systemen bouwen met LLM's</div>
+  <div class="abs tl-h" data-step="1" style="left:240px">BSc Artificial Intelligence</div>
+  <div class="abs tl-h" data-step="2" style="left:727px">MSc Cognitive Science</div>
+  <div class="abs tl-h" data-step="3" style="left:1215px">Software Engineer</div>
+  <div class="abs tl-h p" data-step="4" style="left:1702px">Terug naar AI — jan 2025</div>
+</section>
+
+<!-- 4b · Zoom: from a person to one neuron -->
+<section class="slide" id="zoom" data-thread="plain" data-secs="30">
+  <iframe class="zoom-frame" src="assets/brain-zoom.html" title="Animatie: inzoomen van een mens naar het brein, de hersenschors en één neuron" tabindex="-1"></iframe>
 </section>
 
 <!-- 5 · Neuron -->
-<section class="slide" data-thread="plain" data-secs="50">
-  <div class="abs kicker" style="left:120px;top:87px">Het begin — 1943</div>
-  <div class="abs title" style="left:120px;top:135px">Hoe een neuron beslist</div>
+<section class="slide" id="neuron" data-thread="plain" data-secs="50">
+  <i data-step="1" hidden></i><!-- one "next" press: start the signals -->
+  <div class="abs kicker" style="left:120px;top:70px;font-size:38px">Het begin — 1943</div>
   <div class="card"><iframe src="assets/neuron-simulator.html" title="Neuronsimulator: opgetelde signalen op de dendrieten activeren een actiepotentiaal langs het axon"></iframe></div>
-  <div class="abs kicker small" style="left:1260px;top:340px">Wat je moet onthouden</div>
-  <div class="hold" style="top:380px">Het luistert naar veel signalen tegelijk</div>
-  <div class="hold" style="top:538px">Het telt ze allemaal op</div>
-  <div class="hold" style="top:695px">Genoeg signaal? Het vuurt — alles of niets</div>
-  <div class="hold" style="top:853px">Niet één neuron — honderden soorten</div>
 </section>
 
 <!-- 5b · How a neuron learns -->
 <section class="slide" id="hebb" data-thread="plain" data-secs="60">
-  <div class="abs kicker" style="left:120px;top:87px">Het begin — 1949</div>
-  <div class="abs title" style="left:120px;top:135px">Hoe een neuron leert</div>
-  <svg class="art" viewBox="0 0 2000 1125">
-    <rect x="54" y="301" width="1138" height="749" rx="14" fill="#161936" stroke="var(--rule)" stroke-width="2"/>
+  <i data-step="1" hidden></i><!-- one "next" press: start the spikes -->
+  <div class="abs kicker" style="left:120px;top:70px">Het begin — 1949</div>
+  <svg class="art hebb-art" viewBox="0 0 2000 1125">
+    <rect x="54" y="301" width="1400" height="749" rx="14" fill="#161936" stroke="var(--rule)" stroke-width="2"/>
   </svg>
-  <button class="hebb-reset" type="button">↺ opnieuw</button>
-  <div class="abs" style="left:623px;top:985px;transform:translateX(-50%);font:italic 400 24px var(--sans);color:var(--muted)">A en B vuren samen → hun verbindingen groeien. &nbsp;C vuurt alleen → zijn verbinding vervaagt.</div>
-  <div class="abs kicker small" style="left:1260px;top:340px">Wat je moet onthouden</div>
-  <div class="hold" style="top:380px">Samen vuren, samen verbinden</div>
-  <div class="hold" style="top:538px">Gebruikt maar genegeerd? Dan vervaagt ze</div>
-  <div class="hold" style="top:695px">Elke verbinding kent alleen haar eigen plek</div>
-  <div class="hold" style="top:853px">Geen persoonlijk “0,3 ernaast”-briefje</div>
 </section>
 
 <!-- 6 · Perceptron -->
 <section class="slide" data-thread="plain" data-secs="45">
-  <div class="abs kicker" style="left:120px;top:94px">1958 — Rosenblatt</div>
-  <div class="abs title" style="left:120px;top:152px">Het perceptron</div>
+  <div class="abs kicker" style="left:120px;top:70px">1958 — Rosenblatt</div>
+  <div class="abs title" style="left:120px;top:120px">Het perceptron</div>
   <svg class="art" viewBox="0 0 2000 1125">
     <defs><marker id="ah6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--teal)"/></marker></defs>
     <g stroke="var(--teal)" stroke-width="4" fill="none">
@@ -304,25 +281,18 @@
       <circle cx="390" cy="405" r="52"/><circle cx="390" cy="585" r="52"/><circle cx="390" cy="765" r="52"/>
       <circle cx="1470" cy="585" r="42"/>
     </g>
-    <g font-family="Cambria, Caladea, Georgia, serif" font-style="italic" font-size="38" fill="var(--bg)" text-anchor="middle">
+    <g font-family="Cambria, Caladea, Georgia, serif" font-style="italic" font-size="48" fill="var(--bg)" text-anchor="middle">
       <text x="390" y="418">x1</text><text x="390" y="598">x2</text><text x="390" y="778">x3</text><text x="1470" y="598">y</text>
     </g>
-    <g font-family="Calibri, Carlito, sans-serif" font-style="italic" font-size="24" fill="var(--muted)" text-anchor="middle">
+    <g font-family="Calibri, Carlito, sans-serif" font-style="italic" font-size="31" fill="var(--muted)" text-anchor="middle">
       <text x="630" y="497">w1</text><text x="630" y="587">w2</text><text x="630" y="677">w3</text>
     </g>
     <circle cx="900" cy="585" r="82" fill="var(--purple)"/>
-    <text x="900" y="608" text-anchor="middle" font-family="Cambria, Caladea, Georgia, serif" font-weight="700" font-size="64" fill="#fff">Σ</text>
+    <text x="900" y="608" text-anchor="middle" font-family="Cambria, Caladea, Georgia, serif" font-weight="700" font-size="72" fill="#fff">Σ</text>
     <rect x="1125" y="522" width="150" height="126" rx="16" fill="var(--teal)"/>
-    <text x="1200" y="606" text-anchor="middle" font-family="Cambria, Caladea, Georgia, serif" font-style="italic" font-weight="700" font-size="60" fill="#fff">f</text>
-    <!-- what each part borrows from the neuron -->
-    <g class="pop" font-family="Calibri, Carlito, sans-serif" font-style="italic" font-size="22" fill="var(--lav)" text-anchor="middle">
-      <text x="390" y="862">signalen op de takken</text>
-      <text x="630" y="760">verbindingssterktes</text>
-      <text x="900" y="708">telt op, net als het cellichaam</text>
-      <text x="1200" y="690">drempel:</text><text x="1200" y="718">vuren of niet</text>
-    </g>
+    <text x="1200" y="606" text-anchor="middle" font-family="Cambria, Caladea, Georgia, serif" font-style="italic" font-weight="700" font-size="67" fill="#fff">f</text>
     <!-- AND -->
-    <text x="1684" y="358" text-anchor="middle" font-family="Cambria, Caladea, Georgia, serif" font-weight="700" font-size="28" fill="#fff">AND</text>
+    <text x="1684" y="330" text-anchor="middle" font-family="Cambria, Caladea, Georgia, serif" font-weight="700" font-size="56" fill="#fff">AND</text>
     <rect x="1553" y="390" width="262" height="263" fill="none" stroke="#5A5680" stroke-width="2"/>
     <line class="draw" pathLength="1" x1="1672" y1="362" x2="1846" y2="536" stroke="var(--purple)" stroke-width="4"/>
     <circle cx="1815" cy="390" r="12" fill="var(--teal)" stroke="var(--rule)" stroke-width="2"/>
@@ -330,8 +300,6 @@
     <circle cx="1815" cy="653" r="12" fill="#fff" stroke="var(--rule)" stroke-width="2"/>
     <circle cx="1553" cy="653" r="12" fill="#fff" stroke="var(--rule)" stroke-width="2"/>
   </svg>
-  <div class="abs caption" style="left:1484px;top:712px;width:400px">Maar één hoek is waar. Eén rechte lijn snijdt die af.</div>
-  <div class="abs" style="left:0;width:1995px;top:908px;text-align:center;font:400 30px var(--sans);color:var(--lav)"><b style="color:#fff">Hoe het leert:</b> fout? Geef elk gewicht een klein duwtje. &nbsp;Goed? Laat het met rust.</div>
   <div class="meter-label" style="top:996px">Hoe breinachtig is dit?</div>
   <div class="meter" style="top:1028px;--v:85%"><i></i></div>
 </section>
@@ -350,10 +318,12 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 </section>
 
 <!-- 7 · Backprop -->
-<section class="slide" data-thread="break" data-secs="35">
-  <div class="abs kicker" style="left:120px;top:94px">1986 — Rumelhart, Hinton &amp; Williams</div>
-  <div class="abs title" style="left:120px;top:152px">+ Backpropagation</div>
+<section class="slide" id="backprop" data-thread="break" data-secs="35">
+  <!-- first only the XOR square; "next" brings in the rest -->
+  <div class="abs kicker" data-step="1" style="left:120px;top:70px">1986 — Rumelhart, Hinton &amp; Williams</div>
+  <div class="abs title" data-step="1" style="left:120px;top:120px">Backpropagation</div>
   <svg class="art" viewBox="0 0 2000 1125">
+    <g data-step="1">
     <defs><marker id="ah7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--teal)"/></marker></defs>
     <g stroke="var(--teal)" stroke-width="4" fill="none">
       <line x1="437" y1="465" x2="883" y2="465"/><line x1="437" y1="465" x2="883" y2="705"/>
@@ -364,14 +334,20 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
     <g stroke="var(--purple)" stroke-width="4" stroke-dasharray="16 10" fill="none">
       <line class="pop" x1="1415" y1="620" x2="953" y2="548"/>
       <line class="pop" x1="1415" y1="716" x2="953" y2="788"/>
+      <!-- and on back from the hidden layer to the inputs, alongside each connection -->
+      <line class="pop" x1="861" y1="489" x2="459" y2="489"/>
+      <line class="pop" x1="861" y1="729" x2="459" y2="729"/>
+      <line class="pop" x1="850" y1="714" x2="448" y2="498"/>
+      <line class="pop" x1="872" y1="498" x2="470" y2="714"/>
     </g>
-    <text class="pop" x="993" y="788" text-anchor="middle" font-family="Calibri, Carlito, sans-serif" font-style="italic" font-weight="700" font-size="40" fill="var(--purple)">?</text>
+    <text class="pop" x="993" y="788" text-anchor="middle" font-family="Calibri, Carlito, sans-serif" font-style="italic" font-weight="700" font-size="50" fill="var(--purple)">?</text>
     <g fill="#fff" stroke="var(--rule)" stroke-width="4">
       <circle cx="390" cy="465" r="47"/><circle cx="390" cy="705" r="47"/><circle cx="1470" cy="585" r="42"/>
     </g>
     <circle cx="930" cy="465" r="47" fill="var(--purple)"/><circle cx="930" cy="705" r="47" fill="var(--purple)"/>
+    </g>
     <!-- XOR -->
-    <text x="1684" y="358" text-anchor="middle" font-family="Cambria, Caladea, Georgia, serif" font-weight="700" font-size="28" fill="#fff">XOR</text>
+    <text x="1684" y="330" text-anchor="middle" font-family="Cambria, Caladea, Georgia, serif" font-weight="700" font-size="56" fill="#fff">XOR</text>
     <rect x="1553" y="390" width="262" height="263" fill="none" stroke="#5A5680" stroke-width="2"/>
     <circle class="pop" cx="1553" cy="390" r="42" fill="none" stroke="var(--purple)" stroke-width="3"/>
     <circle class="pop" cx="1815" cy="653" r="42" fill="none" stroke="var(--purple)" stroke-width="3"/>
@@ -380,10 +356,8 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
     <circle cx="1815" cy="390" r="12" fill="#fff" stroke="var(--rule)" stroke-width="2"/>
     <circle cx="1553" cy="653" r="12" fill="#fff" stroke="var(--rule)" stroke-width="2"/>
   </svg>
-  <div class="abs caption" style="left:1484px;top:712px;width:400px">Geen enkele rechte lijn werkt — je hebt er twee nodig, gecombineerd. Dat levert een verborgen laag je op.</div>
-  <div class="abs pop" style="left:940px;top:834px;transform:translateX(-50%);font:italic 400 26px var(--sans);color:var(--purple)">geen bekende biologische route voor dit signaal</div>
-  <div class="meter-label" style="top:996px">Hoe breinachtig is dit?</div>
-  <div class="meter" style="top:1028px;--v:35%"><i></i></div>
+  <div class="meter-label" data-step="1" style="top:996px">Hoe breinachtig is dit?</div>
+  <div class="meter" data-step="1" style="top:1028px;--v:35%"><i></i></div>
 </section>
 
 <!-- 7b · Demo -->
@@ -402,7 +376,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 <!-- 7c · Demo -->
 <section class="slide demo" id="demoDigits" data-thread="break">
   <div class="abs kicker small demo-kicker">Demo · Handgeschreven cijfers</div>
-  <div class="demo-card" data-src="http://localhost:8082/?embed">
+  <div class="demo-card" data-src="http://localhost:8082/?embed&amp;nohidden">
     <div class="demo-off">
       <div class="demo-off-h">Start de demo, dan verschijnt hij hier</div>
       <pre>cd perceptron-digits &amp;&amp; mvn quarkus:dev</pre>
@@ -413,8 +387,8 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 
 <!-- 8 · CNNs -->
 <section class="slide" id="cnnTitle" data-thread="knot" data-secs="35">
-  <div class="abs kicker" style="left:120px;top:94px">1989 — LeCun</div>
-  <div class="abs title" style="left:120px;top:152px">Convolutionele netwerken</div>
+  <div class="abs kicker" style="left:120px;top:70px">1989 — LeCun</div>
+  <div class="abs title" style="left:120px;top:120px">Convolutionele netwerken</div>
   <svg class="art" viewBox="0 0 2000 1125"></svg>
   <div class="cnn-label" style="left:284px">pixels</div>
   <div class="cnn-label" style="left:634px">randen</div>
@@ -427,25 +401,24 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 
 <!-- 8a · Classic nets on images -->
 <section class="slide" id="cnnFlat" data-thread="knot" data-secs="40">
-  <div class="abs kicker" style="left:120px;top:94px">Convolutionele netwerken — het probleem</div>
-  <div class="abs title" style="left:120px;top:152px">Hoe een klassiek netwerk een afbeelding ziet</div>
-  <div class="abs" style="left:120px;top:262px;font:400 32px var(--sans);color:var(--lav)">Elke pixel krijgt een eigen gewicht — schuif de afbeelding twee pixels op en het netwerk ziet een vreemde.</div>
+  <div class="abs kicker" style="left:120px;top:70px">Convolutionele netwerken — het probleem</div>
+  <div class="abs title" style="left:120px;top:120px">Klassiek Neuraal Netwerk</div>
   <svg class="art" viewBox="0 0 2000 1125"></svg>
-  <div class="abs" style="left:120px;top:356px;font:italic 400 22px var(--sans);color:var(--muted)">een 7</div>
-  <div class="abs" style="left:120px;top:626px;font:italic 400 22px var(--sans);color:var(--muted)">dezelfde 7, twee pixels naar rechts</div>
-  <div class="abs" style="left:1160px;top:352px;font:italic 400 22px var(--sans);color:var(--muted)">één neuron: een eigen gewicht voor elke pixel</div>
-  <div class="abs" style="left:430px;top:494px;font:400 20px var(--sans);color:var(--dim)">pixel 1</div>
-  <div class="abs" style="left:1838px;top:494px;font:400 20px var(--sans);color:var(--dim);transform:translateX(-100%)">pixel 64</div>
-  <div class="abs" style="left:430px;top:870px;font:400 34px var(--serif);white-space:normal;width:1420px">Slechts <b class="t" id="flatMatch">3 van 10</b> verlichte pixels komen nog op dezelfde input terecht.<br><span style="font:italic 400 26px var(--sans);color:var(--muted)">Wat het netwerk over de eerste 7 leerde, gaat niet mee — het moet elke positie apart leren.</span></div>
-  <div class="abs" style="left:430px;top:792px;font:400 22px var(--sans);color:var(--muted)"><span style="display:inline-block;width:16px;height:16px;background:var(--teal);vertical-align:-2px;margin-right:8px"></span>dezelfde input als eerst <span style="display:inline-block;width:16px;height:16px;background:var(--purple);vertical-align:-2px;margin:0 8px 0 32px"></span>verschoven naar een andere input</div>
+  <div class="abs" style="left:120px;top:388px;font:italic 400 40px var(--sans);color:var(--muted)">een 7</div>
+  <div class="abs" style="left:120px;top:708px;font:italic 400 40px var(--sans);color:var(--muted)">dezelfde 7, twee pixels naar rechts</div>
+  <div class="abs" style="left:1166px;top:282px;font:italic 400 40px var(--sans);color:var(--muted)">één neuron: een eigen gewicht voor elke pixel</div>
+  <div class="abs" style="left:430px;top:556px;font:400 34px var(--sans);color:var(--dim)">pixel 1</div>
+  <div class="abs" style="left:1838px;top:556px;font:400 34px var(--sans);color:var(--dim);transform:translateX(-100%)">pixel 64</div>
+  <div class="abs" style="left:430px;top:990px;font:400 38px var(--sans);color:var(--muted)"><span style="display:inline-block;width:24px;height:24px;background:var(--teal);vertical-align:-3px;margin-right:12px"></span>dezelfde input als eerst <span style="display:inline-block;width:24px;height:24px;background:var(--purple);vertical-align:-3px;margin:0 12px 0 48px"></span>verschoven naar een andere input</div>
 </section>
 
 <!-- 8b · Inspired by the eye -->
 <section class="slide" data-thread="knot" data-secs="45">
-  <div class="abs kicker" style="left:120px;top:94px">Convolutionele netwerken — de inspiratie</div>
-  <div class="abs title" style="left:120px;top:152px">Afgekeken van het oog</div>
-  <div class="abs" style="left:120px;top:262px;font:400 32px var(--sans);color:var(--lav)">Zien begint klein: elke cel in de visuele cortex bekijkt één piepklein stukje en vuurt bij één randhoek.</div>
+  <div class="abs kicker" style="left:120px;top:70px">Convolutionele netwerken — de inspiratie</div>
+  <div class="abs title" style="left:120px;top:120px">Het oog</div>
   <svg class="art" viewBox="0 0 2000 1125">
+    <!-- house → eye → visual cortex, laid out at x 126–1169, y 410–779, scaled up 1.65× and centred -->
+    <g transform="translate(-66 -312) scale(1.65)">
     <!-- the house being looked at, with three receptive fields on it -->
     <g fill="none" stroke="#fff" stroke-width="4" stroke-linejoin="round">
       <path d="M150 520 L225 450 L300 520"/>
@@ -456,7 +429,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
     <g fill="none" stroke="var(--purple)" stroke-width="3" stroke-dasharray="6 5">
       <circle cx="187" cy="485" r="22"/><circle cx="165" cy="600" r="22"/><circle cx="225" cy="640" r="22"/>
     </g>
-    <g font-family="Calibri, Carlito, sans-serif" font-weight="700" font-size="20" fill="var(--purple)" text-anchor="middle">
+    <g font-family="Calibri, Carlito, sans-serif" font-weight="700" font-size="26" fill="var(--purple)" text-anchor="middle">
       <text x="160" y="462">1</text><text x="132" y="606">2</text><text x="225" y="684">3</text>
     </g>
     <!-- light rays through the lens onto the retina (the image lands upside down) -->
@@ -475,74 +448,84 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
     <!-- optic nerve to the visual cortex -->
     <path d="M768 560 C 820 560, 850 560, 905 560" fill="none" stroke="var(--lav)" stroke-width="10" stroke-linecap="round" stroke-opacity=".6"/>
     <g id="v1cells"></g>
-    <g font-family="Calibri, Carlito, sans-serif" font-style="italic" font-size="22" fill="var(--muted)" text-anchor="middle">
+    <g font-family="Calibri, Carlito, sans-serif" font-style="italic" font-size="26" fill="var(--muted)" text-anchor="middle">
       <text x="225" y="740">waar je naar kijkt</text>
-      <text x="620" y="740">het oog: het beeld valt op het netvlies</text>
-      <text x="1032" y="740">visuele cortex: één cel per stukje en hoek</text>
+      <text x="620" y="740">het oog:</text><text x="620" y="772">het beeld valt op het netvlies</text>
+      <text x="1032" y="740">visuele cortex:</text><text x="1032" y="772">één cel per stukje en hoek</text>
     </g>
-    <!-- who turned it into a network -->
-    <line x1="150" y1="960" x2="1850" y2="960" stroke="var(--rule)" stroke-width="3"/>
-    <circle cx="300" cy="960" r="10" fill="var(--teal)"/><circle cx="1000" cy="960" r="10" fill="#fff"/><circle cx="1700" cy="960" r="10" fill="var(--purple)"/>
+    </g>
   </svg>
-  <div class="abs kicker small" style="left:1250px;top:360px">In je visuele cortex</div>
-  <div class="abs kicker small" style="left:1640px;top:360px">In een ConvNet</div>
-  <div id="eyeMap"></div>
-  <div class="abs tl-h" style="left:300px;top:900px;font-size:28px">1959 · Hubel &amp; Wiesel</div>
-  <div class="abs tl-h" style="left:1000px;top:900px;font-size:28px">1980 · Fukushima</div>
-  <div class="abs tl-h" style="left:1700px;top:900px;font-size:28px">1989 · LeCun</div>
-  <div class="abs tl-d" style="left:300px;top:990px">meten losse cellen in de visuele cortex van een kat</div>
-  <div class="abs tl-d" style="left:1000px;top:990px">kopieert ze naar het Neocognitron</div>
-  <div class="abs tl-d" style="left:1700px;top:990px">voegt backprop toe: het leest postcodes</div>
+</section>
+
+<!-- 8b2 · From the eye to a network: who did what, when -->
+<section class="slide" id="eyeTimeline" data-thread="knot" data-secs="30">
+  <div class="abs kicker" style="left:120px;top:70px">Convolutionele netwerken — de geschiedenis</div>
+  <div class="abs title" style="left:120px;top:120px">Van oog naar netwerk</div>
+  <svg class="art" viewBox="0 0 2000 1125">
+    <!-- starts empty; each "next" adds the line up to the next point, the point and its texts -->
+    <line data-step="1" x1="150" y1="640" x2="330" y2="640" stroke="var(--rule)" stroke-width="4"/>
+    <line data-step="2" x1="330" y1="640" x2="1000" y2="640" stroke="var(--rule)" stroke-width="4"/>
+    <line data-step="3" x1="1000" y1="640" x2="1850" y2="640" stroke="var(--rule)" stroke-width="4"/>
+    <circle data-step="1" cx="330" cy="640" r="16" fill="var(--teal)"/><circle data-step="2" cx="1000" cy="640" r="16" fill="#fff"/><circle data-step="3" cx="1670" cy="640" r="18" fill="var(--purple)"/>
+  </svg>
+  <div class="abs tl-h eye-h" data-step="1" style="left:330px">1959<br>Hubel &amp; Wiesel</div>
+  <div class="abs tl-h eye-h" data-step="2" style="left:1000px">1980<br>Fukushima</div>
+  <div class="abs tl-h eye-h p" data-step="3" style="left:1670px">1989<br>LeCun</div>
+  <div class="abs tl-d eye-d" data-step="1" style="left:330px">meten losse cellen in de visuele cortex van een kat</div>
+  <div class="abs tl-d eye-d" data-step="2" style="left:1000px">kopieert ze naar het Neocognitron</div>
+  <div class="abs tl-d eye-d" data-step="3" style="left:1670px">voegt backprop toe: het leest postcodes</div>
 </section>
 
 <!-- 8c · Edges → corners → parts -->
 <section class="slide" id="cnnSee" data-thread="knot" data-secs="50">
-  <div class="abs kicker" style="left:120px;top:94px">Convolutionele netwerken — hoe ze zien</div>
-  <div class="abs title" style="left:120px;top:152px">Randen, dan hoeken, dan dingen</div>
-  <div class="abs" style="left:120px;top:262px;font:400 32px var(--sans);color:var(--lav)">Eén klein venster schuift over het plaatje. Elke laag vindt iets grotere patronen, opgebouwd uit die eronder.</div>
+  <!-- starts with the pixels; each "next" adds the next stage -->
+  <div class="abs kicker" style="left:120px;top:70px">Convolutionele netwerken — hoe ze zien</div>
   <svg class="art" viewBox="0 0 2000 1125"></svg>
-  <div class="abs kicker small" style="left:248px;top:370px;transform:translateX(-50%)">Pixels</div>
-  <div class="abs kicker small" style="left:612px;top:370px;transform:translateX(-50%)">Laag 1 · Randen</div>
-  <div class="abs kicker small" style="left:970px;top:370px;transform:translateX(-50%)">Laag 2 · Hoeken</div>
-  <div class="abs kicker small" style="left:1320px;top:370px;transform:translateX(-50%)">Laag 3 · Delen</div>
-  <div class="abs kicker small" style="left:1715px;top:370px;transform:translateX(-50%)">Output</div>
-  <div class="abs" style="left:1358px;top:446px;font:italic 400 22px var(--sans);color:var(--lav)">dak</div>
-  <div class="abs" style="left:1262px;top:550px;font:italic 400 22px var(--sans);color:var(--lav)">raam</div>
-  <div class="abs" style="left:1262px;top:642px;font:italic 400 22px var(--sans);color:var(--lav)">deur</div>
-  <div class="abs" style="left:1715px;top:432px;transform:translateX(-50%);font:700 60px var(--serif);color:var(--teal)">“huis”</div>
-  <div class="abs" style="left:150px;top:820px;width:1700px;white-space:normal;font:400 30px/46px var(--sans);color:var(--lav)">Niemand schrijft deze filters met de hand: het netwerk leert ze uit voorbeelden. Toch ontstaan in de eerste laag vrijwel altijd <b style="color:#fff">randdetectoren</b> — net als de cellen die Hubel &amp; Wiesel vonden.</div>
-  <div class="abs" style="left:150px;top:1058px;font:italic 400 20px var(--sans);color:var(--dim)">rand- en hoekkaarten live berekend uit de pixels met handgemaakte 3×3-filters · outputscores ter illustratie</div>
+  <!-- the pipeline in two rows: pixels → edges → corners, then parts → output (same transforms as the svg rows) -->
+  <div class="see-row see-row1">
+    <div class="abs kicker small" style="left:248px;top:370px;transform:translateX(-50%)">Pixels</div>
+    <div data-step="1" class="abs kicker small" style="left:612px;top:370px;transform:translateX(-50%)">Laag 1 · Randen</div>
+    <div data-step="2" class="abs kicker small" style="left:970px;top:370px;transform:translateX(-50%)">Laag 2 · Hoeken</div>
+  </div>
+  <div class="see-row see-row2">
+    <div data-step="3" class="abs kicker small" style="left:1320px;top:370px;transform:translateX(-50%)">Laag 3 · Delen</div>
+    <div data-step="4" class="abs kicker small" style="left:1715px;top:370px;transform:translateX(-50%)">Output</div>
+    <div data-step="3" class="abs" style="left:1358px;top:446px;font:italic 400 29px var(--sans);color:var(--lav)">dak</div>
+    <div data-step="3" class="abs" style="left:1262px;top:550px;font:italic 400 29px var(--sans);color:var(--lav)">raam</div>
+    <div data-step="3" class="abs" style="left:1262px;top:642px;font:italic 400 29px var(--sans);color:var(--lav)">deur</div>
+    <div data-step="4" class="abs" style="left:1715px;top:432px;transform:translateX(-50%);font:700 67px var(--serif);color:var(--teal)">“huis”</div>
+  </div>
 </section>
 
 <!-- 8d · Parameter comparison -->
 <section class="slide" id="cnnParams" data-thread="knot" data-secs="40">
-  <div class="abs kicker" style="left:120px;top:94px">Convolutionele netwerken — de opbrengst</div>
-  <div class="abs title" style="left:120px;top:152px">De gewichten tellen</div>
-  <div class="abs" style="left:120px;top:262px;font:400 32px var(--sans);color:var(--lav)">Eén gewone kleurenfoto van 224 × 224. Alleen de eerste laag.</div>
+  <div class="abs kicker" style="left:120px;top:70px">Convolutionele netwerken — de opbrengst</div>
+  <div class="abs title" style="left:120px;top:120px">De gewichten tellen</div>
+  <div class="abs" style="left:120px;top:244px;font:400 40px var(--sans);color:var(--lav)">Eén gewone kleurenfoto van 224 × 224. Alleen de eerste laag.</div>
 
-  <div class="abs" style="left:150px;top:350px;font:700 40px var(--serif)">Klassiek netwerk</div>
-  <div class="abs" style="left:150px;top:404px;font:400 26px var(--sans);color:var(--muted)">150.528 pixelwaarden × 1.000 neuronen</div>
-  <div class="abs" style="left:150px;top:446px;font:700 64px var(--serif)"><span data-count="150528000">150.528.000</span> <span style="font:400 28px var(--sans);color:var(--lav)">gewichten</span></div>
+  <div class="abs" style="left:150px;top:350px;font:700 50px var(--serif)">Klassiek netwerk</div>
+  <div class="abs" style="left:150px;top:410px;font:400 32px var(--sans);color:var(--muted)">150.528 pixelwaarden × 1.000 neuronen</div>
+  <div class="abs" style="left:150px;top:446px;font:700 72px var(--serif)"><span data-count="150528000">150.528.000</span> <span style="font:400 35px var(--sans);color:var(--lav)">gewichten</span></div>
   <div class="sq-big" style="position:absolute;left:150px;top:550px;width:400px;height:400px;background:var(--thread);border:2px solid #5A5680"></div>
 
-  <div class="abs" style="left:1050px;top:350px;font:700 40px var(--serif)">ConvNet</div>
-  <div class="abs" style="left:1050px;top:404px;font:400 26px var(--sans);color:var(--muted)">64 filters × (3 × 3 pixels × 3 kleuren)</div>
-  <div class="abs" style="left:1050px;top:446px;font:700 64px var(--serif);color:var(--teal)"><span data-count="1728">1.728</span> <span style="font:400 28px var(--sans);color:var(--lav)">gewichten</span></div>
+  <div class="abs" style="left:1050px;top:350px;font:700 50px var(--serif)">ConvNet</div>
+  <div class="abs" style="left:1050px;top:410px;font:400 32px var(--sans);color:var(--muted)">64 filters × (3 × 3 pixels × 3 kleuren)</div>
+  <div class="abs" style="left:1050px;top:446px;font:700 72px var(--serif);color:var(--teal)"><span data-count="1728">1.728</span> <span style="font:400 35px var(--sans);color:var(--lav)">gewichten</span></div>
   <svg class="art" viewBox="0 0 2000 1125">
     <rect x="1050" y="550" width="1.4" height="1.4" fill="var(--teal)"/>
     <circle class="pop" cx="1051" cy="551" r="26" fill="none" stroke="var(--teal)" stroke-width="3"/>
-    <text class="pop" x="1092" y="559" font-family="Calibri, Carlito, sans-serif" font-style="italic" font-size="24" fill="var(--teal)">← die stip, op schaal</text>
+    <text class="pop" x="1092" y="559" font-family="Calibri, Carlito, sans-serif" font-style="italic" font-size="31" fill="var(--teal)">← die stip, op schaal</text>
   </svg>
   <div class="abs" style="left:1050px;top:650px;font:700 150px var(--serif);color:var(--teal)">≈<span data-count="87000">87.000</span>×</div>
-  <div class="abs" style="left:1050px;top:808px;font:700 40px var(--serif)">minder gewichten</div>
-  <div class="abs" style="left:1050px;top:866px;width:800px;white-space:normal;font:400 28px/40px var(--sans);color:var(--lav)">En dezelfde 27 getallen per filter worden op elke positie hergebruikt, dus een 7 die naar rechts schuift, activeert nog steeds dezelfde filters.</div>
-  <div class="abs" style="left:150px;top:1058px;font:italic 400 20px var(--sans);color:var(--dim)">vierkanten op schaal naar oppervlakte · 224 × 224 × 3 = 150.528 inputs · 64 × 3 × 3 × 3 = 1.728 · biases weggelaten</div>
+  <div class="abs" style="left:1050px;top:826px;font:700 50px var(--serif)">minder gewichten</div>
+  <div class="abs" style="left:1050px;top:888px;width:800px;white-space:normal;font:400 35px/40px var(--sans);color:var(--lav)">En dezelfde 27 getallen per filter worden op elke positie hergebruikt, dus een 7 die naar rechts schuift, activeert nog steeds dezelfde filters.</div>
+  <div class="abs" style="left:150px;top:1058px;font:italic 400 26px var(--sans);color:var(--dim)">vierkanten op schaal naar oppervlakte · 224 × 224 × 3 = 150.528 inputs · 64 × 3 × 3 × 3 = 1.728 · biases weggelaten</div>
 </section>
 
 <!-- 9 · Transformers -->
 <section class="slide" data-thread="cut" data-secs="40">
-  <div class="abs kicker" style="left:120px;top:94px">2017 — Vaswani e.a.</div>
-  <div class="abs title" style="left:120px;top:152px">Attention / Transformers</div>
+  <div class="abs kicker" style="left:120px;top:70px">2017 — Vaswani e.a.</div>
+  <div class="abs title" style="left:120px;top:120px">Attention / Transformers</div>
   <svg class="art" viewBox="0 0 2000 1125">
     <g fill="none" stroke="var(--purple)" stroke-linejoin="round">
       <polyline class="draw" pathLength="1" points="810,585 645,443 480,585" stroke-width="4" stroke-opacity=".35"/>
@@ -552,7 +535,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
     <circle cx="480" cy="585" r="36" fill="#fff"/><circle cx="810" cy="585" r="36" fill="var(--purple)"/>
     <circle cx="1140" cy="585" r="36" fill="#fff"/><circle cx="1470" cy="585" r="36" fill="#fff"/>
     <!-- checkerboard -->
-    <text x="1684" y="268" text-anchor="middle" font-family="Cambria, Caladea, Georgia, serif" font-weight="700" font-size="30" fill="#fff">een dambord</text>
+    <text x="1684" y="268" text-anchor="middle" font-family="Cambria, Caladea, Georgia, serif" font-weight="700" font-size="38" fill="#fff">een dambord</text>
     <rect x="1553" y="300" width="262" height="262" fill="none" stroke="#5A5680" stroke-width="2"/>
     <g stroke="var(--purple)" stroke-opacity=".7" stroke-width="2">
       <line x1="1553" y1="300" x2="1815" y2="562"/><line x1="1815" y1="300" x2="1553" y2="562"/>
@@ -565,129 +548,134 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
     </g>
   </svg>
   <div class="abs caption" style="left:1484px;top:607px;width:400px">Geen eenvoudige grens werkt — het gaat om relaties, niet om afstand.</div>
-  <div class="abs caption" style="left:497px;top:677px;width:1000px;font-size:26px">één woord dat stil aan elk ander woord vraagt: “hoeveel moet ik om jou geven?”</div>
+  <div class="abs caption" style="left:497px;top:677px;width:1000px;font-size:32px">één woord dat stil aan elk ander woord vraagt: “hoeveel moet ik om jou geven?”</div>
   <div class="meter-label" style="top:996px">Hoe breinachtig is dit?</div>
   <div class="meter" style="top:1028px;--v:5%"><i></i></div>
 </section>
 
-<!-- 9a · Why language was hard -->
-<section class="slide" id="txProblem" data-thread="cut" data-secs="50">
-  <div class="abs kicker" style="left:120px;top:94px">Transformers — het probleem</div>
-  <div class="abs title" style="left:120px;top:152px">Waarom eerdere netwerken vastliepen op taal</div>
-  <div class="abs" style="left:120px;top:262px;font:400 32px var(--sans);color:var(--lav)">Taal is een reeks, en woorden die bij elkaar horen, kunnen ver uit elkaar staan.</div>
+<!-- 9a · Why language was hard: one earlier kind of network per slide, each with a picture of where it gets stuck -->
+<section class="slide tx-problem" id="txProblem1" data-thread="cut" data-secs="17">
+  <div class="abs kicker" style="left:120px;top:70px">Transformers — het probleem</div>
+  <div class="abs title" style="left:120px;top:120px">Perceptrons &amp; simpele netwerken</div>
+  <div class="abs tx-era" style="left:120px;top:248px">1958 →</div>
   <svg class="art" viewBox="0 0 2000 1125"></svg>
-  <div class="tx-card-h" style="left:156px">Perceptrons &amp; simpele netwerken</div>
-  <div class="tx-card-h" style="left:756px">Convolutionele netwerken</div>
-  <div class="tx-card-h" style="left:1356px">RNN's &amp; LSTM's</div>
-  <div class="tx-era" style="left:156px">1958 →</div>
-  <div class="tx-era" style="left:756px">1989 →</div>
-  <div class="tx-era" style="left:1356px">1990s →</div>
-  <div class="tx-good" style="left:156px"><b>Goed in:</b> eenvoudige patronen in een vaste set inputs.</div>
-  <div class="tx-good" style="left:756px"><b>Goed in:</b> lokale patronen — een paar woorden naast elkaar.</div>
-  <div class="tx-good" style="left:1356px"><b>Goed in:</b> op volgorde lezen en een geheugen meenemen.</div>
-  <div class="tx-bad" style="left:156px"><b>Moeite met:</b> volgorde en context. Geen geheugen van wat ervoor kwam, en niet genoeg diepte.</div>
-  <div class="tx-bad" style="left:756px"><b>Moeite met:</b> woorden die bij elkaar horen maar ver uit elkaar staan.</div>
-  <div class="tx-bad" style="left:1356px"><b>Moeite met:</b> lange teksten, want het geheugen vervaagt. En snelheid: woord 100 wacht op woord 99.</div>
+  <div class="abs tx-good">  <b>Goed in:</b> eenvoudige patronen in een vaste set inputs.</div>
+  <div class="abs tx-bad"><b>Moeite met:</b> volgorde en context. Geen geheugen van wat ervoor kwam, en niet genoeg diepte.</div>
+</section>
+
+<section class="slide tx-problem" id="txProblem2" data-thread="cut" data-secs="17">
+  <div class="abs kicker" style="left:120px;top:70px">Transformers — het probleem</div>
+  <div class="abs title" style="left:120px;top:120px">Convolutionele netwerken</div>
+  <div class="abs tx-era" style="left:120px;top:248px">1989 →</div>
+  <svg class="art" viewBox="0 0 2000 1125"></svg>
+  <div class="abs tx-good">  <b>Goed in:</b> lokale patronen — een paar woorden naast elkaar.</div>
+  <div class="abs tx-bad"><b>Moeite met:</b> woorden die bij elkaar horen maar ver uit elkaar staan.</div>
+</section>
+
+<section class="slide tx-problem" id="txProblem3" data-thread="cut" data-secs="16">
+  <div class="abs kicker" style="left:120px;top:70px">Transformers — het probleem</div>
+  <div class="abs title" style="left:120px;top:120px">RNN's &amp; LSTM's</div>
+  <div class="abs tx-era" style="left:120px;top:248px">1990s →</div>
+  <svg class="art" viewBox="0 0 2000 1125"></svg>
+  <div class="abs tx-good">  <b>Goed in:</b> op volgorde lezen en een geheugen meenemen.</div>
+  <div class="abs tx-bad"><b>Moeite met:</b> lange teksten, want het geheugen vervaagt. En snelheid: woord 100 wacht op woord 99.</div>
 </section>
 
 <!-- 9b · Self-attention -->
 <section class="slide" id="txIdea" data-thread="cut" data-secs="60">
-  <div class="abs kicker" style="left:120px;top:94px">Transformers — het idee</div>
-  <div class="abs title" style="left:120px;top:152px">Elk woord kijkt naar elk ander woord</div>
-  <div class="abs" style="left:120px;top:262px;font:400 32px var(--sans);color:var(--lav)">Self-attention verbindt twee woorden rechtstreeks, hoe ver ze ook uit elkaar staan.</div>
+  <div class="abs kicker" style="left:120px;top:70px">Transformers — het idee</div>
+  <div class="abs title" style="left:120px;top:120px">Elk woord kijkt naar elk ander woord</div>
+  <i data-step="1" hidden></i><!-- "next" turns “groot” into “klein”, "previous" turns it back -->
   <svg class="art" viewBox="0 0 2000 1125"></svg>
   <div class="attn-sent"></div>
   <div class="attn-caption"></div>
-  <div class="abs" style="left:160px;top:734px;font:700 32px var(--serif)">Eerst: woord voor woord</div>
-  <div class="abs" style="left:160px;top:782px;width:760px;white-space:normal;font:400 24px/32px var(--sans);color:var(--muted)">Een RNN geeft zijn geheugen door: 7 stappen van “trofee” naar “hij”, en onderweg vervaagt het.</div>
-  <div class="abs" style="left:1080px;top:734px;font:700 32px var(--serif)">Transformer: één stap</div>
-  <div class="abs" style="left:1080px;top:782px;width:760px;white-space:normal;font:400 24px/32px var(--sans);color:var(--muted)">Elk paar is rechtstreeks verbonden en alle woorden worden tegelijk verwerkt, dus trainen gaat parallel.</div>
-  <div class="abs" style="left:120px;top:1058px;font:italic 400 20px var(--sans);color:var(--dim)">attention-gewichten ter illustratie</div>
+  <div class="abs" style="left:160px;top:734px;font:700 40px var(--serif)">Eerst: woord voor woord</div>
+  <div class="abs" style="left:1080px;top:734px;font:700 40px var(--serif)">Transformer: één stap</div>
+  <div class="abs" style="left:120px;top:1058px;font:italic 400 26px var(--sans);color:var(--dim)">attention-gewichten ter illustratie</div>
 </section>
 
 <!-- 9c · Inside a transformer -->
 <section class="slide" id="txInside" data-thread="cut" data-secs="70">
-  <div class="abs kicker" style="left:120px;top:94px">Transformers — vanbinnen</div>
-  <div class="abs title" style="left:120px;top:152px">Binnen in een transformer</div>
-  <div class="abs" style="left:120px;top:262px;font:400 32px var(--sans);color:var(--lav)">Een stapel identieke blokken: eerst attention, dan een klein klassiek netwerk.</div>
+  <div class="abs kicker" style="left:120px;top:70px">Transformers — vanbinnen</div>
+  <div class="abs title" style="left:120px;top:120px">Binnen in een transformer</div>
+  <div class="abs" style="left:120px;top:244px;font:400 40px var(--sans);color:var(--lav)">Een stapel identieke blokken: eerst attention, dan een klein klassiek netwerk.</div>
   <svg class="art" viewBox="0 0 2000 1125"></svg>
-  <div class="tx-row" style="top:352px"><i style="background:var(--purple)"></i><h3>Self-attention</h3><p>Elk woord vraagt aan elk ander woord “hoe relevant ben jij voor mij?” en mengt hun betekenis erdoor, gewogen naar het antwoord.</p></div>
-  <div class="tx-row" style="top:512px"><i style="background:#A39CFF"></i><h3>Multi-head attention</h3><p>Meerdere attentions draaien naast elkaar. De ene head volgt misschien de grammatica, de andere waar “hij” naar verwijst.</p></div>
-  <div class="tx-row" style="top:672px"><i style="background:#F5B94A"></i><h3>Positionele codering</h3><p>Attention ziet alle woorden tegelijk, dus de volgorde gaat verloren. Een positiesignaal houdt “hond bijt man” ≠ “man bijt hond”.</p></div>
-  <div class="tx-row" style="top:832px"><i style="background:var(--teal)"></i><h3>Feed-forward, normalisatie &amp; shortcuts</h3><p>Een klein klassiek netwerk per woord — weer perceptrons. Shortcuts en normalisatie houden een diepe stapel stabiel tijdens het trainen.</p></div>
+  <div class="tx-row" style="top:352px"><i style="background:var(--purple)"></i><h3>Self-attention</h3></div>
+  <div class="tx-row" style="top:512px"><i style="background:#A39CFF"></i><h3>Multi-head attention</h3></div>
+  <div class="tx-row" style="top:672px"><i style="background:#F5B94A"></i><h3>Positionele codering</h3></div>
+  <div class="tx-row" style="top:832px"><i style="background:var(--teal)"></i><h3>Feed-forward, normalisatie &amp; shortcuts</h3></div>
 </section>
 
 <!-- 9d · Impact on LLMs -->
 <section class="slide" id="txImpact" data-thread="cut" data-secs="45">
-  <div class="abs kicker" style="left:120px;top:94px">Transformers — de impact</div>
-  <div class="abs title" style="left:120px;top:152px">De motor in elk LLM</div>
-  <div class="abs" style="left:120px;top:262px;font:400 32px var(--sans);color:var(--lav)">Hetzelfde ontwerp schaalt: meer lagen, meer data, meer rekenkracht, en het wordt steeds beter.</div>
+  <div class="abs kicker" style="left:120px;top:70px">Transformers — de impact</div>
+  <div class="abs title" style="left:120px;top:120px">De motor in elk LLM</div>
+  <div class="abs" style="left:120px;top:244px;font:400 40px var(--sans);color:var(--lav)">Hetzelfde ontwerp schaalt: meer lagen, meer data, meer rekenkracht, en het wordt steeds beter.</div>
   <svg class="art" viewBox="0 0 2000 1125"></svg>
   <div class="abs kicker small" style="left:120px;top:360px">Parameters · logschaal, elke rasterlijn is 10×</div>
   <div class="tx-row wide" style="top:380px"><i style="background:#A39CFF"></i><h3>Leest: BERT</h3><p>Begrijpt tekst, bijvoorbeeld voor zoeken en classificeren.</p></div>
   <div class="tx-row wide" style="top:560px"><i style="background:var(--teal)"></i><h3>Schrijft: GPT</h3><p>Voorspelt het volgende woord, steeds opnieuw: dat is je chatassistent.</p></div>
   <div class="tx-row wide" style="top:740px"><i style="background:var(--purple)"></i><h3>Leert van oceanen aan tekst</h3><p>GPT-3 is getraind op zo'n 300 miljard tokens (stukjes woorden), allemaal parallel.</p></div>
-  <div class="abs" style="left:120px;top:1058px;font:italic 400 20px var(--sans);color:var(--dim)">aantallen parameters uit de oorspronkelijke papers · de grootte van GPT-4 is niet gepubliceerd</div>
+  <div class="abs" style="left:120px;top:1058px;font:italic 400 26px var(--sans);color:var(--dim)">aantallen parameters uit de oorspronkelijke papers · vanaf GPT-4 (2023) publiceert OpenAI de grootte van zijn modellen niet meer</div>
 </section>
 
 <!-- 9e · Why transformers matter -->
 <section class="slide" id="txWhy" data-thread="cut" data-secs="40">
-  <div class="abs kicker" style="left:120px;top:94px">Transformers — waarom het ertoe doet</div>
-  <div class="abs title" style="left:120px;top:152px">De ontbrekende schakel</div>
+  <div class="abs kicker" style="left:120px;top:70px">Transformers — waarom het ertoe doet</div>
+  <div class="abs title" style="left:120px;top:120px">De ontbrekende schakel</div>
   <svg class="art" viewBox="0 0 2000 1125"></svg>
-  <div class="abs" style="left:0;width:2000px;top:640px;text-align:center;font:700 52px var(--serif)">Geen self-attention, geen parallel trainen — <span class="t">geen GPT-4.</span></div>
-  <div class="abs" style="left:0;width:1995px;top:880px;text-align:center;font:400 40px var(--serif)">En toch — open een modern LLM en het zit er nog steeds in: <b class="p">hetzelfde perceptron</b><b>, alleen groter.</b></div>
-  <div class="abs" style="left:0;width:1995px;top:954px;text-align:center;font:italic 400 26px var(--sans);color:var(--muted)">Meer lagen, meer data, meer rekenkracht — plus dat “hoeveel moet ik om jou geven”-trucje erbovenop.</div>
+  <div class="abs" style="left:0;width:2000px;top:640px;text-align:center;font:700 58px var(--serif)">Geen self-attention, geen parallel trainen — <span class="t">geen GPT.</span></div>
+  <div class="abs" style="left:0;width:1995px;top:880px;text-align:center;font:400 42px var(--serif)">En toch — open een modern LLM en het zit er nog steeds in: <b class="p">hetzelfde perceptron</b><b>, alleen groter.</b></div>
+  <div class="abs" style="left:0;width:1995px;top:954px;text-align:center;font:italic 400 32px var(--sans);color:var(--muted)">Meer lagen, meer data, meer rekenkracht — plus dat “hoeveel moet ik om jou geven”-trucje erbovenop.</div>
 </section>
 
 <!-- 10 · The turn -->
 <section class="slide" data-thread="cut" data-secs="45">
   <div class="abs kicker teal" style="left:150px;top:102px">De wending</div>
-  <div class="abs statement" style="left:150px;top:200px;width:1800px;line-height:92px">Het begon als een <span class="p">echte metafoor.</span><br>We bouwden erop voort — en <span class="t">dreven af</span>, stukje bij beetje.</div>
+  <div class="abs statement" style="left:150px;top:200px;width:1800px;font-size:74px;line-height:100px">Het begon als een <span class="p">echte metafoor.</span><br>We bouwden erop voort — en <span class="t">dreven af</span>, stukje bij beetje.</div>
   <svg class="art chart" viewBox="0 0 2000 1125" data-x="264,759,1253,1748" data-a="915,757,690,555" data-b="600,825,735,960"></svg>
-  <div class="abs" style="left:1533px;top:506px;width:200px;text-align:right;font:700 24px var(--sans);color:var(--teal)">hoe goed het werkt</div>
-  <div class="abs" style="left:1433px;top:830px;width:300px;text-align:right;font:700 24px var(--sans);color:var(--purple)">hoe breinachtig het is</div>
-  <div class="xlabels" data-labels="Perceptron,+ Backprop,CNN's,Transformers"></div>
-  <div class="abs" style="left:180px;top:1058px;font:italic 400 20px var(--sans);color:var(--dim)">conceptuele illustratie — geen gemeten data</div>
+  <div class="abs" style="left:1533px;top:506px;width:200px;text-align:right;font:700 31px var(--sans);color:var(--teal)">hoe goed het werkt</div>
+  <div class="abs" style="left:1433px;top:830px;width:300px;text-align:right;font:700 31px var(--sans);color:var(--purple)">hoe breinachtig het is</div>
+  <div class="xlabels" data-labels="Perceptron,Backprop,CNN's,Transformers"></div>
+  <div class="abs" style="left:180px;top:1058px;font:italic 400 26px var(--sans);color:var(--dim)">conceptuele illustratie — geen gemeten data</div>
 </section>
 
 <!-- 11 · The loop -->
 <section class="slide" data-thread="loop" data-secs="45">
   <div class="abs kicker teal" style="left:150px;top:102px">De lus</div>
-  <div class="abs statement" style="left:150px;top:200px;width:1800px;line-height:92px">We <span class="p">liepen weg</span> van de biologie om dit te bouwen.<br>Nu <span class="t">loopt het terug</span>.</div>
+  <div class="abs statement" style="left:150px;top:200px;width:1800px;font-size:74px;line-height:100px">We <span class="p">liepen weg</span> van de biologie om dit te bouwen.<br>Nu <span class="t">loopt het terug</span>.</div>
   <svg class="art chart" viewBox="0 0 2000 1125" data-x="231,610,989,1369,1748" data-a="915,757,690,555,546" data-b="600,825,735,960,847">
     <line class="pop" x1="1749" y1="768" x2="1749" y2="832" stroke="var(--purple)" stroke-width="2" stroke-dasharray="6 6"/>
   </svg>
-  <div class="abs" style="left:1533px;top:497px;width:200px;text-align:right;font:700 24px var(--sans);color:var(--teal)">hoe goed het werkt</div>
-  <div class="abs" style="left:1433px;top:925px;width:300px;text-align:right;font:700 24px var(--sans);color:var(--purple)">hoe breinachtig het is</div>
-  <div class="abs pop" style="left:1233px;top:724px;width:500px;text-align:right;font:italic 400 22px var(--sans);color:var(--lav)">AI helpt nu echte hersensignalen te ontcijferen</div>
-  <div class="xlabels" data-labels="Perceptron,+ Backprop,CNN's,Transformers,Vandaag"></div>
-  <div class="abs" style="left:180px;top:1058px;font:italic 400 20px var(--sans);color:var(--dim)">conceptuele illustratie — geen gemeten data</div>
+  <div class="abs" style="left:1533px;top:497px;width:200px;text-align:right;font:700 31px var(--sans);color:var(--teal)">hoe goed het werkt</div>
+  <div class="abs" style="left:1433px;top:925px;width:300px;text-align:right;font:700 31px var(--sans);color:var(--purple)">hoe breinachtig het is</div>
+  <div class="abs pop" style="left:1233px;top:724px;width:500px;text-align:right;font:italic 400 29px var(--sans);color:var(--lav)">AI helpt nu echte hersensignalen te ontcijferen</div>
+  <div class="xlabels" data-labels="Perceptron,Backprop,CNN's,Transformers,Vandaag"></div>
+  <div class="abs" style="left:180px;top:1058px;font:italic 400 26px var(--sans);color:var(--dim)">conceptuele illustratie — geen gemeten data</div>
 </section>
 
 <!-- 12 · Takeaway -->
 <section class="slide" data-thread="end" data-secs="30">
-  <div class="abs kicker teal" style="left:150px;top:154px">De boodschap</div>
-  <div class="abs statement" style="left:150px;top:268px;width:1800px">Redeneer niet over LLM's alsof het <span class="p">breinen</span> zijn.<br>Redeneer erover als een heel grote <span class="t">gewogen som.</span></div>
-  <div class="short-rule" style="top:562px"></div>
-  <div class="abs body" style="left:150px;top:596px;width:1420px">Je weet nu waar het vandaan komt. Dat voorspelt de rare dingen — dingen verzinnen, van slag raken door een andere formulering, midden in een gesprek vergeten wie je bent — veel beter dan welke breinmetafoor ook.</div>
-  <div class="abs" style="left:195px;top:1054px;font:400 24px var(--sans);letter-spacing:.12em;color:var(--dim)">How AI Lost the Thread</div>
+  <div class="abs statement" style="left:150px;top:268px;width:1800px;font-size:74px;line-height:100px">Redeneer niet over LLM's alsof het <span class="p">breinen</span> zijn.<br>Redeneer erover als een heel grote <span class="t">gewogen som.</span></div>
+  <div class="short-rule" style="top:540px"></div>
+  <div class="abs body" style="left:150px;top:576px;width:1600px">Je weet nu waar het vandaan komt. Dat voorspelt de rare dingen — dingen verzinnen, van slag raken door een andere formulering, midden in een gesprek vergeten wie je bent — veel beter dan welke breinmetafoor ook.</div>
+  <div class="abs" style="left:195px;top:1054px;font:400 31px var(--sans);letter-spacing:.12em;color:var(--dim)">How AI Lost the Thread</div>
 </section>
 
 <!-- 13 · Thank you -->
 <section class="slide" id="thanks" data-thread="end">
   <div class="abs" style="left:150px;top:250px;font:700 120px var(--serif)">Bedankt</div>
-  <div class="abs" style="left:150px;top:432px;font:700 48px var(--serif)">Tineke Slotegraaf</div>
-  <div class="abs" style="left:150px;top:500px;font:italic 400 30px var(--sans);color:var(--muted)">Software and AI Engineer - Alvant</div>
+  <div class="abs" style="left:150px;top:432px;font:700 54px var(--serif)">Tineke Slotegraaf</div>
+  <div class="abs" style="left:150px;top:500px;font:italic 400 38px var(--sans);color:var(--muted)">Software and AI Engineer - Alvant</div>
   <div class="short-rule" style="left:150px;top:590px"></div>
-  <div class="abs" style="left:150px;top:640px;font:700 64px var(--serif);color:var(--teal)">Vragen?</div>
+  <div class="abs" style="left:150px;top:640px;font:700 72px var(--serif);color:var(--teal)">Vragen?</div>
   <div class="qr-card" style="left:1050px"><svg viewBox="0 0 330 330" class="segno"><path transform="scale(10)" class="qrline" stroke="#12142b" d="M0 0.5h7m1 0h1m1 0h2m1 0h3m1 0h5m1 0h1m2 0h7m-33 1h1m5 0h1m2 0h1m2 0h1m7 0h2m4 0h1m5 0h1m-33 1h1m1 0h3m1 0h1m2 0h1m2 0h1m2 0h1m5 0h1m4 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m4 0h1m1 0h1m3 0h1m1 0h1m2 0h1m3 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m1 0h1m2 0h5m1 0h7m2 0h1m1 0h3m1 0h1m-33 1h1m5 0h1m1 0h1m4 0h1m1 0h3m2 0h1m5 0h1m5 0h1m-33 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-23 1h1m1 0h2m2 0h1m1 0h1m1 0h2m-21 1h7m1 0h4m2 0h3m9 0h2m3 0h1m-33 1h2m1 0h1m3 0h1m2 0h1m5 0h6m1 0h1m2 0h2m1 0h4m-32 1h1m1 0h4m1 0h1m1 0h1m1 0h1m3 0h2m3 0h2m1 0h3m1 0h1m1 0h2m-31 1h1m2 0h2m1 0h1m2 0h2m1 0h3m4 0h2m2 0h3m1 0h4m-32 1h1m2 0h4m1 0h1m1 0h1m1 0h2m2 0h1m1 0h1m3 0h4m1 0h3m1 0h1m-31 1h2m5 0h2m3 0h2m1 0h1m1 0h3m1 0h2m1 0h3m2 0h3m-33 1h1m2 0h2m1 0h1m2 0h2m1 0h3m1 0h1m1 0h1m3 0h1m2 0h2m2 0h1m1 0h1m-32 1h1m2 0h3m1 0h1m1 0h4m2 0h3m2 0h2m1 0h4m2 0h2m-31 1h3m1 0h4m1 0h1m1 0h2m1 0h1m5 0h1m1 0h1m1 0h2m1 0h2m3 0h1m-33 1h1m1 0h2m1 0h1m3 0h1m1 0h1m2 0h1m1 0h1m2 0h3m1 0h1m2 0h2m1 0h2m1 0h1m-32 1h1m2 0h4m3 0h2m3 0h1m3 0h1m3 0h1m2 0h2m1 0h2m-30 1h3m3 0h6m1 0h1m1 0h1m1 0h3m5 0h6m-31 1h1m1 0h3m2 0h2m5 0h4m2 0h1m1 0h2m1 0h3m2 0h1m-33 1h4m1 0h1m3 0h2m1 0h1m1 0h8m1 0h1m2 0h1m3 0h1m1 0h1m-33 1h1m3 0h1m1 0h5m1 0h2m1 0h1m1 0h1m2 0h1m3 0h2m1 0h1m1 0h1m1 0h1m-32 1h1m1 0h1m1 0h1m2 0h1m1 0h4m1 0h1m1 0h3m1 0h7m2 0h2m1 0h1m-33 1h1m1 0h6m3 0h1m3 0h1m1 0h3m2 0h1m1 0h5m2 0h2m-25 1h1m1 0h1m1 0h1m1 0h3m1 0h2m3 0h2m3 0h1m1 0h1m1 0h1m-33 1h7m1 0h2m1 0h1m1 0h1m1 0h1m4 0h1m1 0h3m1 0h1m1 0h1m1 0h2m-32 1h1m5 0h1m1 0h1m1 0h2m1 0h4m1 0h1m1 0h5m3 0h4m-32 1h1m1 0h3m1 0h1m1 0h1m1 0h1m2 0h1m2 0h1m1 0h2m2 0h1m1 0h6m1 0h1m-32 1h1m1 0h3m1 0h1m1 0h2m1 0h1m1 0h3m1 0h3m3 0h3m2 0h2m2 0h1m-33 1h1m1 0h3m1 0h1m1 0h1m3 0h2m1 0h2m1 0h1m3 0h1m3 0h2m1 0h1m-30 1h1m5 0h1m1 0h2m1 0h1m1 0h3m1 0h1m1 0h5m1 0h1m2 0h3m-31 1h7m2 0h2m3 0h3m1 0h2m2 0h4m1 0h1m3 0h1"/></svg></div>
   <div class="qr-card" style="left:1490px"><svg viewBox="0 0 330 330" class="segno"><path transform="scale(10)" class="qrline" stroke="#12142b" d="M0 0.5h7m3 0h1m2 0h2m1 0h1m1 0h3m2 0h1m2 0h7m-33 1h1m5 0h1m1 0h1m1 0h1m2 0h1m1 0h3m2 0h4m2 0h1m5 0h1m-33 1h1m1 0h3m1 0h1m1 0h4m1 0h4m3 0h1m3 0h1m1 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m2 0h2m1 0h3m3 0h2m2 0h3m1 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m4 0h3m2 0h2m2 0h3m1 0h1m1 0h1m1 0h3m1 0h1m-33 1h1m5 0h1m6 0h2m1 0h2m1 0h1m2 0h1m3 0h1m5 0h1m-33 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-24 1h2m1 0h1m1 0h2m1 0h3m2 0h3m-24 1h3m1 0h2m2 0h4m1 0h1m2 0h3m1 0h1m1 0h1m6 0h2m-32 1h1m1 0h1m5 0h2m3 0h3m1 0h3m1 0h1m1 0h1m2 0h2m1 0h2m1 0h1m-32 1h7m1 0h2m1 0h2m2 0h1m1 0h1m1 0h1m1 0h2m1 0h1m1 0h3m1 0h2m-32 1h1m1 0h1m4 0h1m3 0h3m2 0h1m2 0h1m1 0h6m1 0h1m2 0h1m-32 1h1m1 0h1m2 0h1m3 0h1m1 0h1m1 0h1m4 0h1m2 0h4m1 0h3m1 0h2m-33 1h1m2 0h3m2 0h2m4 0h1m4 0h1m1 0h1m2 0h1m2 0h1m1 0h3m-30 1h1m2 0h5m3 0h3m2 0h4m2 0h1m1 0h4m-30 1h1m2 0h1m4 0h6m4 0h1m2 0h1m1 0h8m-31 1h1m3 0h1m1 0h2m1 0h3m1 0h4m1 0h1m1 0h4m1 0h2m1 0h3m-31 1h1m1 0h3m2 0h1m1 0h1m2 0h1m1 0h1m5 0h1m1 0h2m2 0h1m1 0h2m1 0h2m-33 1h1m3 0h5m1 0h2m1 0h2m2 0h2m1 0h3m2 0h1m1 0h2m1 0h1m-29 1h3m2 0h4m1 0h1m2 0h4m1 0h1m1 0h1m1 0h3m1 0h1m2 0h2m-33 1h3m1 0h4m4 0h2m1 0h2m1 0h1m2 0h1m2 0h1m4 0h2m1 0h1m-33 1h3m1 0h2m1 0h2m1 0h1m8 0h2m2 0h1m2 0h1m2 0h1m2 0h1m-28 1h3m1 0h2m1 0h5m1 0h1m2 0h1m1 0h4m2 0h4m-32 1h1m1 0h2m2 0h1m1 0h3m1 0h2m2 0h1m1 0h1m4 0h1m1 0h3m2 0h1m-32 1h1m2 0h1m1 0h7m1 0h3m1 0h1m4 0h1m1 0h5m2 0h2m-25 1h2m2 0h2m2 0h1m1 0h2m4 0h1m3 0h2m-30 1h7m4 0h1m1 0h1m2 0h2m1 0h1m1 0h1m1 0h2m1 0h1m1 0h1m-29 1h1m5 0h1m1 0h4m1 0h5m2 0h5m3 0h5m-33 1h1m1 0h3m1 0h1m2 0h5m2 0h3m1 0h9m1 0h2m-32 1h1m1 0h3m1 0h1m1 0h2m1 0h1m3 0h1m2 0h1m1 0h1m2 0h2m2 0h1m1 0h4m-33 1h1m1 0h3m1 0h1m1 0h2m2 0h1m1 0h1m2 0h1m3 0h7m1 0h1m-30 1h1m5 0h1m1 0h1m3 0h1m1 0h2m1 0h1m1 0h2m1 0h3m2 0h2m3 0h1m-33 1h7m2 0h1m2 0h4m3 0h1m1 0h1m1 0h1m2 0h1m1 0h3"/></svg></div>
   <div class="qr-label" style="left:1230px">Code + slides</div>
   <div class="qr-label" style="left:1670px">LinkedIn</div>
   <a class="qr-url" style="left:1230px" href="https://github.com/tinekescode/perceptron-demo" target="_blank" rel="noopener">github.com/tinekescode/perceptron-demo</a>
   <a class="qr-url" style="left:1670px" href="https://www.linkedin.com/in/tinekeslotegraaf" target="_blank" rel="noopener">linkedin.com/in/tinekeslotegraaf</a>
-  <div class="abs" style="left:1230px;top:800px;transform:translateX(-50%);font:italic 400 22px var(--sans);color:var(--dim)">de talk, plus alle drie de demo's</div>
+  <div class="abs" style="left:1230px;top:800px;transform:translateX(-50%);font:italic 400 29px var(--sans);color:var(--dim)">de talk, plus alle drie de demo's</div>
 </section>
 
 </div></div>
@@ -767,79 +755,47 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
     labels.dataset.labels.split(",").forEach((t, i) => {
       const d = document.createElement("div");
       d.className = "abs"; d.textContent = t;
-      d.style.cssText = `left:${xs[i]}px;top:1012px;transform:translateX(-50%);font:400 24px var(--sans);color:var(--lav)`;
+      d.style.cssText = `left:${xs[i]}px;top:1012px;transform:translateX(-50%);font:400 31px var(--sans);color:var(--lav)`;
       labels.appendChild(d);
     });
   }
 
   const CELL = "var(--cell)", TEAL = "var(--teal)", PURPLE = "var(--purple)";
 
-  // ── Slide 2: a chat window playing out everyday requests
+  // ── Slide 2: everyday questions appear one by one, then stay
   {
-    const slide = document.getElementById("llmUse");
-    const CASES = [
-      { title: "JUnit-test", chip: "ide", ask: "Schrijf een JUnit-test voor calculateDiscount()", code: true,
-        reply: "@Test\nvoid membersGetTenPercentOff() {\n    var order = new Order(100.00, Customer.member());\n    assertEquals(90.00, pricing.calculateDiscount(order), 0.001);\n}" },
-      { title: "NullPointerException", chip: "ide", ask: "Waarom krijg ik een NullPointerException op regel 42?",
-        reply: "Op regel 42 roep je customer.getAddress().getCity() aan, maar getAddress() geeft null terug voor klanten die nooit een adres hebben ingevuld. Controleer eerst op null, of geef een Optional<Address> terug." },
-      { title: "E-mailsamenvatting", chip: "mail", ask: "Vat deze e-mailreeks van 38 berichten samen in drie punten",
-        reply: "• De release schuift op naar donderdag.\n• Marco doet de databasemigratie.\n• Nog open: wie vertelt het de klant?" },
-      { title: "Vriendelijker, Engels", chip: "chat", ask: "Maak dit bericht vriendelijker, en in het Engels",
-        reply: "Hi everyone! Just a quick update: the release moves to Thursday. Thanks for your patience!" },
-      { title: "Eetidee", chip: "phone", ask: "Wat kan ik koken met eieren, spinazie en feta?",
-        reply: "Een omelet met spinazie en feta: laat de spinazie slinken, giet er drie losgeklopte eieren bij, verkruimel de feta erover en vouw dubbel. Tien minuten, één pan." },
-    ];
-    const side = slide.querySelector(".chat-side"), log = slide.querySelector(".chat-log");
-    const typed = slide.querySelector(".chat-typed"), send = slide.querySelector(".chat-send");
-    const chips = [...slide.querySelectorAll(".chip")];
-    const hist = CASES.map(c => { const d = document.createElement("div"); d.className = "chat-hist"; d.textContent = c.title; side.appendChild(d); return d; });
-    const div = (cls, text = "") => { const d = document.createElement("div"); d.className = cls; d.textContent = text; log.appendChild(d); return d; };
-    const select = i => {
-      hist.forEach((h, j) => h.classList.toggle("on", j === i));
-      chips.forEach(c => c.classList.toggle("on", c.dataset.chip === CASES[i].chip));
-    };
-    const showDone = i => {   // a finished exchange, for the slide's resting state
-      select(i); log.textContent = ""; typed.textContent = ""; send.classList.remove("ready");
-      div("msg-user", CASES[i].ask); div("msg-bot" + (CASES[i].code ? " code" : ""), CASES[i].reply);
-    };
-    showDone(0);
-    let run = 0;
-    const play = async () => {
-      const me = ++run, sleep = ms => new Promise(r => setTimeout(r, ms)), alive = () => me === run;
-      for (let i = 0; alive(); i = (i + 1) % CASES.length) {
-        const c = CASES[i];
-        select(i); log.textContent = ""; typed.textContent = "";
-        await sleep(500);
-        for (const ch of c.ask) { if (!alive()) return; typed.textContent += ch; await sleep(32); }
-        send.classList.add("ready"); await sleep(350); if (!alive()) return;
-        typed.textContent = ""; send.classList.remove("ready");
-        div("msg-user", c.ask);
-        const dots = div("dots"); dots.innerHTML = "<i></i><i></i><i></i>";
-        await sleep(800); if (!alive()) return;
-        dots.remove();
-        const out = div("msg-bot" + (c.code ? " code" : ""));
-        for (const word of c.reply.split(/(?<=[ \n])/)) { if (!alive()) return; out.textContent += word; await sleep(c.code ? 28 : 45); }
-        await sleep(2800);
-      }
-    };
-    slide.addEventListener("slideenter", play);
-    slide.addEventListener("slideleave", () => { run++; showDone(0); });
+    // Step 0 asks the room; "next" plays the questions once, and the last one stays
+    const slide = document.getElementById("llmUse"), intro = slide.querySelector(".ask-intro"), asks = [...slide.querySelectorAll(".ask")];
+    const show = i => asks.forEach((a, j) => a.classList.toggle("on", j === i));
+    let timers = [];
+    const stop = () => { timers.forEach(clearTimeout); timers = []; };
+    slide.addEventListener("slidestep", e => {
+      stop(); show(-1);
+      intro.classList.toggle("on", e.detail === 0);
+      if (e.detail > 0) asks.forEach((a, i) => timers.push(setTimeout(() => show(i), 600 + i * 4000)));
+    });
+    slide.addEventListener("slideleave", stop);
   }
 
-  // ── Slide 3: the question types itself out, then the statement appears
+  // ── Slide 5: the neuron waits at rest; "next" starts the signals in the simulator
+  {
+    const slide = document.getElementById("neuron"), frame = slide.querySelector("iframe");
+    slide.addEventListener("slidestep", e => frame.contentWindow.postMessage({ neuron: e.detail > 0 ? "start" : "rest" }, "*"));
+  }
+
+  // ── Slide 3: the question types itself out
   {
     const slide = document.getElementById("llmWhy"), typed = slide.querySelector(".ask-typed"), send = slide.querySelector(".chat-send");
     const QUESTION = typed.textContent;
     let run = 0;
     slide.addEventListener("slideenter", async () => {
       const me = ++run, sleep = ms => new Promise(r => setTimeout(r, ms));
-      slide.classList.add("asking"); typed.textContent = ""; send.classList.remove("ready");
+      typed.textContent = ""; send.classList.remove("ready");
       await sleep(600);
       for (const ch of QUESTION) { if (me !== run) return; typed.textContent += ch; await sleep(55); }
-      send.classList.add("ready"); await sleep(700);
-      if (me === run) slide.classList.remove("asking");
+      send.classList.add("ready");
     });
-    slide.addEventListener("slideleave", () => { run++; slide.classList.remove("asking"); typed.textContent = QUESTION; send.classList.add("ready"); });
+    slide.addEventListener("slideleave", () => { run++; typed.textContent = QUESTION; send.classList.add("ready"); });
   }
 
   // ── How a neuron learns: Hebbian strengthening, and fading for a connection that fires alone
@@ -858,22 +814,22 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
       n.path = el("path", { d: `M${n.x + 42} ${n.y} Q${n.ctrl[0]} ${n.ctrl[1]} ${n.end[0]} ${n.end[1]}`, fill: "none", stroke: TEAL, "stroke-linecap": "round" }, linkLayer);
       n.knob = el("circle", { cx: n.end[0], cy: n.end[1], r: 9, fill: TEAL }, linkLayer);
       n.circle = el("circle", { cx: n.x, cy: n.y, r: 42, fill: "#fff" }, nodeLayer);
-      const t = el("text", { x: n.x, y: n.y + 12, "text-anchor": "middle", "font-family": "Cambria, Caladea, Georgia, serif", "font-weight": 700, "font-size": 36, fill: "var(--bg)" }, nodeLayer);
+      const t = el("text", { x: n.x, y: n.y + 12, "text-anchor": "middle", "font-family": "Cambria, Caladea, Georgia, serif", "font-weight": 700, "font-size": 45, fill: "var(--bg)" }, nodeLayer);
       t.textContent = name;
-      const label = el("text", { x: n.x - 55, y: n.y + 72, ...sans, "font-size": 18, fill: "var(--dim)" }, nodeLayer);
+      const label = el("text", { x: n.x - 55, y: n.y + 74, ...sans, "font-size": 30, fill: "var(--dim)" }, nodeLayer);
       label.textContent = "verbindingssterkte";
-      el("rect", { x: n.x - 55, y: n.y + 82, width: 110, height: 10, rx: 5, fill: "var(--track)" }, nodeLayer);
-      n.bar = el("rect", { x: n.x - 55, y: n.y + 82, width: 0, height: 10, rx: 5, fill: TEAL }, nodeLayer);
+      el("rect", { x: n.x - 55, y: n.y + 90, width: 110, height: 10, rx: 5, fill: "var(--track)" }, nodeLayer);
+      n.bar = el("rect", { x: n.x - 55, y: n.y + 90, width: 0, height: 10, rx: 5, fill: TEAL }, nodeLayer);
     }
     const ring = el("circle", { cx: OUT.x, cy: OUT.y, r: OUT.r, fill: "none", stroke: TEAL, "stroke-width": 4, opacity: 0 }, nodeLayer);
     const cell = el("circle", { cx: OUT.x, cy: OUT.y, r: OUT.r, fill: PURPLE }, nodeLayer);
-    const cellText = el("text", { x: OUT.x, y: OUT.y + 9, "text-anchor": "middle", ...sans, "font-weight": 700, "font-size": 26, fill: "#fff" }, nodeLayer);
+    const cellText = el("text", { x: OUT.x, y: OUT.y + 9, "text-anchor": "middle", ...sans, "font-weight": 700, "font-size": 32, fill: "#fff" }, nodeLayer);
     cellText.textContent = "de cel";
     // "each connection only knows its own spot"
     el("circle", { cx: 788, cy: 604, r: 28, fill: "none", stroke: "var(--lav)", "stroke-width": 2, "stroke-dasharray": "6 5" }, nodeLayer);
-    el("line", { x1: 806, y1: 582, x2: 940, y2: 470, stroke: "var(--lav)", "stroke-width": 2, "stroke-dasharray": "6 5" }, nodeLayer);
+    el("line", { x1: 806, y1: 582, x2: 895, y2: 485, stroke: "var(--lav)", "stroke-width": 2, "stroke-dasharray": "6 5" }, nodeLayer);
     ["deze verbinding weet alleen:", "heb ik net gevuurd?", "heeft de cel net gevuurd?"].forEach((s, i) => {
-      const t = el("text", { x: 950, y: 440 + i * 30, ...sans, "font-style": "italic", "font-size": 22, fill: "var(--lav)" }, nodeLayer);
+      const t = el("text", { x: 905, y: 400 + i * 50, ...sans, "font-style": "italic", "font-size": 40, fill: "var(--lav)" }, nodeLayer);
       t.textContent = s;
     });
 
@@ -942,10 +898,13 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
       raf = requestAnimationFrame(frame);
     };
     frame(performance.now()); cancelAnimationFrame(raf);
-    slide.addEventListener("slideenter", () => { cancelAnimationFrame(raf); reset(performance.now()); shown = { ...w }; raf = requestAnimationFrame(frame); });
+    // Step 0 shows the connections at rest; "next" starts the spikes
+    slide.addEventListener("slidestep", e => {
+      cancelAnimationFrame(raf); reset(performance.now()); shown = { ...w };
+      if (e.detail > 0) raf = requestAnimationFrame(frame);
+      else { frame(performance.now()); cancelAnimationFrame(raf); }
+    });
     slide.addEventListener("slideleave", () => cancelAnimationFrame(raf));
-    const btn = slide.querySelector(".hebb-reset");
-    btn.addEventListener("click", e => { e.stopPropagation(); reset(performance.now()); btn.blur(); });
   }
 
   // ── Transformer section
@@ -960,32 +919,39 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
     const pill = (parent, cx, cy, word, stroke = "var(--rule)") => {
       const w = 16 * word.length + 30;
       el("rect", { x: cx - w / 2, y: cy - 21, width: w, height: 42, rx: 21, fill: CELL, stroke, "stroke-width": 2 }, parent);
-      text(parent, cx, cy + 8, word, { "text-anchor": "middle", "font-size": 22, fill: "var(--lav)" });
+      text(parent, cx, cy + 8, word, { "text-anchor": "middle", "font-size": 29, fill: "var(--lav)" });
     };
 
-    // 1 · Why earlier networks struggled: three cards, each with a tiny picture of the problem
+    // 1 · Why earlier networks struggled: one slide per kind of network, each with a picture of the problem.
+    //     The pictures were laid out side by side (centres at x 350, 1000, 1630); each is moved to the middle of its slide and doubled.
     {
-      const svg = document.querySelector("#txProblem svg.art");
-      arrowHead(svg, "ahTx1", "var(--lav)");
-      [0, 1, 2].forEach(i => el("rect", { x: 120 + i * 600, y: 330, width: 560, height: 670, rx: 16, fill: "#161936", stroke: "var(--rule)", "stroke-width": 2 }, svg));
+      const board = (id, cx, cy) => {
+        const svg = document.querySelector(`#${id} svg.art`);
+        return el("g", { transform: `translate(${1000 - 2 * cx} ${530 - 2 * cy}) scale(2)` }, svg);
+      };
       // perceptron: a bag of words, no order
+      const g1 = board("txProblem1", 365, 592);
       [["bug", 210, 520], ["was", 420, 505], ["gefikst", 300, 600], ["de", 520, 590], ["eindelijk", 230, 680], ["nieuwe", 450, 675]]
-        .forEach(([w, x, y]) => pill(svg, x, y, w));
+        .forEach(([w, x, y]) => pill(g1, x, y, w));
       // ConvNet: a 3-word window, and two related words too far apart for it
+      const g2 = board("txProblem2", 1000, 575);
       const words = ["bug", "die", "zij", "vond", "is", "gefikst"], wx = k => 790 + k * 84;
-      el("rect", { x: wx(1) - 40, y: 594, width: 248, height: 52, rx: 12, fill: "rgba(0,217,192,.12)", stroke: TEAL, "stroke-width": 3 }, svg);
-      words.forEach((w, k) => text(svg, wx(k), 628, w, { "text-anchor": "middle", "font-size": 22, fill: "var(--lav)" }));
-      el("path", { d: `M${wx(0)} 590 Q${(wx(0) + wx(5)) / 2} 470 ${wx(5)} 590`, fill: "none", stroke: ROSE, "stroke-width": 3, "stroke-dasharray": "8 7" }, svg);
-      text(svg, (wx(0) + wx(5)) / 2, 520, "te ver uit elkaar", { "text-anchor": "middle", "font-size": 22, "font-style": "italic", fill: ROSE });
-      text(svg, wx(2), 680, "venster", { "text-anchor": "middle", "font-size": 20, "font-style": "italic", fill: TEAL });
+      el("rect", { x: wx(1) - 40, y: 594, width: 248, height: 52, rx: 12, fill: "rgba(0,217,192,.12)", stroke: TEAL, "stroke-width": 3 }, g2);
+      words.forEach((w, k) => text(g2, wx(k), 628, w, { "text-anchor": "middle", "font-size": 29, fill: "var(--lav)" }));
+      el("path", { d: `M${wx(0)} 590 Q${(wx(0) + wx(5)) / 2} 470 ${wx(5)} 590`, fill: "none", stroke: ROSE, "stroke-width": 3, "stroke-dasharray": "8 7" }, g2);
+      text(g2, (wx(0) + wx(5)) / 2, 520, "te ver uit elkaar", { "text-anchor": "middle", "font-size": 29, "font-style": "italic", fill: ROSE });
+      text(g2, wx(2), 680, "venster", { "text-anchor": "middle", "font-size": 26, "font-style": "italic", fill: TEAL });
       // RNN: one word at a time, a memory that fades along the chain
-      text(svg, 1380, 530, "geheugen", { "font-size": 20, "font-style": "italic", fill: "var(--muted)" });
+      const svg3 = document.querySelector("#txProblem3 svg.art");
+      arrowHead(svg3, "ahTx1", "var(--lav)");
+      const g3 = board("txProblem3", 1630, 600);
+      text(g3, 1380, 530, "geheugen", { "font-size": 26, "font-style": "italic", fill: "var(--muted)" });
       words.forEach((w, k) => {
         const x = 1410 + k * 88;
-        el("rect", { x: x - 26, y: 548, width: 52, height: 14, rx: 7, fill: PURPLE, "fill-opacity": 1 - k * .17 }, svg);
-        el("circle", { cx: x, cy: 610, r: 20, fill: CELL, stroke: "var(--lav)", "stroke-width": 2 }, svg);
-        text(svg, x, 668, w, { "text-anchor": "middle", "font-size": 20, fill: "var(--lav)" });
-        if (k) el("line", { x1: x - 88 + 22, y1: 610, x2: x - 24, y2: 610, stroke: "var(--lav)", "stroke-width": 2, "marker-end": "url(#ahTx1)" }, svg);
+        el("rect", { x: x - 26, y: 548, width: 52, height: 14, rx: 7, fill: PURPLE, "fill-opacity": 1 - k * .17 }, g3);
+        el("circle", { cx: x, cy: 610, r: 20, fill: CELL, stroke: "var(--lav)", "stroke-width": 2 }, g3);
+        text(g3, x, 668, w, { "text-anchor": "middle", "font-size": 26, fill: "var(--lav)" });
+        if (k) el("line", { x1: x - 88 + 22, y1: 610, x2: x - 24, y2: 610, stroke: "var(--lav)", "stroke-width": 2, "marker-end": "url(#ahTx1)" }, g3);
       });
     }
 
@@ -995,7 +961,8 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
       const sent = slide.querySelector(".attn-sent"), caption = slide.querySelector(".attn-caption");
       const WORDS = ["De", "trofee", "paste", "niet", "in", "de", "koffer", "omdat", "hij", "te", "groot", "was."];
       const IT = 8, base = [.03, 0, .03, .07, .02, .02, 0, .04, 0, .02, .08, .03];
-      const spans = WORDS.map((w, i) => { const sp = document.createElement("span"); sp.textContent = w; if (i === IT) sp.className = "it"; sent.appendChild(sp); return sp; });
+      const SWAP = 10;   // "groot" / "klein"
+      const spans = WORDS.map((w, i) => { const sp = document.createElement("span"); sp.textContent = w; if (i === IT) sp.className = "it"; if (i === SWAP) sp.className = "swap"; sent.appendChild(sp); return sp; });
       const arcs = el("g", { fill: "none", stroke: PURPLE, "stroke-linecap": "round" }, svg);
       // the two boxes underneath
       [120, 1040].forEach(x => el("rect", { x, y: 710, width: 840, height: 280, rx: 16, fill: "#161936", stroke: "var(--rule)", "stroke-width": 2 }, svg));
@@ -1005,17 +972,20 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
         el("circle", { cx: x, cy: 900, r: 14, fill: PURPLE, "fill-opacity": 1 - k * .11 }, svg);
         if (k) el("line", { x1: x - 96 + 16, y1: 900, x2: x - 18, y2: 900, stroke: "var(--lav)", "stroke-width": 2, "marker-end": "url(#ahTx2)" }, svg);
       }
-      text(svg, 200, 948, "trofee", { "text-anchor": "middle", "font-size": 22, fill: "var(--lav)" });
-      text(svg, 872, 948, "hij", { "text-anchor": "middle", "font-size": 22, fill: "var(--lav)" });
+      text(svg, 200, 948, "trofee", { "text-anchor": "middle", "font-size": 29, fill: "var(--lav)" });
+      text(svg, 872, 948, "hij", { "text-anchor": "middle", "font-size": 29, fill: "var(--lav)" });
       el("path", { d: "M1200 912 Q1480 852 1760 912", fill: "none", stroke: PURPLE, "stroke-width": 8, "stroke-linecap": "round" }, svg);
       el("circle", { cx: 1200, cy: 912, r: 14, fill: PURPLE }, svg); el("circle", { cx: 1760, cy: 912, r: 14, fill: PURPLE }, svg);
-      text(svg, 1200, 960, "trofee", { "text-anchor": "middle", "font-size": 22, fill: "var(--lav)" });
-      text(svg, 1760, 960, "hij", { "text-anchor": "middle", "font-size": 22, fill: "var(--lav)" });
+      text(svg, 1200, 960, "trofee", { "text-anchor": "middle", "font-size": 29, fill: "var(--lav)" });
+      text(svg, 1760, 960, "hij", { "text-anchor": "middle", "font-size": 29, fill: "var(--lav)" });
 
       let big = true;
       const draw = () => {
         const ref = big ? 1 : 6, other = big ? 6 : 1;
-        spans[10].textContent = big ? "groot" : "klein";
+        if (spans[SWAP].textContent !== (big ? "groot" : "klein")) {
+          spans[SWAP].textContent = big ? "groot" : "klein";
+          spans[SWAP].classList.remove("changed"); void spans[SWAP].offsetWidth; spans[SWAP].classList.add("changed");   // restart the pulse
+        }
         spans.forEach((sp, i) => sp.classList.toggle("ref", i === ref));
         caption.textContent = big ? "“hij” = de trofee" : "“hij” = de koffer";
         const w = base.slice(); w[ref] = .52; w[other] = .14;
@@ -1028,46 +998,45 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
         });
       };
       draw(); document.fonts.ready.then(draw);
-      let timer = null;
-      slide.addEventListener("slideenter", () => { big = true; draw(); clearInterval(timer); timer = setInterval(() => { big = !big; draw(); }, 3500); });
-      slide.addEventListener("slideleave", () => { clearInterval(timer); big = true; draw(); });
+      // step 0: “groot” (hij = de trofee); step 1: “klein” (hij = de koffer). Next and previous switch between them.
+      slide.addEventListener("slidestep", e => { big = e.detail === 0; draw(); });
     }
 
-    // 3 · Inside a transformer: the block diagram, read bottom to top, colours matching the four rows
+    // 3 · Inside a transformer: words come in on the left, go up through the repeated block, the prediction comes out on the right.
+    //     Colours match the four headings next to it.
     {
       const svg = document.querySelector("#txInside svg.art");
       arrowHead(svg, "ahTx3", "var(--lav)");
-      const up = (x, y1, y2) => el("line", { x1: x, y1, x2: x, y2, stroke: "var(--lav)", "stroke-width": 3, "marker-end": "url(#ahTx3)" }, svg);
-      const box = (x, y, w, h, color, fillOpacity, lines, size = 26) => {
-        el("rect", { x, y, width: w, height: h, rx: 12, fill: color, "fill-opacity": fillOpacity, stroke: color, "stroke-width": 2 }, svg);
-        lines.forEach((l, i) => text(svg, x + w / 2, y + h / 2 + (i - (lines.length - 1) / 2) * (size + 6) + size * .35, l,
+      const arrow = (x1, y1, x2, y2) => el("line", { x1, y1, x2, y2, stroke: "var(--lav)", "stroke-width": 3, "marker-end": "url(#ahTx3)" }, svg);
+      const box = (x, y, w, h, color, fillOpacity, lines, size = 38) => {
+        el("rect", { x, y, width: w, height: h, rx: 14, fill: color, "fill-opacity": fillOpacity, stroke: color, "stroke-width": 2 }, svg);
+        lines.forEach((l, i) => text(svg, x + w / 2, y + h / 2 + (i - (lines.length - 1) / 2) * (size + 8) + size * .35, l,
           { "text-anchor": "middle", "font-size": size, "font-weight": 700, fill: "#fff" }));
       };
-      // output
-      box(250, 330, 400, 56, "var(--thread)", 1, ["voorspel het volgende woord"], 24);
-      up(450, 428, 392);
-      // the repeated block
-      el("rect", { x: 200, y: 430, width: 500, height: 372, rx: 18, fill: "none", stroke: "var(--lav)", "stroke-width": 2, "stroke-dasharray": "10 8" }, svg);
-      box(260, 448, 380, 30, "var(--lav)", .25, ["add & normalise"], 18);
-      box(260, 494, 380, 82, TEAL, .22, ["Feed-forward"]);
-      box(260, 592, 380, 30, "var(--lav)", .25, ["add & normalise"], 18);
-      box(260, 638, 380, 120, PURPLE, .3, ["Multi-head", "self-attention"]);
-      // the three heads, peeking out behind the attention box
-      [1, 2].forEach(k => el("rect", { x: 260 + k * 8, y: 638 - k * 8, width: 380, height: 120, rx: 12, fill: "none", stroke: LILAC, "stroke-width": 1.5, "stroke-opacity": .7 - k * .2 }, svg));
-      up(450, 638 - 2, 626); up(450, 592 - 2, 580); up(450, 494 - 2, 482);
+      // input: the words, turned into numbers, plus position
+      ["De", "trofee", "paste", "niet", "…"].forEach((w, k) => text(svg, 185, 600 + k * 58, w, { "text-anchor": "middle", "font-size": 38, fill: "var(--lav)" }));
+      arrow(250, 716, 286, 716);
+      box(290, 660, 200, 112, "var(--thread)", 1, ["woorden", "→ getallen"], 32);
+      el("circle", { cx: 330, cy: 830, r: 28, fill: AMBER, "fill-opacity": .25, stroke: AMBER, "stroke-width": 2 }, svg);
+      text(svg, 330, 842, "+", { "text-anchor": "middle", "font-size": 44, "font-weight": 700, fill: AMBER });
+      text(svg, 370, 842, "positie", { "font-size": 36, fill: AMBER });
+      arrow(490, 716, 556, 716);
+      // the repeated block, read bottom to top
+      el("rect", { x: 520, y: 300, width: 580, height: 610, rx: 20, fill: "none", stroke: "var(--lav)", "stroke-width": 2, "stroke-dasharray": "10 8" }, svg);
+      box(560, 324, 440, 52, "var(--lav)", .25, ["add & normalise"], 30);
+      box(560, 408, 440, 120, TEAL, .22, ["Feed-forward"]);
+      box(560, 560, 440, 52, "var(--lav)", .25, ["add & normalise"], 30);
+      box(560, 660, 440, 176, PURPLE, .3, ["Multi-head", "self-attention"]);
+      // the other heads, peeking out behind the attention box
+      [1, 2].forEach(k => el("rect", { x: 560 + k * 10, y: 660 - k * 10, width: 440, height: 176, rx: 14, fill: "none", stroke: LILAC, "stroke-width": 1.5, "stroke-opacity": .7 - k * .2 }, svg));
+      arrow(780, 638, 780, 616); arrow(780, 558, 780, 532); arrow(780, 406, 780, 380);
       // shortcuts (residual connections) around each part
-      el("path", { d: "M640 776 C 690 776, 690 607, 644 607", fill: "none", stroke: "var(--lav)", "stroke-width": 2, "stroke-dasharray": "6 5", "marker-end": "url(#ahTx3)" }, svg);
-      el("path", { d: "M640 586 C 690 586, 690 463, 644 463", fill: "none", stroke: "var(--lav)", "stroke-width": 2, "stroke-dasharray": "6 5", "marker-end": "url(#ahTx3)" }, svg);
-      text(svg, 700, 540, "shortcut", { "font-size": 20, "font-style": "italic", fill: "var(--muted)" });
-      text(svg, 450, 832, "herhaald: GPT-3 stapelt 96 van deze blokken", { "text-anchor": "middle", "font-size": 22, "font-style": "italic", fill: "var(--muted)" });
-      // words in, turned into numbers, plus position
-      up(450, 866, 806);
-      box(250, 868, 330, 52, "var(--thread)", 1, ["woorden → getallen"], 22);
-      el("circle", { cx: 630, cy: 894, r: 24, fill: AMBER, "fill-opacity": .25, stroke: AMBER, "stroke-width": 2 }, svg);
-      text(svg, 630, 903, "+", { "text-anchor": "middle", "font-size": 30, "font-weight": 700, fill: AMBER });
-      text(svg, 668, 902, "positie", { "font-size": 22, fill: AMBER });
-      up(450, 950, 924);
-      ["De", "trofee", "paste", "niet", "…"].forEach((w, k) => text(svg, 270 + k * 92, 985, w, { "text-anchor": "middle", "font-size": 22, fill: "var(--lav)" }));
+      el("path", { d: "M1000 820 C 1060 820, 1060 586, 1004 586", fill: "none", stroke: "var(--lav)", "stroke-width": 2.5, "stroke-dasharray": "6 5", "marker-end": "url(#ahTx3)" }, svg);
+      el("path", { d: "M1000 586 C 1060 586, 1060 350, 1004 350", fill: "none", stroke: "var(--lav)", "stroke-width": 2.5, "stroke-dasharray": "6 5", "marker-end": "url(#ahTx3)" }, svg);
+      text(svg, 810, 960, "herhaald: GPT-3 stapelt 96 van deze blokken", { "text-anchor": "middle", "font-size": 36, "font-style": "italic", fill: "var(--muted)" });
+      // output
+      arrow(1100, 350, 1146, 350);
+      box(1150, 304, 224, 164, "var(--thread)", 1, ["voorspel", "volgende", "woord"], 34);
     }
 
     // 4 · Model sizes on a log scale (one series: no legend, direct labels, a tooltip per bar)
@@ -1078,22 +1047,22 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
         ["BERT", "2018", 340e6, "340 miljoen"],
         ["GPT-2", "2019", 1.5e9, "1,5 miljard"],
         ["GPT-3", "2020", 175e9, "175 miljard"],
-        ["GPT-4", "2023", null, "grootte niet gepubliceerd"],
+        ["GPT-4 →", "2023 en later", null, "vanaf hier publiceert OpenAI de grootte niet meer"],
       ];
       const X0 = 440, DECADE = 200, sx = v => X0 + (Math.log10(v) - 8) * DECADE;
       [[1e8, "100 mln"], [1e9, "1 mld"], [1e10, "10 mld"], [1e11, "100 mld"], [1e12, "1 bln"]].forEach(([v, label]) => {
         el("line", { x1: sx(v), y1: 404, x2: sx(v), y2: 900, stroke: "var(--rule)", "stroke-width": 1 }, svg);
-        text(svg, sx(v), 934, label, { "text-anchor": "middle", "font-size": 20, fill: "var(--dim)" });
+        text(svg, sx(v), 934, label, { "text-anchor": "middle", "font-size": 26, fill: "var(--dim)" });
       });
       MODELS.forEach(([name, year, v, label], i) => {
         const y = 424 + i * 96;
-        text(svg, X0 - 24, y + 22, name, { "text-anchor": "end", "font-family": serif, "font-weight": 700, "font-size": 28, fill: "#fff" });
-        text(svg, X0 - 24, y + 50, year, { "text-anchor": "end", "font-size": 20, fill: "var(--dim)" });
-        if (v == null) { text(svg, X0, y + 32, label, { "font-size": 24, "font-style": "italic", fill: "var(--muted)" }); return; }
+        text(svg, X0 - 24, y + 22, name, { "text-anchor": "end", "font-family": serif, "font-weight": 700, "font-size": 35, fill: "#fff" });
+        text(svg, X0 - 24, y + 56, year, { "text-anchor": "end", "font-size": 26, fill: "var(--dim)" });
+        if (v == null) { text(svg, X0, y + 32, label, { "font-size": 31, "font-style": "italic", fill: "var(--muted)" }); return; }
         const w = sx(v) - X0;
         const bar = el("path", { d: `M${X0} ${y} H${X0 + w - 4} Q${X0 + w} ${y} ${X0 + w} ${y + 4} V${y + 40} Q${X0 + w} ${y + 44} ${X0 + w - 4} ${y + 44} H${X0} Z`, fill: TEAL }, svg);
         el("title", {}, bar).textContent = `${name} (${year}): ${label} parameters`;
-        text(svg, X0 + w + 14, y + 31, label, { "font-size": 24, fill: "var(--lav)" });
+        text(svg, X0 + w + 14, y + 31, label, { "font-size": 31, fill: "var(--lav)" });
       });
     }
 
@@ -1108,8 +1077,8 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
         const hot = i === 4;
         if (hot) el("circle", { cx: x(i), cy: 480, r: 44, fill: "none", stroke: TEAL, "stroke-width": 3, "stroke-opacity": .5 }, svg);
         el("circle", { cx: x(i), cy: 480, r: hot ? 28 : 16, fill: hot ? TEAL : i === 5 ? PURPLE : "var(--lav)" }, svg);
-        text(svg, x(i), 410, name, { "text-anchor": "middle", "font-family": serif, "font-weight": 700, "font-size": hot ? 36 : 30, fill: hot ? TEAL : "#fff" });
-        text(svg, x(i), 556, year, { "text-anchor": "middle", "font-size": 22, fill: "var(--dim)" });
+        text(svg, x(i), 410, name, { "text-anchor": "middle", "font-family": serif, "font-weight": 700, "font-size": hot ? 45 : 38, fill: hot ? TEAL : "#fff" });
+        text(svg, x(i), 556, year, { "text-anchor": "middle", "font-size": 29, fill: "var(--dim)" });
       });
       el("line", { x1: 300, y1: 840, x2: 1700, y2: 840, stroke: "var(--rule)", "stroke-width": 2 }, svg);
     }
@@ -1149,7 +1118,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
     dense.forEach(([x, y]) => el("circle", { cx: x, cy: y, r: 14, fill: "var(--lav)", "fill-opacity": .8 }, svg));
     outs.forEach(([x, y], d) => {
       el("circle", { cx: x, cy: y, r: 10, fill: d === 7 ? TEAL : "var(--thread)" }, svg);
-      const t = el("text", { x: x + 26, y: y + 9, "font-family": "Calibri, Carlito, sans-serif", "font-size": d === 7 ? 30 : 24,
+      const t = el("text", { x: x + 26, y: y + 9, "font-family": "Calibri, Carlito, sans-serif", "font-size": d === 7 ? 32 : 26,
         "font-weight": d === 7 ? 700 : 400, fill: d === 7 ? TEAL : "var(--dim)" }, svg);
       t.textContent = d;
     });
@@ -1165,28 +1134,27 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
     const colA = (r, c) => lit(r, c) ? TEAL : CELL;
     const colB = (r, c) => moved(r, c) ? (lit(r, c) ? TEAL : PURPLE) : CELL;
     const ROW_X = 430, CELL_W = 22;
+    const TOP_A = 440, TOP_B = 760, NEURON_Y = 300;   // top of each 7, and the neuron above the first row
+    const rowY = top => top + 77;                    // the flattened row, level with the middle of its 7
     // one neuron, wired to every one of the 64 inputs
     const wires = el("g", { stroke: "var(--purple)", "stroke-opacity": .28, "stroke-width": 1 }, svg);
-    for (let i = 0; i < 64; i++) el("line", { x1: 1134, y1: 378, x2: ROW_X + i * CELL_W + CELL_W / 2, y2: 459 }, wires);
-    el("circle", { cx: 1134, cy: 366, r: 16, fill: PURPLE }, svg);
+    for (let i = 0; i < 64; i++) el("line", { x1: 1134, y1: NEURON_Y + 20, x2: ROW_X + i * CELL_W + CELL_W / 2, y2: rowY(TOP_A) }, wires);
+    el("circle", { cx: 1134, cy: NEURON_Y, r: 20, fill: PURPLE }, svg);
     const g = el("g", {}, svg);
-    pixels(g, 120, 382, 8, 8, CELL_W, colA);
-    pixels(g, 120, 652, 8, 8, CELL_W, colB);
-    for (const [y, col] of [[459, colA], [729, colB]]) {
+    pixels(g, 120, TOP_A, 8, 8, CELL_W, colA);
+    pixels(g, 120, TOP_B, 8, 8, CELL_W, colB);
+    for (const [y, col] of [[rowY(TOP_A), colA], [rowY(TOP_B), colB]]) {
       pixels(g, ROW_X, y, 1, 64, CELL_W, (_, i) => col(Math.floor(i / 8), i % 8));
       for (let k = 1; k < 8; k++)   // where one image row ends and the next begins
         el("line", { x1: ROW_X + k * 8 * CELL_W, y1: y - 10, x2: ROW_X + k * 8 * CELL_W, y2: y + CELL_W + 10, stroke: "var(--lav)", "stroke-width": 2, "stroke-opacity": .5 }, g);
     }
     const defs = el("defs", {}, svg), m = el("marker", { id: "ahFlat", viewBox: "0 0 10 10", refX: 9, refY: 5, markerWidth: 5, markerHeight: 5, orient: "auto" }, defs);
     el("path", { d: "M0 0L10 5L0 10z", fill: "var(--lav)" }, m);
-    for (const y of [470, 740]) {
+    for (const y of [rowY(TOP_A) + 11, rowY(TOP_B) + 11]) {
       el("line", { x1: 318, y1: y, x2: 410, y2: y, stroke: "var(--lav)", "stroke-width": 3, "marker-end": "url(#ahFlat)" }, svg);
-      const t = el("text", { x: 364, y: y - 14, "text-anchor": "middle", "font-family": "Calibri, Carlito, sans-serif", "font-style": "italic", "font-size": 20, fill: "var(--muted)" }, svg);
+      const t = el("text", { x: 364, y: y - 14, "text-anchor": "middle", "font-family": "Calibri, Carlito, sans-serif", "font-style": "italic", "font-size": 34, fill: "var(--muted)" }, svg);
       t.textContent = "uitrollen";
     }
-    let total = 0, same = 0;
-    for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) if (moved(r, c)) { total++; if (lit(r, c)) same++; }
-    document.getElementById("flatMatch").textContent = `${same} van ${total}`;
   }
 
   // The eye: V1 cells, each a receptive field tuned to one edge angle
@@ -1201,24 +1169,9 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
       const rad = -a * Math.PI / 180, dx = Math.cos(rad) * 15, dy = Math.sin(rad) * 15;
       el("line", { x1: x + 33 - dx, y1: y + 33 - dy, x2: x + 33 + dx, y2: y + 33 + dy, stroke: on ? "#fff" : "var(--muted)", "stroke-width": 5, "stroke-linecap": "round" }, g);
       if (on) {
-        const t = el("text", { x: x + 58, y: y + 20, "text-anchor": "middle", "font-family": "Calibri, Carlito, sans-serif", "font-weight": 700, "font-size": 18, fill: PURPLE }, g);
+        const t = el("text", { x: x + 58, y: y + 20, "text-anchor": "middle", "font-family": "Calibri, Carlito, sans-serif", "font-weight": 700, "font-size": 23, fill: PURPLE }, g);
         t.textContent = tuned[i];
       }
-    });
-    const rows = [
-      ["Elke cel ziet maar een klein stukje", "3×3-filter"],
-      ["Afgestemd op één randhoek", "randdetector"],
-      ["Dezelfde celtypes bedekken het hele beeld", "gedeelde gewichten"],
-      ["Complexe cellen: precies waar maakt niet uit", "pooling"],
-    ];
-    const host = document.getElementById("eyeMap");
-    rows.forEach(([bio, cnn], i) => {
-      const y = 410 + i * 116;
-      host.insertAdjacentHTML("beforeend",
-        `<div class="abs" style="left:1250px;top:${y}px;width:330px;white-space:normal;font:400 26px/32px var(--sans);color:var(--lav)">${bio}</div>
-         <div class="abs" style="left:1592px;top:${y}px;font:400 28px var(--sans);color:var(--dim)">→</div>
-         <div class="abs" style="left:1640px;top:${y}px;font:700 32px var(--serif);color:var(--teal)">${cnn}</div>`);
-      if (i) host.insertAdjacentHTML("beforeend", `<div style="position:absolute;left:1250px;top:${y - 26}px;width:640px;height:2px;background:var(--rule)"></div>`);
     });
   }
 
@@ -1272,7 +1225,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
       const g = el("g", {}, svg); pixels(g, x, y, N, N, 7, heat(m, TEAL)); shade(g, m);
       maps.push({ x, y });
       el("rect", { x: x - 4, y: y - 4, width: 26, height: 26, rx: 5, fill: "var(--bg)", stroke: "var(--rule)" }, svg);
-      const t = el("text", { x: x + 9, y: y + 16, "text-anchor": "middle", "font-family": "Calibri, Carlito, sans-serif", "font-weight": 700, "font-size": 18, fill: "#fff" }, svg);
+      const t = el("text", { x: x + 9, y: y + 16, "text-anchor": "middle", "font-family": "Calibri, Carlito, sans-serif", "font-weight": 700, "font-size": 23, fill: "#fff" }, svg);
       t.textContent = k;
     });
     const gC = el("g", {}, svg); pixels(gC, 850, 420, N, N, 15, heat(corners, PURPLE)); shade(gC, corners);
@@ -1282,7 +1235,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
     // Output scores (illustrative)
     [["huis", .94], ["schuur", .05], ["boot", .01]].forEach(([label, v], i) => {
       const y = 540 + i * 50;
-      const t = el("text", { x: 1560, y: y + 20, "font-family": "Calibri, Carlito, sans-serif", "font-size": 22, fill: i ? "var(--muted)" : "#fff" }, svg);
+      const t = el("text", { x: 1532, y: y + 20, "font-family": "Calibri, Carlito, sans-serif", "font-size": 29, fill: i ? "var(--muted)" : "#fff" }, svg);
       t.textContent = label;
       el("rect", { x: 1640, y, width: 230, height: 26, rx: 13, fill: "var(--track)" }, svg);
       el("rect", { x: 1640, y, width: Math.max(26, 230 * v), height: 26, rx: 13, fill: i ? "var(--thread)" : TEAL }, svg);
@@ -1290,7 +1243,7 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
     // Arrows between the stages
     const defs = el("defs", {}, svg), mk = el("marker", { id: "ahSee", viewBox: "0 0 10 10", refX: 9, refY: 5, markerWidth: 5, markerHeight: 5, orient: "auto" }, defs);
     el("path", { d: "M0 0L10 5L0 10z", fill: "var(--lav)" }, mk);
-    for (const [x1, x2] of [[392, 474], [762, 834], [1106, 1184], [1476, 1544]])
+    for (const [x1, x2] of [[392, 474], [762, 834], [1106, 1184], [1450, 1518]])
       el("line", { x1, y1: 548, x2, y2: 548, stroke: "var(--lav)", "stroke-width": 3, "marker-end": "url(#ahSee)" }, svg);
     // The sliding 3×3 window, and the output cell it writes in every edge map
     const win = el("rect", { width: 48, height: 48, fill: "rgba(0,217,192,.18)", stroke: TEAL, "stroke-width": 4 }, svg);
@@ -1303,9 +1256,27 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
       pos = (pos + 1) % (N * N);
     };
     pos = 5 * N + 4; step();
+    // Split into two rows: everything left of x 1100 (pixels, edges, corners) on top, the parts and output below
+    const row1 = el("g", { transform: "translate(142 -378) scale(1.4)" }), row2 = el("g", { transform: "translate(-1083 92) scale(1.4)" });
+    // and each stage (pixels, edges, corners, parts, output, with the arrow into it) is one "next" press
+    const stageOf = x => x < 380 ? 0 : x < 760 ? 1 : x < 1100 ? 2 : x < 1440 ? 3 : 4;
+    [...svg.children].filter(n => n.tagName !== "defs").forEach(n => {
+      const x = n.getBBox().x, stage = stageOf(x);
+      if (stage) n.setAttribute("data-step", stage);
+      (x < 1100 ? row1 : row2).appendChild(n);
+    });
+    svg.append(row1, row2);
     slide.addEventListener("slideenter", () => { clearInterval(timer); timer = setInterval(step, 70); });
     slide.addEventListener("slideleave", () => clearInterval(timer));
   }
+
+  // The zoom animation starts from the beginning each time its slide comes on screen
+  document.querySelectorAll(".zoom-frame").forEach(frame => {
+    const slide = frame.closest(".slide"), send = cmd => frame.contentWindow.postMessage({ brainZoom: cmd }, "*");
+    slide.addEventListener("slideenter", () => send("play"));
+    slide.addEventListener("slideleave", () => send("stop"));
+    frame.addEventListener("load", () => { if (slide.isOn) send("play"); });
+  });
 
   // Counting numbers up when a slide comes on screen
   document.querySelectorAll("[data-count]").forEach(n => {
@@ -1369,8 +1340,29 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
 
   const notes = document.getElementById("notes"), count = document.getElementById("count");
   let cur = 0;
+  // Build-up steps: "next" first reveals a slide's data-step elements one by one, "previous" hides them again
+  let step = 0;
+  const stepEls = s => [...s.querySelectorAll("[data-step]")];
+  const stepsOn = s => Math.max(0, ...stepEls(s).map(e => +e.dataset.step));
+  function setStep(n) {
+    step = n;
+    stepEls(slides[cur]).forEach(e => e.classList.toggle("shown", +e.dataset.step <= step));
+    slides[cur].dispatchEvent(new CustomEvent("slidestep", { detail: step }));
+  }
+  function next() { if (step < stepsOn(slides[cur])) setStep(step + 1); else go(cur + 1); }
+  function prev() {
+    if (step > 0) return setStep(step - 1);
+    const before = cur;
+    go(cur - 1);
+    if (cur !== before) setStep(stepsOn(slides[cur]));   // coming back to a slide: it's already fully built up
+  }
   function go(n) {
+    const before = cur;
     cur = Math.max(0, Math.min(slides.length - 1, n));
+    if (cur !== before) {
+      stepEls(slides[before]).forEach(e => e.classList.remove("shown"));
+      setStep(0);
+    }
     slides.forEach((s, i) => {
       const on = i === cur;
       s.classList.toggle("active", on);
@@ -1385,8 +1377,8 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
     history.replaceState(null, "", "#" + (cur + 1));
   }
   function onKey(e) {
-    if (["ArrowRight", "PageDown", " ", "Enter"].includes(e.key)) { e.preventDefault(); go(cur + 1); }
-    else if (["ArrowLeft", "PageUp", "Backspace"].includes(e.key)) { e.preventDefault(); go(cur - 1); }
+    if (["ArrowRight", "PageDown", " ", "Enter"].includes(e.key)) { e.preventDefault(); next(); }
+    else if (["ArrowLeft", "PageUp", "Backspace"].includes(e.key)) { e.preventDefault(); prev(); }
     else if (e.key === "Home") go(0);
     else if (e.key === "End") go(slides.length - 1);
     else if (e.key === "n" || e.key === "N") notes.classList.toggle("show");
@@ -1400,10 +1392,10 @@ cd perceptron-frontend &amp;&amp; npm run dev</pre>
   addEventListener("message", e => {
     if (e.data && typeof e.data.deckKey === "string") onKey({ key: e.data.deckKey, preventDefault() {} });
   });
-  document.getElementById("viewport").addEventListener("click", e => go(cur + (e.clientX > innerWidth / 3 ? 1 : -1)));
+  document.getElementById("viewport").addEventListener("click", e => e.clientX > innerWidth / 3 ? next() : prev());
   let tx = null;
   addEventListener("touchstart", e => tx = e.touches[0].clientX, { passive: true });
-  addEventListener("touchend", e => { if (tx == null) return; const dx = e.changedTouches[0].clientX - tx; if (Math.abs(dx) > 40) go(cur + (dx < 0 ? 1 : -1)); tx = null; });
+  addEventListener("touchend", e => { if (tx == null) return; const dx = e.changedTouches[0].clientX - tx; if (Math.abs(dx) > 40) dx < 0 ? next() : prev(); tx = null; });
 
   // ── Rehearsal timer (T). Shows the time against a plan for a 35- or 50-minute slot, so you can
   //    practise slowing down. T cycles off → 35 → 50 → off; Shift+T restarts the clock.

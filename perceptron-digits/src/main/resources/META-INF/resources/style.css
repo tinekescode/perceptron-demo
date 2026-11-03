@@ -461,3 +461,15 @@ canvas {
 .embed .grid > :nth-child(3) { grid-area: accuracy; }
 .embed .grid > :nth-child(4) { grid-area: mistakes; }
 .embed .grid > :nth-child(5) { grid-area: neurons; }
+
+/* ?nohidden: no hidden-neurons panel; in a deck the other four panels share two rows */
+.nohidden .grid > :nth-child(5) {
+  display: none;
+}
+
+.nohidden.embed .grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-areas:
+    'draw prediction'
+    'accuracy mistakes';
+}

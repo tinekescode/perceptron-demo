@@ -7,6 +7,9 @@ const HIDDEN_EVERY_MS = 1000; // weight images are larger, so refresh them less 
 // ?embed: shown on a slide in the decks (presentations/)
 const EMBED = new URLSearchParams(location.search).has('embed');
 if (EMBED) document.documentElement.classList.add('embed');
+// ?nohidden: leave out the hidden-neurons panel, for a simpler demo
+const SHOW_HIDDEN = !new URLSearchParams(location.search).has('nohidden');
+if (!SHOW_HIDDEN) document.documentElement.classList.add('nohidden');
 
 const $ = (id) => document.getElementById(id);
 const pad = $('pad');
@@ -277,6 +280,7 @@ function renderActivations(hidden) {
 }
 
 async function refreshHidden() {
+  if (!SHOW_HIDDEN) return;
   state.hiddenAt = performance.now();
   renderHidden(await api('/hidden'));
 }

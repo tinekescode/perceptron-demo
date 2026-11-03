@@ -8,82 +8,58 @@
   * { box-sizing: border-box; }
   html, body { width:100%; height:100%; }
   body { margin:0; min-height:100vh; overflow:hidden; font-family:system-ui,-apple-system,Segoe UI,sans-serif; background:#0b1020; color:#eef2ff; }
-  .app { width:100%; height:100vh; padding:12px 16px; display:flex; flex-direction:column; gap:8px; background:#10192d; overflow:hidden; }
-  header { flex:0 0 auto; display:flex; align-items:baseline; justify-content:space-between; gap:16px; }
-  h1 { margin:0; font-size:clamp(19px,2vw,27px); line-height:1.15; }
-  .subtitle { color:#9eabc9; margin:0; font-size:clamp(10px,1vw,13px); text-align:right; }
-  .canvas-wrap { position:relative; flex:1 1 auto; min-height:0; width:100%; background:radial-gradient(ellipse at 42% 48%,#17223a 0%,#0a1020 68%,#070b15 100%); border-radius:12px; overflow:hidden; border:1px solid #26314d; }
+  /* the neuron on the left, all text and controls in a column on the right */
+  .app { width:100%; height:100vh; padding:12px; display:grid; grid-template-columns:minmax(0,1fr) 400px; gap:12px; background:#10192d; overflow:hidden; }
+  .canvas-wrap { position:relative; min-height:0; background:radial-gradient(ellipse at 42% 48%,#17223a 0%,#0a1020 68%,#070b15 100%); border-radius:12px; overflow:hidden; border:1px solid #26314d; }
   canvas { width:100%; height:100%; display:block; }
-  .info-row { flex:0 0 auto; display:grid; grid-template-columns: minmax(105px,.7fr) minmax(105px,.7fr) minmax(115px,.75fr) minmax(320px,3fr) minmax(125px,.8fr); gap:8px; min-height:108px; }
+  /* the boxes grow to fill the column's full height, with the sliders spread evenly in theirs */
+  .side { display:flex; flex-direction:column; gap:14px; min-height:0; overflow:hidden; }
+  h1 { margin:0; font-size:32px; line-height:1.15; }
+  .subtitle { color:#9eabc9; margin:4px 0 0; font-size:20px; line-height:1.3; }
+  .metrics { flex:1 1 0; display:flex; flex-direction:column; gap:12px; min-height:0; }
   .metric, .input-panel { background:#0c1325; border:1px solid #293554; border-radius:10px; padding:10px 12px; min-width:0; }
-  .label { color:#9eabc9; font-size:10px; letter-spacing:.04em; text-transform:uppercase; }
-  .value { font-size:clamp(20px,2vw,28px); font-weight:750; margin-top:4px; line-height:1.1; }
+  .metric { flex:1 1 0; display:flex; align-items:center; justify-content:space-between; padding:6px 14px; }
+  .input-panel { flex:1.4 1 0; display:flex; flex-direction:column; min-height:0; }
+  .label { color:#9eabc9; font-size:16px; letter-spacing:.04em; text-transform:uppercase; line-height:1.2; }
+  .value { font-size:34px; font-weight:750; line-height:1.1; }
   .threshold { color:#fbbf24; } .fired { color:#fb7185; }
-  .input-panel { display:flex; flex-direction:column; justify-content:center; }
-  #controls { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; margin-top:8px; }
-  .input-row { min-width:0; font-size:11px; }
-  .input-head { display:flex; justify-content:space-between; gap:4px; margin-bottom:5px; white-space:nowrap; }
-  input[type=range] { width:100%; display:block; margin:0; accent-color:#60a5fa; }
-  .actions { display:flex; flex-direction:column; justify-content:center; gap:8px; }
-  button { width:100%; border:0; border-radius:8px; padding:10px 8px; font-size:11px; background:#2563eb; color:white; font-weight:700; cursor:pointer; }
-  button:hover { filter:brightness(1.12); }
-  #auto { background:#059669; }
+  #controls { flex:1; display:flex; flex-direction:column; justify-content:space-evenly; gap:8px; margin-top:8px; }
+  .input-row { display:grid; grid-template-columns:118px minmax(0,1fr) 20px; align-items:center; gap:10px; font-size:20px; }
+  .input-head { display:contents; }
+  .input-head strong { grid-column:3; grid-row:1; text-align:right; }
+  input[type=range] { grid-column:2; grid-row:1; width:100%; display:block; margin:0; accent-color:#60a5fa; }
   @media (max-width:900px) {
     body { overflow:auto; }
-    .app { height:auto; min-height:100vh; overflow:visible; }
-    header { align-items:flex-start; flex-direction:column; gap:3px; }
-    .subtitle { text-align:left; }
-    .canvas-wrap { flex:none; height:55vh; min-height:300px; }
-    .info-row { grid-template-columns:repeat(3,minmax(0,1fr)); }
-    .input-panel { grid-column:1 / 3; }
-    .actions { grid-column:3; }
-    #controls { grid-template-columns:repeat(3,minmax(0,1fr)); }
-  }
-  @media (max-height:650px) and (min-width:901px) {
-    .app { padding:8px 12px; gap:6px; }
-    .info-row { min-height:92px; gap:6px; }
-    .metric,.input-panel { padding:7px 9px; }
-    #controls { margin-top:5px; gap:7px; }
-    .input-head { margin-bottom:2px; }
-    button { padding:7px 6px; }
-  }
-  @media (max-width:560px) {
-    .info-row { grid-template-columns:repeat(2,minmax(0,1fr)); }
-    .input-panel { grid-column:1 / -1; }
-    .actions { grid-column:1 / -1; flex-direction:row; }
-    #controls { grid-template-columns:repeat(5,minmax(0,1fr)); gap:6px; }
-    .input-row { font-size:10px; }
-    .input-head { flex-direction:column; gap:1px; white-space:normal; }
+    .app { height:auto; min-height:100vh; overflow:visible; grid-template-columns:1fr; }
+    .canvas-wrap { height:55vh; min-height:300px; }
   }
 </style>
 </head>
 <body>
 <div class="app">
-  <header>
-    <h1>Neuronsimulator</h1>
-    <div class="subtitle">Opgetelde signalen activeren een actiepotentiaal langs het axon.</div>
-  </header>
   <div class="canvas-wrap"><canvas id="neuron"></canvas></div>
-  <section class="info-row" aria-label="Bediening en status van het neuron">
-    <div class="metric">
-      <div class="label">Opgeteld signaal</div>
-      <div class="value" id="sum">1</div>
-    </div>
-    <div class="metric">
-      <div class="label">Drempel</div>
-      <div class="value threshold" id="threshold">10</div>
-    </div>
-    <div class="metric">
-      <div class="label">Toestand neuron</div>
-      <div class="value" id="state">RUST</div>
+  <section class="side" aria-label="Bediening en status van het neuron">
+    <header>
+      <h1>Neuronsimulator</h1>
+      <div class="subtitle">Opgetelde signalen activeren een actiepotentiaal langs het axon.</div>
+    </header>
+    <div class="metrics">
+      <div class="metric">
+        <div class="label">Opgeteld signaal</div>
+        <div class="value" id="sum">1</div>
+      </div>
+      <div class="metric">
+        <div class="label">Drempel</div>
+        <div class="value threshold" id="threshold">10</div>
+      </div>
+      <div class="metric">
+        <div class="label">Toestand neuron</div>
+        <div class="value" id="state">RUST</div>
+      </div>
     </div>
     <div class="input-panel">
       <div class="label">Signalen op dendrieten</div>
       <div id="controls"></div>
-    </div>
-    <div class="actions">
-      <button id="reset">Signalen resetten</button>
-      <button id="auto">Automatische signalen pauzeren</button>
     </div>
   </section>
 </div>
@@ -96,7 +72,7 @@ const stateEl = document.getElementById("state");
 const controls = document.getElementById("controls");
 
 const threshold = 10;
-const values = [1, 0, 0, 0, 0];
+const values = [0, 0, 0, 0, 0];
 let firing = false;
 let fireStart = 0;
 
@@ -118,7 +94,7 @@ values.forEach((v, i) => {
   controls.appendChild(row);
 });
 
-document.getElementById("reset").onclick = () => {
+function reset() {
   values.fill(0);
   [...controls.querySelectorAll("input")].forEach((s,i) => {
     s.value = 0;
@@ -126,15 +102,11 @@ document.getElementById("reset").onclick = () => {
   });
   firing = false;
   update();
-};
+}
 
-let autoMode = true;
+// Standalone, the signals run straight away; in the deck the neuron waits at rest until "next" starts it
+let autoMode = window.parent === window;
 let lastAutoAdd = performance.now();
-
-document.getElementById("auto").onclick = () => {
-  autoMode = !autoMode;
-  document.getElementById("auto").textContent = autoMode ? "Automatische signalen pauzeren" : "Automatische signalen starten";
-};
 
 function update() {
   const sum = values.reduce((a,b) => a+b, 0);
@@ -344,8 +316,8 @@ function drawNeuron(t) {
     }
   }
   // Small, restrained anatomical labels.
-  ctx.fillStyle='rgba(218,228,250,.72)';ctx.font='10px system-ui';ctx.textAlign='center';
-  ctx.fillText('DENDRIETBOOM',105,445);ctx.fillText('CELLICHAAM',235,380);ctx.fillText('AXON',438,207);ctx.fillText('SYNAPTISCHE UITEINDEN',610,365);
+  ctx.fillStyle='rgba(218,228,250,.72)';ctx.font='15px system-ui';ctx.textAlign='center';
+  ctx.fillText('DENDRIETBOOM',105,450);ctx.fillText('CELLICHAAM',235,388);ctx.fillText('AXON',438,205);ctx.fillText('SYNAPTISCHE UITEINDEN',598,372);
   ctx.restore();
   requestAnimationFrame(drawNeuron);
 }
@@ -361,6 +333,11 @@ if (window.parent !== window) {
     e.preventDefault();
     parent.postMessage({ deckKey: e.key }, "*");
   }, true);
+  // the deck says when to start the signals, and when to go back to rest
+  addEventListener("message", e => {
+    if (e.data && e.data.neuron === "start") { autoMode = true; lastAutoAdd = performance.now(); }
+    else if (e.data && e.data.neuron === "rest") { autoMode = false; reset(); }
+  });
 }
 </script>
 </body>

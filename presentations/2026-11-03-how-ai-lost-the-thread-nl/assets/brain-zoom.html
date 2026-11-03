@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Van mens tot neuron</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #12142B; }
+  body { font-family: Calibri, Carlito, "Segoe UI", sans-serif; color: #fff; }
+  canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+  /* caption, bottom left */
+  .hud { position: fixed; left: 5.5vh; bottom: 5vh; display: flex; align-items: flex-end; gap: 5vh; pointer-events: none; }
+  .label { position: relative; min-width: 60vh; height: 10vh; }
+  .label div { position: absolute; left: 0; bottom: 0; opacity: 0; transform: translateY(1vh); transition: opacity .7s ease, transform .7s ease; white-space: nowrap; }
+  .label div.on { opacity: 1; transform: none; }
+  .label b { display: block; font: 700 5.4vh Cambria, Caladea, Georgia, serif; }
+  .label span { display: block; margin-top: .8vh; font: 400 2.6vh Calibri, Carlito, sans-serif; color: #A9A6C9; letter-spacing: .02em; }
+  .replay { position: fixed; right: 4vh; bottom: 4vh; font: 400 2vh Calibri, Carlito, sans-serif; color: #8A8AA3; opacity: 0; transition: opacity .6s; }
+  .done .replay { opacity: 1; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="hud">
+  <div class="label" id="label"></div>
+</div>
+<div class="replay" id="replay">klik om opnieuw af te spelen</div>
+<script>
+(() => {
+  // A "powers of ten" zoom: one world in millimetres, from a person (~1 m in view)
+  // down to a single pyramidal neuron (~0,7 mm in view). Everything is drawn procedurally.
+  const params = new URLSearchParams(location.search);
+  const EN = (params.get("lang") || document.documentElement.lang) === "en";
+  const STAGES = EN ? [
+    [Infinity, "A person", ""],
+    [55, "The brain", "86 billion neurons"],
+    [1.8, "The cortex", "up to 100,000 neurons per mm³"],
+    [0, "One neuron", "about 10,000 connections"],
+  ] : [
+    [Infinity, "Een mens", ""],
+    [55, "Het brein", "86 miljard neuronen"],
+    [1.8, "De hersenschors", "tot 100.000 neuronen per mm³"],
+    [0, "Eén neuron", "ongeveer 10.000 verbindingen"],
+  ];
+  if (EN) document.getElementById("replay").textContent = "click to replay";
+
+  const canvas = document.getElementById("c"), ctx = canvas.getContext("2d");
+  let W = 0, H = 0, dpr = 1;
+  const resize = () => {
+    dpr = Math.min(1.5, devicePixelRatio || 1);
+    W = innerWidth; H = innerHeight;
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+  };
+  addEventListener("resize", resize); resize();
+
+  // ── helpers
+  const seeded = seed => () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  const rnd = seeded(7);
+  const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+  const lerp = (a, b, u) => a + (b - a) * u;
+  const smooth = u => { u = clamp(u); return u * u * (3 - 2 * u); };
+  const ease = u => { u = clamp(u); return u < .5 ? 4 * u * u * u : 1 - (-2 * u + 2) ** 3 / 2; };
+  // Catmull-Rom spline through points, as Path2D
+  function spline(pts, closed = true, path = new Path2D()) {
+    const n = pts.length, P = i => closed ? pts[(i + n) % n] : pts[clamp(i, 0, n - 1)];
+    path.moveTo(pts[0][0], pts[0][1]);
+    for (let i = 0; i < (closed ? n : n - 1); i++) {
+      const p0 = P(i - 1), p1 = P(i), p2 = P(i + 1), p3 = P(i + 2);
+      path.bezierCurveTo(p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6,
+        p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6, p2[0], p2[1]);
+    }
+    if (closed) path.closePath();
+    return path;
+  }
+  const probe = document.createElement("canvas").getContext("2d");
+
+  // ── the person (profile facing right, millimetres, head centre at 0,0, y down)
+  const BODY = spline([
+    [-60, 105], [-92, 62], [-104, 12], [-100, -45], [-78, -92], [-35, -121], [20, -124], [64, -102], [89, -64], [99, -26],
+    [98, -6], [104, 10], [117, 29], [123, 40], [113, 47], [104, 51], [107, 59], [102, 66], [105, 75], [97, 84],
+    [100, 99], [93, 112], [72, 121], [52, 128], [52, 160], [64, 195], [100, 228], [126, 280], [134, 380],
+    [131, 480], [124, 600], [120, 720], [118, 950], [-172, 950], [-170, 700], [-162, 520], [-152, 380],
+    [-134, 272], [-100, 222], [-62, 175],
+  ]);
+  const ARM = spline([[-85, 265], [-25, 236], [30, 272], [38, 420], [32, 600], [28, 950], [-74, 950], [-82, 600], [-94, 420]]);
+  const NECKLINE = spline([[-260, 170], [-66, 174], [-10, 196], [40, 205], [76, 189], [260, 180], [260, 1000], [-260, 1000]]);
+  const HAIR = spline([
+    [93, -58], [86, -96], [52, -128], [0, -136], [-52, -126], [-94, -92], [-112, -40], [-110, 12], [-97, 56],
+    [-78, 72], [-70, 26], [-52, -16], [-20, -52], [24, -76], [62, -78], [84, -66],
+  ]);
+  const EAR = new Path2D(); EAR.ellipse(-18, 10, 16, 29, -.18, 0, Math.PI * 2);
+  const SKULL = spline([[-90, 14], [-96, -40], [-76, -86], [-34, -113], [20, -115], [62, -95], [86, -58], [93, -24],
+    [86, -4], [70, 22], [30, 40], [-20, 46], [-62, 40]]);
+
+  // ── the brain (lateral view, frontal lobe to the right)
+  const BRAIN_PTS = [[80, -26], [74, -66], [42, -98], [-6, -110], [-54, -98], [-86, -60], [-96, -24], [-86, 2],
+    [-62, 8], [-30, 22], [10, 30], [38, 24], [48, 10], [56, 2], [72, -6]];
+  const BRAIN = spline(BRAIN_PTS);
+  const CEREBELLUM = spline([[-90, 4], [-80, 30], [-56, 44], [-30, 40], [-26, 24], [-50, 12]]);
+  const STEM = spline([[-34, 22], [-18, 18], [-10, 50], [-14, 96], [-30, 96], [-30, 52]]);
+  const inBrain = (x, y) => probe.isPointInPath(BRAIN, x, y);
+  const walk = (x, y, a, steps, step, bend) => {
+    const pts = [[x, y]];
+    for (let i = 0; i < steps; i++) {
+      a += (rnd() - .5) * bend; x += Math.cos(a) * step; y += Math.sin(a) * step;
+      if (!inBrain(x, y)) break;
+      pts.push([x, y]);
+    }
+    return pts;
+  };
+  const SULCI = [
+    { p: spline([[54, 2], [32, -8], [6, -20], [-24, -32], [-42, -52]], false), w: 2.6 },   // lateral fissure
+    { p: spline([[10, -106], [17, -82], [14, -62], [23, -40], [30, -18]], false), w: 2.1 }, // central sulcus
+  ];
+  // the other sulci: contour lines of a smooth random field meander without crossing, like real folds
+  {
+    const waves = Array.from({ length: 8 }, () => { const a = rnd() * Math.PI, k = 2 * Math.PI / (13 + rnd() * 9);
+      return [Math.cos(a) * k, Math.sin(a) * k, rnd() * 9]; });
+    const f = (x, y) => { const wx = x + 4 * Math.sin(y / 9); let v = 0; for (const [kx, ky, p] of waves) v += Math.sin(kx * wx + ky * y + p); return v; };
+    const g = 1, X0 = -100, Y0 = -114, NX = 184, NY = 148, val = [];
+    for (let j = 0; j <= NY; j++) for (let i = 0; i <= NX; i++) val.push(f(X0 + i * g, Y0 + j * g));
+    const path = new Path2D(), V = (i, j) => val[j * (NX + 1) + i];
+    const cut = (x0, y0, v0, x1, y1, v1) => { const u = v0 / (v0 - v1); return [x0 + (x1 - x0) * u, y0 + (y1 - y0) * u]; };
+    for (let j = 0; j < NY; j++) for (let i = 0; i < NX; i++) {
+      const x = X0 + i * g, y = Y0 + j * g, a = V(i, j), b = V(i + 1, j), c = V(i + 1, j + 1), d = V(i, j + 1), pts = [];
+      if ((a > 0) !== (b > 0)) pts.push(cut(x, y, a, x + g, y, b));
+      if ((b > 0) !== (c > 0)) pts.push(cut(x + g, y, b, x + g, y + g, c));
+      if ((c > 0) !== (d > 0)) pts.push(cut(x + g, y + g, c, x, y + g, d));
+      if ((d > 0) !== (a > 0)) pts.push(cut(x, y + g, d, x, y, a));
+      for (let k = 0; k + 1 < pts.length; k += 2) { path.moveTo(...pts[k]); path.lineTo(...pts[k + 1]); }
+    }
+    SULCI.push({ p: path, w: 1.6 });
+  }
+  // surface blood vessels
+  const VESSELS = [];
+  const vessel = (x, y, a, len, w, gen) => {
+    const pts = walk(x, y, a, len, 2.2, .5);
+    if (pts.length > 1) VESSELS.push({ p: spline(pts, false), w });
+    if (gen > 0) for (let k = 0; k < 2; k++) {
+      const q = pts[Math.floor(pts.length * (.3 + rnd() * .6))];
+      if (q) vessel(q[0], q[1], a + (rnd() < .5 ? -1 : 1) * (.6 + rnd() * .7), len * .6, w * .6, gen - 1);
+    }
+  };
+  vessel(50, 0, -2.6, 30, 1.2, 3);
+  vessel(-30, -32, -1.5, 22, .9, 2);
+  vessel(-40, -50, -2.4, 18, .8, 2);
+  const SPARKS = [];
+  for (let i = 0; i < 70; i++) {
+    let x, y; do { x = -96 + rnd() * 176; y = -110 + rnd() * 140; } while (!inBrain(x, y));
+    SPARKS.push({ x, y, f: .6 + rnd() * 1.6, ph: rnd() * 9 });
+  }
+
+  // ── neurons (millimetres, soma at 0,0)
+  function makeNeuron(r) {
+    const br = [];
+    const grow = (parent, at, x, y, a, len, w, gen, kind, wig = .35) => {
+      const pts = [[x, y]], n = Math.max(3, Math.round(len / .008));
+      for (let i = 1; i <= n; i++) { a += (r() - .5) * wig; x += Math.cos(a) * len / n; y += Math.sin(a) * len / n; pts.push([x, y]); }
+      const id = br.length; br.push({ pts, w0: w, w1: kind === "axon" ? w : w * .4, parent, at, kind, kids: 0 });
+      if (parent >= 0) br[parent].kids++;
+      for (let j = 0; gen > 0 && j < (r() < .65 ? 2 : 1); j++) {
+        const i = Math.floor(n * (.45 + r() * .5));
+        grow(id, i, pts[i][0], pts[i][1], a + (r() < .5 ? -1 : 1) * (.35 + r() * .5), len * (.5 + r() * .3), w * .62, gen - 1, kind);
+      }
+      return id;
+    };
+    const rx = .010, ry = .013;
+    const trunk = grow(-1, 0, 0, -ry * 1.2, -Math.PI / 2 + (r() - .5) * .2, .28 + r() * .06, .0045, 0, "dend", .12);
+    const T = br[trunk].pts;
+    for (let k = 0; k < 6; k++) {
+      const i = Math.floor(T.length * (.15 + k * .12 + r() * .05)), side = k % 2 ? 1 : -1;
+      grow(trunk, i, T[i][0], T[i][1], -Math.PI / 2 + side * (.9 + r() * .5), .06 + r() * .07, .0018, 1, "dend");
+    }
+    const top = T.length - 1;
+    for (let k = 0; k < 4; k++)
+      grow(trunk, top, T[top][0], T[top][1], -Math.PI / 2 + (k - 1.5) * .45 + (r() - .5) * .2, .09 + r() * .06, .0024, 2, "dend");
+    for (let k = 0; k < 6; k++) {
+      const a = Math.PI * (.02 + k * .19 + (r() - .5) * .08);
+      grow(-1, 0, Math.cos(a) * rx, Math.sin(a) * ry * .7, a, .08 + r() * .06, .003, 2, "dend");
+    }
+    const axon = grow(-1, 0, 0, ry, Math.PI / 2 + (r() - .5) * .1, .55, .0014, 0, "axon", .08);
+    const A = br[axon].pts;
+    for (let k = 0; k < 2; k++) {
+      const i = Math.floor(A.length * (.35 + k * .3));
+      grow(axon, i, A[i][0], A[i][1], Math.PI / 2 + (k ? 1 : -1) * (.9 + r() * .3), .12, .001, 0, "axon", .2);
+    }
+    const soma = spline([[0, -ry * 1.7], [rx * .65, -ry * .5], [rx, ry * .35], [rx * .55, ry], [-rx * .55, ry], [-rx, ry * .35], [-rx * .65, -ry * .5]]);
+    return { br, soma, axon };
+  }
+  function strokeNeuron(c, nrn, color, widthScale, extra) {
+    c.strokeStyle = color; c.lineCap = "round";
+    for (const b of nrn.br) {
+      const n = b.pts.length - 1;
+      for (let i = 0; i < n; i++) {
+        c.lineWidth = lerp(b.w0, b.w1, i / n) * widthScale + extra;
+        c.beginPath(); c.moveTo(b.pts[i][0], b.pts[i][1]); c.lineTo(b.pts[i + 1][0], b.pts[i + 1][1]); c.stroke();
+      }
+    }
+  }
+  function drawNeuron(c, nrn, core, glow) {
+    c.globalCompositeOperation = "lighter";
+    strokeNeuron(c, nrn, glow + ".07)", 1, .014);
+    strokeNeuron(c, nrn, glow + ".16)", 1.6, .004);
+    c.globalCompositeOperation = "source-over";
+    strokeNeuron(c, nrn, core, 1, 0);
+    c.fillStyle = glow + ".25)"; c.save(); c.scale(1.8, 1.8); c.fill(nrn.soma); c.restore();
+    c.fillStyle = core; c.fill(nrn.soma);
+  }
+
+  // background neurons are pre-rendered once into sprites (sharp and out of focus)
+  const SPR = { x0: -.3, y0: -.5, w: .6, h: 1.1, pxmm: 700 };
+  const COLORS = [["#a8f6ea", "rgba(0,217,192,"], ["#c4bfff", "rgba(118,108,255,"], ["#e0dcff", "rgba(201,198,240,"]];
+  const sprites = [];
+  for (let s = 0; s < 6; s++) {
+    const nrn = makeNeuron(seeded(100 + s));
+    for (const [core, glow] of COLORS) {
+      const sharp = document.createElement("canvas");
+      sharp.width = SPR.w * SPR.pxmm; sharp.height = SPR.h * SPR.pxmm;
+      const c = sharp.getContext("2d");
+      c.setTransform(SPR.pxmm, 0, 0, SPR.pxmm, -SPR.x0 * SPR.pxmm, -SPR.y0 * SPR.pxmm);
+      drawNeuron(c, nrn, core, glow);
+      const soft = document.createElement("canvas");
+      soft.width = sharp.width; soft.height = sharp.height;
+      const sc = soft.getContext("2d"); sc.filter = "blur(9px)"; sc.drawImage(sharp, 0, 0); sc.drawImage(sharp, 0, 0);
+      sprites.push({ sharp, soft });
+    }
+  }
+  const dot = document.createElement("canvas"); dot.width = dot.height = 64;
+  { const c = dot.getContext("2d"), g = c.createRadialGradient(32, 32, 0, 32, 32, 32);
+    g.addColorStop(0, "rgba(201,198,240,1)"); g.addColorStop(1, "rgba(201,198,240,0)"); c.fillStyle = g; c.fillRect(0, 0, 64, 64); }
+
+  // the point we zoom into, on the parietal cortex, and the one neuron there
+  const F = { x: -22, y: -62 }, SOMA = { x: 0, y: .16 };   // SOMA relative to F
+  const hero = makeNeuron(seeded(42));
+  const TISSUE = [];
+  for (let i = 0; i < 110; i++) {
+    const s = i < 14 ? 1.35 + rnd() * 1.2 : .38 + rnd() * .92;   // depth: how fast it grows with the zoom
+    const x = (rnd() * 2 - 1) * 3.3 / s, y = (rnd() * 2 - 1) * 1.9 / s;
+    if (s > .75 && Math.abs(x) < .45 && Math.abs(y) < .6) { i--; continue; }   // keep the hero neuron clear
+    TISSUE.push({ x, y, s, k: .75 + rnd() * .5, rot: (rnd() - .5) * .5, spr: sprites[rnd() * sprites.length | 0], f: .3 + rnd(), ph: rnd() * 9 });
+  }
+  for (let i = 0; i < 160; i++) TISSUE.push({ dust: true, x: (rnd() * 2 - 1) * 3.4, y: (rnd() * 2 - 1) * 2, s: .3 + rnd() * 2.6, r: .004 + rnd() * .012 });
+  TISSUE.push({ hero: true, s: 1 });
+  TISSUE.sort((a, b) => a.s - b.s);
+
+  // spines along the hero's dendrites, and the routes signals take to the soma
+  const SPINES = [], TIPS = [];
+  hero.br.forEach((b, id) => {
+    if (b.kind !== "dend") return;
+    if (!b.kids) TIPS.push(id);
+    for (let i = 0; i < b.pts.length - 1; i++) {
+      const [x0, y0] = b.pts[i], [x1, y1] = b.pts[i + 1], L = Math.hypot(x1 - x0, y1 - y0), nx = -(y1 - y0) / L, ny = (x1 - x0) / L;
+      for (let d = rnd() * .004; d < L; d += .0035 + rnd() * .003) {
+        const side = rnd() < .5 ? -1 : 1, len = .0012 + rnd() * .0014, u = d / L;
+        const x = x0 + (x1 - x0) * u, y = y0 + (y1 - y0) * u;
+        SPINES.push([x, y, x + nx * side * len, y + ny * side * len, .0005 + rnd() * .0004]);
+      }
+    }
+  });
+  const route = pts => { const cum = [0]; for (let i = 1; i < pts.length; i++) cum.push(cum[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1])); return { pts, cum, len: cum.at(-1) }; };
+  const toSoma = id => { const out = []; let upto = hero.br[id].pts.length - 1;
+    while (id >= 0) { const B = hero.br[id]; for (let i = upto; i >= 0; i--) out.push(B.pts[i]); upto = B.at; id = B.parent; }
+    out.push([0, 0]); return route(out); };
+  const ROUTES = TIPS.map(toSoma), AXON = route([[0, 0], ...hero.br[hero.axon].pts]);
+  const at = (r, d) => { let i = 1; while (i < r.cum.length - 1 && r.cum[i] < d) i++;
+    const u = (d - r.cum[i - 1]) / (r.cum[i] - r.cum[i - 1] || 1); return [lerp(r.pts[i - 1][0], r.pts[i][0], u), lerp(r.pts[i - 1][1], r.pts[i][1], u)]; };
+
+  // ── camera: keyframes of (time s, view centre mm, view height mm)
+  const KEYS = [
+    [0, 0, 150, 600], [1.4, 0, 150, 600], [5, 4, -6, 330], [6.8, -6, -26, 232], [8.4, -9, -30, 218],
+    [12.8, F.x, F.y, 3.4], [17.6, F.x, F.y, 2.8], [21, F.x, F.y, .9],
+  ].map(([t, x, y, v]) => ({ t, v, dx: (F.x - x) / v, dy: (F.y - y) / v }));   // offset of F from the centre, in view heights
+  const END = KEYS.at(-1).t;
+  function camera(t) {
+    let V, dx, dy;
+    if (t >= END) { V = .9 - .12 * (1 - Math.exp(-(t - END) / 14)); dx = dy = 0; }
+    else {
+      let i = 1; while (KEYS[i].t < t) i++;
+      const a = KEYS[i - 1], b = KEYS[i], u = ease((t - a.t) / (b.t - a.t));
+      V = Math.exp(lerp(Math.log(a.v), Math.log(b.v), u)); dx = lerp(a.dx, b.dx, u); dy = lerp(a.dy, b.dy, u);
+    }
+    const sway = smooth((t - 12) / 3);   // a slow drift once we're in the tissue, for depth
+    return { V, x: F.x - dx * V + Math.sin(t * .23) * .03 * sway, y: F.y - dy * V + Math.cos(t * .19) * .02 * sway };
+  }
+
+  // ── drawing
+  function background() {
+    const g = ctx.createRadialGradient(W * .55, H * .45, 0, W * .55, H * .45, Math.max(W, H) * .75);
+    g.addColorStop(0, "#232650"); g.addColorStop(.55, "#15173a"); g.addColorStop(1, "#0a0b1d");
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  }
+  function person(t) {
+    const breathe = Math.sin(t * 1.4) * .6;
+    ctx.save(); ctx.translate(0, breathe);
+    // soft floor shadow / backlight
+    const halo = ctx.createRadialGradient(-20, 120, 50, -20, 120, 900);
+    halo.addColorStop(0, "rgba(108,99,255,.22)"); halo.addColorStop(1, "rgba(108,99,255,0)");
+    ctx.fillStyle = halo; ctx.fillRect(-1200, -1000, 2400, 2400);
+    // skin
+    const skin = ctx.createLinearGradient(-110, 0, 125, 0);
+    skin.addColorStop(0, "#6b4636"); skin.addColorStop(.55, "#b57f63"); skin.addColorStop(1, "#d9a385");
+    ctx.fillStyle = skin; ctx.fill(BODY);
+    ctx.save(); ctx.clip(BODY);
+    const cheek = ctx.createRadialGradient(70, 20, 0, 70, 20, 60);
+    cheek.addColorStop(0, "rgba(255,200,170,.28)"); cheek.addColorStop(1, "rgba(255,200,170,0)");
+    ctx.fillStyle = cheek; ctx.fillRect(0, -40, 140, 130);
+    const jaw = ctx.createRadialGradient(35, 132, 0, 35, 132, 55);
+    jaw.addColorStop(0, "rgba(40,20,20,.4)"); jaw.addColorStop(1, "rgba(40,20,20,0)");
+    ctx.fillStyle = jaw; ctx.fillRect(-20, 77, 110, 110);
+    // sweater
+    const cloth = ctx.createLinearGradient(-170, 0, 135, 0);
+    cloth.addColorStop(0, "#1b1f3d"); cloth.addColorStop(.6, "#2d3466"); cloth.addColorStop(1, "#3b4380");
+    ctx.fillStyle = cloth; ctx.fill(NECKLINE);
+    ctx.strokeStyle = "rgba(255,255,255,.08)"; ctx.lineWidth = 7; ctx.stroke(NECKLINE);
+    const arm = ctx.createLinearGradient(-95, 0, 40, 0);
+    arm.addColorStop(0, "#232850"); arm.addColorStop(1, "#3a427c");
+    ctx.fillStyle = arm; ctx.shadowColor = "rgba(0,0,0,.45)"; ctx.shadowBlur = 30 * dpr; ctx.fill(ARM); ctx.shadowBlur = 0;
+    ctx.strokeStyle = "rgba(0,0,0,.25)"; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(10, 470); ctx.quadraticCurveTo(-10, 500, -40, 490); ctx.stroke();
+    // rim light along the back
+    ctx.save(); ctx.beginPath(); ctx.rect(-400, -400, 380, 1500); ctx.clip();
+    ctx.strokeStyle = "rgba(0,217,192,.35)"; ctx.lineWidth = 16; ctx.filter = "blur(4px)"; ctx.stroke(BODY); ctx.filter = "none";
+    ctx.restore();
+    ctx.restore();
+    // hair, ear, face details
+    const hair = ctx.createLinearGradient(-110, -130, 90, 40);
+    hair.addColorStop(0, "#1a1210"); hair.addColorStop(1, "#3b2a22");
+    ctx.fillStyle = hair; ctx.fill(HAIR);
+    ctx.strokeStyle = "rgba(0,217,192,.25)"; ctx.lineWidth = 3; ctx.stroke(HAIR);
+    ctx.fillStyle = "#a06b52"; ctx.fill(EAR);
+    ctx.strokeStyle = "rgba(70,35,25,.6)"; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.ellipse(-16, 10, 9, 19, -.18, -1.2, 1.9); ctx.stroke();
+    ctx.lineCap = "round";
+    ctx.strokeStyle = "#2a1c17"; ctx.lineWidth = 3.5;
+    ctx.beginPath(); ctx.moveTo(64, -24); ctx.quadraticCurveTo(80, -30, 94, -22); ctx.stroke();       // eyebrow
+    ctx.fillStyle = "#f2e6e0"; ctx.beginPath(); ctx.ellipse(84, -9, 7, 3.6, .1, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#2b1d18"; ctx.beginPath(); ctx.arc(88, -9, 2.6, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = "rgba(60,30,25,.8)"; ctx.lineWidth = 1.8;
+    ctx.beginPath(); ctx.moveTo(76, -12); ctx.quadraticCurveTo(86, -15, 93, -10); ctx.stroke();         // eyelid
+    ctx.beginPath(); ctx.moveTo(108, 41); ctx.quadraticCurveTo(102, 44, 104, 48); ctx.stroke();         // nostril
+    ctx.strokeStyle = "rgba(110,50,45,.7)"; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(102, 67); ctx.lineTo(92, 68); ctx.stroke();                             // mouth
+    ctx.restore();
+  }
+  function brain(t, alpha) {
+    ctx.save(); ctx.globalAlpha = alpha;
+    ctx.fillStyle = "#3b2635"; ctx.fill(STEM);
+    const cb = ctx.createLinearGradient(-90, 0, -30, 44);
+    cb.addColorStop(0, "#b77a87"); cb.addColorStop(1, "#86505f");
+    ctx.fillStyle = cb; ctx.fill(CEREBELLUM);
+    ctx.save(); ctx.clip(CEREBELLUM); ctx.strokeStyle = "rgba(80,35,50,.7)"; ctx.lineWidth = .9;
+    for (let k = 0; k < 16; k++) { ctx.beginPath(); ctx.moveTo(-96, -4 + k * 3.3); ctx.quadraticCurveTo(-70, 8 + k * 3.3, -30, 10 + k * 2.6); ctx.stroke(); }
+    ctx.restore();
+    const g = ctx.createRadialGradient(10, -60, 5, -5, -45, 110);
+    g.addColorStop(0, "#f0c2c4"); g.addColorStop(.6, "#d39aa1"); g.addColorStop(1, "#9c6070");
+    ctx.fillStyle = g; ctx.fill(BRAIN);
+    ctx.save(); ctx.clip(BRAIN); ctx.lineCap = "round";
+    // each sulcus: a soft shadow, a lit lip above it and the dark groove itself
+    for (const s of SULCI) { ctx.strokeStyle = "rgba(120,60,78,.25)"; ctx.lineWidth = s.w * 2.6; ctx.stroke(s.p); }
+    ctx.translate(-.9, -1.1);
+    for (const s of SULCI) { ctx.strokeStyle = "rgba(255,228,226,.32)"; ctx.lineWidth = s.w * .9; ctx.stroke(s.p); }
+    ctx.translate(.9, 1.1);
+    for (const s of SULCI) { ctx.strokeStyle = "rgba(104,44,64,.9)"; ctx.lineWidth = s.w * .8; ctx.stroke(s.p); }
+    for (const v of VESSELS) { ctx.strokeStyle = "rgba(150,40,70,.35)"; ctx.lineWidth = v.w * .7; ctx.stroke(v.p); }
+    const edge = ctx.createRadialGradient(-5, -45, 50, -5, -45, 115);
+    edge.addColorStop(0, "rgba(60,20,40,0)"); edge.addColorStop(1, "rgba(60,20,40,.6)");
+    ctx.fillStyle = edge; ctx.fill(BRAIN);
+    // flickering activity
+    ctx.globalCompositeOperation = "lighter";
+    for (const s of SPARKS) {
+      const a = Math.max(0, Math.sin(t * s.f * 2 + s.ph)) ** 6;
+      if (a < .02) continue;
+      const r = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, 3.5);
+      r.addColorStop(0, `rgba(0,217,192,${.6 * a})`); r.addColorStop(1, "rgba(0,217,192,0)");
+      ctx.fillStyle = r; ctx.fillRect(s.x - 4, s.y - 4, 8, 8);
+    }
+    ctx.restore();
+    ctx.restore();
+  }
+
+  // signals on the hero neuron: dendrites carry small pulses in, enough of them make it fire
+  let pulses = [], spikes = [], charge = 0, flash = 0, nextPulse = 0;
+  function updateSignals(t, dt) {
+    if (t > nextPulse) { pulses.push({ r: ROUTES[rnd() * ROUTES.length | 0], d: 0 }); nextPulse = t + .25 + rnd() * .3; }
+    pulses = pulses.filter(p => { p.d += dt * .22; if (p.d < p.r.len) return true; charge++; flash = Math.max(flash, .35); return false; });
+    if (charge >= 5) { charge = 0; flash = 1; spikes.push({ d: 0 }); }
+    spikes = spikes.filter(s => (s.d += dt * .9) < AXON.len + .1);
+    flash = Math.max(0, flash - dt * 1.6);
+  }
+  function glowAt(x, y, r, color, a) {
+    const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+    g.addColorStop(0, color + a + ")"); g.addColorStop(.35, color + a * .5 + ")"); g.addColorStop(1, color + "0)");
+    ctx.fillStyle = g; ctx.fillRect(x - r, y - r, 2 * r, 2 * r);
+  }
+  function heroNeuron(z, a) {
+    ctx.save(); ctx.globalAlpha = a;
+    drawNeuron(ctx, hero, "#e6fdff", "rgba(0,217,192,");
+    if (z > 700) {   // spines become visible close up
+      ctx.globalAlpha = a * clamp((z - 700) / 600);
+      ctx.strokeStyle = "#cdf7f2"; ctx.fillStyle = "#cdf7f2"; ctx.lineWidth = .0004;
+      ctx.beginPath(); for (const [x0, y0, x1, y1] of SPINES) { ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); } ctx.stroke();
+      ctx.beginPath(); for (const [, , x1, y1, r] of SPINES) { ctx.moveTo(x1 + r, y1); ctx.arc(x1, y1, r, 0, Math.PI * 2); } ctx.fill();
+      ctx.globalAlpha = a;
+    }
+    ctx.fillStyle = "rgba(20,60,70,.55)"; ctx.beginPath(); ctx.ellipse(0, .001, .0045, .0055, 0, 0, Math.PI * 2); ctx.fill();   // nucleus
+    ctx.globalCompositeOperation = "lighter";
+    for (const p of pulses) { const [x, y] = at(p.r, p.d); glowAt(x, y, .012, "rgba(0,217,192,", .9); glowAt(x, y, .003, "rgba(255,255,255,", .9); }
+    if (flash > 0) glowAt(0, 0, .03 + .05 * flash, "rgba(255,214,140,", .8 * flash);
+    for (const s of spikes) for (let k = 0; k < 6; k++) {
+      const d = s.d - k * .012; if (d < 0 || d > AXON.len) continue;
+      const [x, y] = at(AXON, d); glowAt(x, y, .016 - k * .0015, "rgba(255,214,140,", .95 - k * .15);
+    }
+    ctx.restore();
+  }
+  function tissue(t, cam, z, a) {
+    const deep = smooth((6 - cam.V) / 4);
+    ctx.globalAlpha = a;
+    const bg = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, Math.max(W, H) * .7);
+    bg.addColorStop(0, `rgb(${lerp(70, 20, deep) | 0},${lerp(36, 24, deep) | 0},${lerp(64, 52, deep) | 0})`);
+    bg.addColorStop(1, `rgb(${lerp(36, 8, deep) | 0},${lerp(18, 9, deep) | 0},${lerp(38, 26, deep) | 0})`);
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+    const fx = W / 2 + (F.x - cam.x) * z, fy = H / 2 + (F.y - cam.y) * z;
+    for (const e of TISSUE) {
+      const k = z * e.s;
+      if (e.hero) {
+        ctx.save(); ctx.translate(fx + SOMA.x * k, fy + SOMA.y * k); ctx.scale(k, k);
+        heroNeuron(k, a); ctx.restore(); continue;
+      }
+      const x = fx + e.x * k, y = fy + e.y * k;
+      if (e.dust) {
+        const r = Math.max(1.5, e.r * k), fade = clamp((H * .4 - r) / (H * .3));
+        if (x < -r || x > W + r || y < -r || y > H + r || fade <= 0) continue;
+        ctx.globalAlpha = a * .22 * fade * clamp(e.s < 1 ? e.s : 2 / e.s);
+        ctx.drawImage(dot, x - r, y - r, 2 * r, 2 * r); continue;
+      }
+      const kk = k * e.k, w = SPR.w * kk, h = SPR.h * kk;
+      const near = clamp((H * 2.6 - h) / (H * 1.2)), far = clamp((e.s - .3) / .5);
+      const alpha = a * near * far * (e.s > 1.3 ? .55 : .3 + .35 * e.s) * (.8 + .2 * Math.sin(t * e.f + e.ph));
+      if (alpha <= .01 || h < 4) continue;
+      const blurry = e.s < .7 || e.s > 1.3;
+      ctx.save(); ctx.globalAlpha = alpha; ctx.translate(x, y); ctx.rotate(e.rot);
+      if (Math.abs(x) - h > W || Math.abs(y) - h > H * 2) { ctx.restore(); continue; }
+      ctx.drawImage(blurry ? e.spr.soft : e.spr.sharp, SPR.x0 * kk, SPR.y0 * kk, w, h);
+      ctx.restore();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  // ── caption
+  const labelEl = document.getElementById("label");
+  const labels = STAGES.map(([, title, sub]) => { const d = document.createElement("div"); d.innerHTML = `<b>${title}</b><span>${sub}</span>`; labelEl.append(d); return d; });
+  let stage = -1;
+  const SCAN_START = 4.4;   // the x-ray sweep over the head starts here, and with it "the brain"
+  function hud(cam, t) {
+    const s = t < SCAN_START ? 0 : STAGES.findIndex(([v]) => cam.V >= v);
+    if (s !== stage) { stage = s; labels.forEach((d, i) => d.classList.toggle("on", i === s)); }
+  }
+
+  function render(t, dt) {
+    const cam = camera(t), z = H / cam.V;
+    const tf = smooth((32 - cam.V) / 26);     // brain → tissue
+    const scan = smooth((t - SCAN_START) / 2);       // x-ray sweep over the head
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    background();
+    if (tf < 1) {
+      ctx.setTransform(dpr * z, 0, 0, dpr * z, dpr * (W / 2 - cam.x * z), dpr * (H / 2 - cam.y * z));
+      if (cam.V > 45) person(t);
+      if (scan > 0) {
+        const scanY = lerp(-140, 140, scan);
+        ctx.save();
+        if (cam.V > 45) ctx.clip(BODY);
+        ctx.beginPath(); ctx.rect(-500, -500, 1000, scanY + 500); ctx.clip();
+        ctx.fillStyle = "rgba(9,11,28,.9)"; ctx.fillRect(-500, -500, 1000, 1000);
+        const sk = ctx.createRadialGradient(0, -40, 20, 0, -40, 120);
+        sk.addColorStop(0, "rgba(150,170,230,.04)"); sk.addColorStop(1, "rgba(150,170,230,.14)");
+        ctx.fillStyle = sk; ctx.fill(SKULL);
+        ctx.strokeStyle = "rgba(210,220,255,.35)"; ctx.lineWidth = 5; ctx.stroke(SKULL);
+        ctx.strokeStyle = "rgba(0,217,192,.3)"; ctx.lineWidth = 1.5; ctx.stroke(BODY);
+        brain(t, 1 - tf);
+        ctx.restore();
+        if (scan < 1) {   // the scan line itself
+          ctx.save(); ctx.clip(BODY);
+          const g = ctx.createLinearGradient(0, scanY - 14, 0, scanY + 3);
+          g.addColorStop(0, "rgba(0,217,192,0)"); g.addColorStop(.85, "rgba(0,217,192,.45)"); g.addColorStop(1, "rgba(200,255,250,.95)");
+          ctx.fillStyle = g; ctx.fillRect(-300, scanY - 14, 600, 17);
+          ctx.restore();
+        }
+      }
+    }
+    if (tf > 0) {
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      if (cam.V < 3.5) updateSignals(t, dt);
+      tissue(t, cam, z, tf);
+    }
+    // vignette
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const v = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * .45, W / 2, H / 2, Math.max(W, H) * .75);
+    v.addColorStop(0, "rgba(5,6,16,0)"); v.addColorStop(1, "rgba(5,6,16,.55)");
+    ctx.fillStyle = v; ctx.fillRect(0, 0, W, H);
+    hud(cam, t);
+    document.body.classList.toggle("done", !EMBEDDED && t > END + 2);
+  }
+
+  // ── playback. On its own the page plays straight away (click to replay); inside the slide deck
+  //    it waits for the deck to say "play" when its slide comes on screen, and "stop" when it leaves.
+  const EMBEDDED = window.parent !== window;
+  let t0 = 0, last = 0, raf = 0, frozen = params.has("pause");
+  const startAt = +params.get("t") || 0;
+  function frame(now) {
+    const t = (now - t0) / 1000, dt = Math.min(.05, (now - last) / 1000); last = now;
+    render(t, dt);
+    if (!frozen) raf = requestAnimationFrame(frame);
+  }
+  function play(from = 0) {
+    cancelAnimationFrame(raf);
+    pulses = []; spikes = []; charge = 0; flash = 0; nextPulse = 0;
+    t0 = last = performance.now() - from * 1000;
+    raf = requestAnimationFrame(frame);
+  }
+  addEventListener("message", e => {
+    if (!e.data || !e.data.brainZoom) return;
+    if (e.data.brainZoom === "play") { frozen = false; play(); }
+    if (e.data.brainZoom === "stop") cancelAnimationFrame(raf);
+  });
+  if (EMBEDDED) { frozen = true; play(startAt); }
+  else { play(startAt); addEventListener("click", () => { frozen = false; play(); }); }
+  addEventListener("resize", () => { if (frozen) render((last - t0) / 1000, 0); });
+})();
+</script>
+</body>
+</html>
